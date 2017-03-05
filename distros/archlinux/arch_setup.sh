@@ -129,7 +129,7 @@ else
 	fi
 	
 	#utility functions
-	[ ! -e arch_func.sh ] &&  wget -q ${SETUP_SCRIPT_LOCATION}/arch/arch_func.sh -O arch_func.sh
+	[ ! -e arch_func.sh ] &&  wget -q ${SETUP_SCRIPT_LOCATION}/01_func/arch_func.sh -O arch_func.sh
 	source arch_func.sh
 	
 	TO_REMOVE+=" arch_func.sh"
@@ -307,7 +307,7 @@ else
 	pause "system preconfigured; about to run arch_finish.sh..."	
 	#execute scrit after chrooting in the new system
 	# The following script is executed after chrooting in the new system.
-	retry "wget $SETUP_SCRIPT_LOCATION/arch/arch_finish.sh -O $MOUNTPOINT/arch_finish.sh"
+	retry "wget $SETUP_SCRIPT_LOCATION/distros/archlinux/arch_finish.sh -O $MOUNTPOINT/arch_finish.sh"
 	TO_REMOVE+=" $MOUNTPOINT/arch_finish.sh"
 	chmod +x $MOUNTPOINT/arch_finish.sh
 		

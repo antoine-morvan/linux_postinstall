@@ -32,8 +32,8 @@ function retry {
 }
 
 mkdir -p $CONFDIR
-retry "wget $SETUP_SCRIPT_LOCATION/apps/conky/koubi_conky.conf -O $CONFFILE"
-#retry "wget http://home.koub.org/files/linux/conky/conky.conf -O $CONFFILE"
+retry "wget $SETUP_SCRIPT_LOCATION/02_apps/conky/koubi_conky.conf -O $CONFFILE"
+#retry "wget http://home.koub.org/files/linux/02_apps/conky/conky.conf -O $CONFFILE"
 
 #PARTS=`mount | grep -v /sys | grep -v /proc | grep -v /run | grep -v tmpfs | grep -v cdrom | grep ^/`
 PARTS=`cat /etc/fstab | grep -v "^#" | grep -v cdrom | grep -v swap | grep -v "//" | grep -v "[ \t]bind" | cut -d" " -f 2 | grep -v "^$"`

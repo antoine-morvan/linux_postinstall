@@ -12,4 +12,4 @@ echo ""
 upgrade
 install_packs conky
 
-dl_and_execute ${SETUP_SCRIPT_LOCATION}/apps/conky/conky_config.sh
+dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/conky/conky_config.sh

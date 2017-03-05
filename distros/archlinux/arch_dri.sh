@@ -1,6 +1,8 @@
 #!/bin/bash
-BG=`cat /setup.dat | head -n 1`
-SETUP_SCRIPT_LOCATION=`cat /setup.dat | tail -n 1`
+BG=`cat /setup.dat | sed '1q;d'`
+SETUP_SCRIPT_LOCATION=`cat /setup.dat | sed '2q;d'`
+TESTSYSTEM=`cat /setup.dat | sed '3q;d'`
+INSTALLHEAD=`cat /setup.dat | sed '4q;d'`
 source /arch_func.sh
 
 

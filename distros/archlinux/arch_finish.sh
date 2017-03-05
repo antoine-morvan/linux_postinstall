@@ -123,9 +123,9 @@ pause "initram configured"
 mkdir -p /usr/share/wallpapers
 # { arch | deb | walldeb }
 WALL=arch
-retry "wget -q -O /usr/share/wallpapers/wallarch.png ${SETUP_SCRIPT_LOCATION}/wallpapers/${WALL}.png"
-retry "wget -q -O /usr/share/wallpapers/wallarch-wide_16_9.png ${SETUP_SCRIPT_LOCATION}/wallpapers/${WALL}_wide_16_9.png"
-retry "wget -q -O /usr/share/wallpapers/wallarch-wide_16_10.png ${SETUP_SCRIPT_LOCATION}/wallpapers/${WALL}_wide_16_10.png"
+retry "wget -q -O /usr/share/wallpapers/wallarch.png ${SETUP_SCRIPT_LOCATION}/99_shared/wallpapers/${WALL}.png"
+retry "wget -q -O /usr/share/wallpapers/wallarch-wide_16_9.png ${SETUP_SCRIPT_LOCATION}/99_shared/wallpapers/${WALL}_wide_16_9.png"
+retry "wget -q -O /usr/share/wallpapers/wallarch-wide_16_10.png ${SETUP_SCRIPT_LOCATION}/99_shared/wallpapers/${WALL}_wide_16_10.png"
 
 pause "wallpaper installed"
 
@@ -149,9 +149,9 @@ if [ "$BOOTLOADER" == "GRUB" ]; then
 	fi
 fi
 
-retry "wget -q -O /etc/iptables/iptables.rules ${SETUP_SCRIPT_LOCATION}/arch/iptables.rules"
-retry "wget -q -O /etc/systemd/system/firewall-tuning.service ${SETUP_SCRIPT_LOCATION}/arch/firewall-tuning.service"
-retry "wget -q -O /usr/local/sbin/firewall-tuning.sh ${SETUP_SCRIPT_LOCATION}/arch/firewall-tuning.sh"
+retry "wget -q -O /etc/iptables/iptables.rules ${SETUP_SCRIPT_LOCATION}/distros/archlinux/iptables.rules"
+retry "wget -q -O /etc/systemd/system/firewall-tuning.service ${SETUP_SCRIPT_LOCATION}/distros/archlinux/firewall-tuning.service"
+retry "wget -q -O /usr/local/sbin/firewall-tuning.sh ${SETUP_SCRIPT_LOCATION}/distros/archlinux/firewall-tuning.sh"
 chmod +x /usr/local/sbin/firewall-tuning.sh
 
 #read -p "press enter ... (before enabling services)"
@@ -297,12 +297,12 @@ mv tmp /etc/systemd/logind.conf
 
 pause "samba & vim configured; about to setup drivers..."
 
-dl_and_execute ${SETUP_SCRIPT_LOCATION}/arch/arch_dri.sh
+dl_and_execute ${SETUP_SCRIPT_LOCATION}/distros/archlinux/arch_dri.sh
 
 pause "drivers installed; about to install head..."
 
 if [ "$INSTALLHEAD" == "YES" ]; then
-	dl_and_execute ${SETUP_SCRIPT_LOCATION}/arch/arch_head.sh
+	dl_and_execute ${SETUP_SCRIPT_LOCATION}/distros/archlinux/arch_head.sh
 fi
 
 #detect sensors

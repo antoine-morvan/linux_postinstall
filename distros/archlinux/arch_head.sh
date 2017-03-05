@@ -51,26 +51,26 @@ fi
 #######	  APPS	 #########
 ##########################
 
-dl_and_execute ${SETUP_SCRIPT_LOCATION}/apps/xfce-4.10/arch.sh
+dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/xfce-4.12/arch.sh
 
-dl_and_execute ${SETUP_SCRIPT_LOCATION}/apps/conky/arch.sh
-dl_and_execute ${SETUP_SCRIPT_LOCATION}/apps/quicktile/arch.sh
-dl_and_execute ${SETUP_SCRIPT_LOCATION}/apps/chrome/arch.sh
+dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/conky/arch.sh
+dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/quicktile/arch.sh
+dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/chrome/arch.sh
 
 
 if [ "$TESTSYSTEM" != "YES" ]; then
-	dl_and_execute ${SETUP_SCRIPT_LOCATION}/apps/deadbeef/arch.sh
-	dl_and_execute ${SETUP_SCRIPT_LOCATION}/apps/wine/arch.sh
-	dl_and_execute ${SETUP_SCRIPT_LOCATION}/apps/steam/arch.sh
-	dl_and_execute ${SETUP_SCRIPT_LOCATION}/apps/firefox/arch.sh
-	dl_and_execute ${SETUP_SCRIPT_LOCATION}/apps/playonlinux/arch.sh
-	dl_and_execute ${SETUP_SCRIPT_LOCATION}/apps/truecrypt/arch.sh
-	dl_and_execute ${SETUP_SCRIPT_LOCATION}/apps/virtualbox/arch.sh
-	dl_and_execute ${SETUP_SCRIPT_LOCATION}/apps/purple-plugins/arch.sh
-	dl_and_execute ${SETUP_SCRIPT_LOCATION}/apps/skype/arch.sh
-	dl_and_execute ${SETUP_SCRIPT_LOCATION}/apps/hipchat/arch.sh
+	dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/deadbeef/arch.sh
+	dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/wine/arch.sh
+	dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/steam/arch.sh
+	dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/firefox/arch.sh
+	dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/playonlinux/arch.sh
+	dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/truecrypt/arch.sh
+	dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/virtualbox/arch.sh
+	dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/purple-plugins/arch.sh
+	dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/skype/arch.sh
+	dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/hipchat/arch.sh
 fi
-#dl_and_execute ${SETUP_SCRIPT_LOCATION}/apps/acroread/arch.sh #disabled because crashing too often ...
+#dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/acroread/arch.sh #disabled because crashing too often ...
 
 pause "apps installed; configuring ..."
 
@@ -98,7 +98,7 @@ systemctl enable tlp
 #cp /usr/share/X11/xorg.conf.d/10-evdev.conf /etc/X11/xorg.conf.d/10-evdev.conf
 #sed -i 's/MatchIsKeyboard "on"/MatchIsKeyboard "on"\n\tOption "XkbLayout"\t"fr"\n\tOption "XkbVariant"\t"latin9" /g' /etc/X11/xorg.conf.d/10-evdev.conf
 
-retry "wget -q -O /etc/X11/xorg.conf.d/50-synaptics.conf ${SETUP_SCRIPT_LOCATION}/arch/50-synaptics.conf"
+retry "wget -q -O /etc/X11/xorg.conf.d/50-synaptics.conf ${SETUP_SCRIPT_LOCATION}/distros/archlinux/50-synaptics.conf"
 
 
 ##########################
