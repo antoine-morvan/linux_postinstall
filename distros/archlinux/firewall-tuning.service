@@ -1,0 +1,10 @@
+[Unit]
+Description=Tuning network setup
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/firewall-tuning.sh
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
