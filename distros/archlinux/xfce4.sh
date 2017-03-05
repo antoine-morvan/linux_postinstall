@@ -6,7 +6,7 @@ INSTALLHEAD=`cat /setup.dat | sed '4q;d'`
 source /arch_func.sh
 
 echo ""
-echo "** Config XFCE 4.10"
+echo "** Config XFCE 4.12"
 echo ""
 
 #get theme

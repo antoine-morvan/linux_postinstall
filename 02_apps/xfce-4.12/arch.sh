@@ -6,7 +6,7 @@ INSTALLHEAD=`cat /setup.dat | sed '4q;d'`
 source /arch_func.sh
 
 echo ""
-echo "** Config XFCE 4.10"
+echo "** Config XFCE 4.12"
 echo ""
 
 #get theme
@@ -14,12 +14,12 @@ echo ""
 #http://xfce-look.org/CONTENT/content-files/121685-BSM%20Simple%2013.tar.gz
 #http://xfce-look.org/CONTENT/content-files/145188-Lines_0.3.1.tar.gz
 mkdir -p /usr/share/themes
-retry "wget -q -O /usr/share/themes/145188-Lines_0.3.1.tar.gz ${SETUP_SCRIPT_LOCATION}/apps/xfce-4.10/145188-Lines_0.3.1.tar.gz"
+retry "wget -q -O /usr/share/themes/145188-Lines_0.3.1.tar.gz ${SETUP_SCRIPT_LOCATION}/02_apps/xfce-4.12/145188-Lines_0.3.1.tar.gz"
 (cd /usr/share/themes &&
 	tar xf 145188-Lines_0.3.1.tar.gz &&
 	rm 145188-Lines_0.3.1.tar.gz)
 
-retry "wget -q -O /usr/share/themes/121685-BSM_Simple_13.tar.gz ${SETUP_SCRIPT_LOCATION}/apps/xfce-4.10/121685-BSM_Simple_13.tar.gz"
+retry "wget -q -O /usr/share/themes/121685-BSM_Simple_13.tar.gz ${SETUP_SCRIPT_LOCATION}/02_apps/xfce-4.12/121685-BSM_Simple_13.tar.gz"
 (cd /usr/share/themes &&
         tar xf 121685-BSM_Simple_13.tar.gz &&
         rm 121685-BSM_Simple_13.tar.gz)
@@ -30,7 +30,7 @@ chmod -R 755 /usr/share/themes
 
 #get icons
 mkdir -p /usr/share/icons
-retry "wget -q -O /usr/share/icons/Fog.tar.bz2 ${SETUP_SCRIPT_LOCATION}/apps/xfce-4.10/Fog.tar.bz2"
+retry "wget -q -O /usr/share/icons/Fog.tar.bz2 ${SETUP_SCRIPT_LOCATION}/02_apps/xfce-4.12/Fog.tar.bz2"
 (cd /usr/share/icons &&
 	tar xf Fog.tar.bz2 &&
 	rm Fog.tar.bz2)
@@ -41,27 +41,27 @@ mkdir -p /etc/xdg/xfce4/xfconf/xfce-perchannel-xml/
 #bordures
 FILE=/etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xfwm4.xml
 [ -e $FILE ] && mv $FILE $FILE.bk
-retry "wget -q -O ${FILE} ${SETUP_SCRIPT_LOCATION}/apps/xfce-4.10/xfwm4.xml"
+retry "wget -q -O ${FILE} ${SETUP_SCRIPT_LOCATION}/02_apps/xfce-4.12/xfwm4.xml"
 #icons
 FILE=/etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xsettings.xml
 [ -e $FILE ] && mv $FILE $FILE.bk
-retry "wget -q -O ${FILE} ${SETUP_SCRIPT_LOCATION}/apps/xfce-4.10/xsettings.xml"
+retry "wget -q -O ${FILE} ${SETUP_SCRIPT_LOCATION}/02_apps/xfce-4.12/xsettings.xml"
 
 FILE=/etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xfce4-session.xml
 [ -e $FILE ] && mv $FILE $FILE.bk
-retry "wget -q -O ${FILE} ${SETUP_SCRIPT_LOCATION}/apps/xfce-4.10/xfce4-session.xml"
+retry "wget -q -O ${FILE} ${SETUP_SCRIPT_LOCATION}/02_apps/xfce-4.12/xfce4-session.xml"
 
 FILE=/etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xfce4-power-manager.xml
 [ -e $FILE ] && mv $FILE $FILE.bk
-retry "wget -q -O ${FILE} ${SETUP_SCRIPT_LOCATION}/apps/xfce-4.10/xfce4-power-manager.xml"
+retry "wget -q -O ${FILE} ${SETUP_SCRIPT_LOCATION}/02_apps/xfce-4.12/xfce4-power-manager.xml"
 
 FILE=/etc/xdg/xfce4/xfconf/xfce-perchannel-xml/pointers.xml
 [ -e $FILE ] && mv $FILE $FILE.bk
-retry "wget -q -O ${FILE} ${SETUP_SCRIPT_LOCATION}/apps/xfce-4.10/pointers.xml"
+retry "wget -q -O ${FILE} ${SETUP_SCRIPT_LOCATION}/02_apps/xfce-4.12/pointers.xml"
 
 FILE=/etc/xdg/xfce4/xfconf/xfce-perchannel-xml/keyboard-layout.xml
 [ -e $FILE ] && mv $FILE $FILE.bk
-retry "wget -q -O ${FILE} ${SETUP_SCRIPT_LOCATION}/apps/xfce-4.10/keyboard-layout.xml"
+retry "wget -q -O ${FILE} ${SETUP_SCRIPT_LOCATION}/02_apps/xfce-4.12/keyboard-layout.xml"
 
 #default icon view & show address bar (Thunar)
 mkdir -p /etc/skel/.config/Thunar/
@@ -70,18 +70,18 @@ echo "LastView=ThunarDetailsView" >> /etc/skel/.config/Thunar/thunarrc
 echo "LastLocationBar=ThunarLocationEntry" >> /etc/skel/.config/Thunar/thunarrc
 
 #Thunar user custom actions
-retry "wget -q -O /etc/skel/.config/Thunar/uca.xml ${SETUP_SCRIPT_LOCATION}/apps/xfce-4.10/uca.xml"
+retry "wget -q -O /etc/skel/.config/Thunar/uca.xml ${SETUP_SCRIPT_LOCATION}/02_apps/xfce-4.12/uca.xml"
 
 #disable thumbs in thunar
 FILE=/etc/xdg/xfce4/xfconf/xfce-perchannel-xml/thunar.xml
 [ -e $FILE ] && mv $FILE $FILE.bk
-retry "wget -q -O ${FILE} ${SETUP_SCRIPT_LOCATION}/apps/xfce-4.10/thunar.xml"
+retry "wget -q -O ${FILE} ${SETUP_SCRIPT_LOCATION}/02_apps/xfce-4.12/thunar.xml"
 
 mkdir -p /etc/xdg/xfce4/panel/
 #default taskbar
 FILE=/etc/xdg/xfce4/panel/default.xml
 [ -e $FILE ] && mv $FILE $FILE.bk
-retry "wget -q -O ${FILE} ${SETUP_SCRIPT_LOCATION}/apps/xfce-4.10/default-panel.xml"
+retry "wget -q -O ${FILE} ${SETUP_SCRIPT_LOCATION}/02_apps/xfce-4.12/default-panel.xml"
 
 #change icon to debian
 sed -i 's/debian-logo/archlinux-icon-crystal/g' $FILE
@@ -94,30 +94,30 @@ ln -s /usr/share/byobu/pixmaps/byobu.svg /usr/share/pixmaps/byobu.svg
 mkdir -p /etc/skel/.config/xfce4/panel/
 FILE=/etc/skel/.config/xfce4/panel/xfce4-cpufreq-plugin-6.rc
 [ -e $FILE ] && mv $FILE $FILE.bk
-retry "wget -q -O ${FILE} ${SETUP_SCRIPT_LOCATION}/apps/xfce-4.10/panel/xfce4-cpufreq-plugin-6.rc"
+retry "wget -q -O ${FILE} ${SETUP_SCRIPT_LOCATION}/02_apps/xfce-4.12/panel/xfce4-cpufreq-plugin-6.rc"
 FILE=/etc/skel/.config/xfce4/panel/weather-11.rc
 [ -e $FILE ] && mv $FILE $FILE.bk
-retry "wget -q -O ${FILE} ${SETUP_SCRIPT_LOCATION}/apps/xfce-4.10/panel/weather-11.rc"
+retry "wget -q -O ${FILE} ${SETUP_SCRIPT_LOCATION}/02_apps/xfce-4.12/panel/weather-11.rc"
 
 FILE=/etc/skel/.config/xfce4/panel/xfce4-orageclock-plugin-12.rc
 [ -e $FILE ] && mv $FILE $FILE.bk
-retry "wget -q -O ${FILE} ${SETUP_SCRIPT_LOCATION}/apps/xfce-4.10/panel/xfce4-orageclock-plugin-12.rc"
+retry "wget -q -O ${FILE} ${SETUP_SCRIPT_LOCATION}/02_apps/xfce-4.12/panel/xfce4-orageclock-plugin-12.rc"
 
 FILE=/etc/skel/.config/xfce4/panel/whiskermenu-91.rc
 [ -e $FILE ] && mv $FILE $FILE.bk
-retry "wget -q -O ${FILE} ${SETUP_SCRIPT_LOCATION}/apps/xfce-4.10/panel/whiskermenu-91.rc"
+retry "wget -q -O ${FILE} ${SETUP_SCRIPT_LOCATION}/02_apps/xfce-4.12/panel/whiskermenu-91.rc"
 
 FILE=/etc/skel/.config/xfce4/panel/multiload-ng-xfce4-92.rc
 [ -e $FILE ] && mv $FILE $FILE.bk
-retry "wget -q -O ${FILE} ${SETUP_SCRIPT_LOCATION}/apps/xfce-4.10/panel/multiload-ng-xfce4-92.rc"
+retry "wget -q -O ${FILE} ${SETUP_SCRIPT_LOCATION}/02_apps/xfce-4.12/panel/multiload-ng-xfce4-92.rc"
 
 FILE=/etc/skel/.config/xfce4/panel/xfce4-sensors-plugin-93.rc
 [ -e $FILE ] && mv $FILE $FILE.bk
-retry "wget -q -O ${FILE} ${SETUP_SCRIPT_LOCATION}/apps/xfce-4.10/panel/xfce4-sensors-plugin-93.rc"
+retry "wget -q -O ${FILE} ${SETUP_SCRIPT_LOCATION}/02_apps/xfce-4.12/panel/xfce4-sensors-plugin-93.rc"
 
 FILE=/etc/skel/.config/xfce4/panel/battery-94.rc
 [ -e $FILE ] && mv $FILE $FILE.bk
-retry "wget -q -O ${FILE} ${SETUP_SCRIPT_LOCATION}/apps/xfce-4.10/panel/battery-94.rc"
+retry "wget -q -O ${FILE} ${SETUP_SCRIPT_LOCATION}/02_apps/xfce-4.12/panel/battery-94.rc"
 
 
 mkdir -p /etc/skel/.config/xfce4/panel/launcher-7
@@ -197,18 +197,18 @@ EOF
 #background
 FILE=/etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml
 [ -e $FILE ] && mv $FILE $FILE.bk
-retry "wget -q -O ${FILE} ${SETUP_SCRIPT_LOCATION}/apps/xfce-4.10/xfce4-desktop.xml"
+retry "wget -q -O ${FILE} ${SETUP_SCRIPT_LOCATION}/02_apps/xfce-4.12/xfce4-desktop.xml"
 sed -i -e "s#%BG%#$BG#g" /etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml
 
 #shortcuts
 FILE=/etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xfce4-keyboard-shortcuts.xml
 [ -e $FILE ] && mv $FILE $FILE.bk
-retry "wget -q -O ${FILE} ${SETUP_SCRIPT_LOCATION}/apps/xfce-4.10/xfce4-keyboard-shortcuts.xml"
+retry "wget -q -O ${FILE} ${SETUP_SCRIPT_LOCATION}/02_apps/xfce-4.12/xfce4-keyboard-shortcuts.xml"
 
 #xscreensaver avoid using desktop pictures
 FILE=/etc/skel/.xscreensaver
 [ -e $FILE ] && mv $FILE $FILE.bk
-retry "wget -q -O ${FILE} ${SETUP_SCRIPT_LOCATION}/apps/xfce-4.10/xscreensaver"
+retry "wget -q -O ${FILE} ${SETUP_SCRIPT_LOCATION}/02_apps/xfce-4.12/xscreensaver"
 
 #disable volumed (replaced by pasystray)
 #rm -f /etc/xdg/autostart/xfce4-volumed.desktop
