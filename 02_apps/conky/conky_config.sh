@@ -85,7 +85,7 @@ PARTS=`echo $NEWPARTS | xargs -n1 | sort -u | xargs`
 ##############################
 
 for DISK in $DISKS; do
-	PRINTCONKY+="\${color grey}File systems on \$color/dev/$DISK \${color grey}: $color(${color orange}I/O : ${diskio /dev/$DISK}/s$color)\n"
+	PRINTCONKY+="\${color grey}File systems on \$color/dev/$DISK \${color grey}: \$color(\${color orange}I/O : \${diskio /dev/$DISK}/s\$color)\n"
 	I=0
 	for PART in $PARTS; do
 		DEVICE=`mount | grep " $PART " | cut -d" " -f 1`
