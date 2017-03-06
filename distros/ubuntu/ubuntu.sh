@@ -30,8 +30,8 @@ source ubuntu_func.sh
 
 #update source.list
 
-echo "deb http://archive.canonical.com/ubuntu xenial partner" >> /etc/source.list
-echo "deb-src http://archive.canonical.com/ubuntu xenial partner" >> /etc/source.list
+echo "deb http://archive.canonical.com/ubuntu xenial partner" >> /etc/apt/source.list
+echo "deb-src http://archive.canonical.com/ubuntu xenial partner" >> /etc/apt/source.list
 
 
 #do a full upgrade
@@ -92,7 +92,7 @@ chmod +x /usr/local/bin/gitstorecredential-10h
 apt-get -y remove unity-webapps-common
 
 #install various tools
-apt-get -y install htop geany bwm-ng qalculate-gtk filezilla vlc apt-file autotools-dev m4 libtool automake autoconf intltool wget bash net-tools zsh samba cifs-utils lshw libtool p7zip htop nethogs iotop parted emacs zip unzip curl fakeroot alsa-utils linux-tools-generic fuse cmake pkg-config python git screen nmap bzip2 sharutils rsync subversion ttf-dejavu tsocks exfat-utils sshfs davfs2 ntp dtach tmux ntfs-3g subversion sdparm hdparm dnsutils traceroute lzip tree cups ghostscript mercurial dosfstools intltool netcat cabextract bwm-ng lynx apache2 php libapache2-mod-php markdown cloc arj unar unace tig lhasa openvpn ghc dvtm clang libomp5 byobu rar vim iptables steam playonlinux pidgin xterm gksu rxvt-unicode lightdm lightdm-gtk-greeter terminator pulseaudio pavucontrol paprefs mate-themes wicd wicd-gtk xfce4 xfce4-goodies xfce4-artwork xfce4-session xfce4-settings xfwm4 xfwm4-themes xfconf thunar numlockx pinta ruby imagemagick iptraf-ng arandr elementary-icon-theme gnome-keyring seahorse python-setuptools tlp bash-completion lsb-release smartmontools graphviz thunderbird vlc pidgin gparted filezilla keepassx xfburn faac libboost-all-dev dbus icoutils zenity hexchat ario audacity deluge libreoffice gimp inkscape thunderbird calibre acetoneiso latex2rtf lyx texmaker pstotext texlive-full pandoc texstudio golang maven gradle openjfx openjfx-source gitg xdot owncloud-client filelight gdmap qt5-default youtube-dl mcomix unetbootin paman pavumeter xprintidle jabref pdftk wireshark-gtk wine
+apt-get -y install htop geany bwm-ng qalculate-gtk filezilla vlc apt-file autotools-dev m4 libtool automake autoconf intltool wget bash net-tools zsh samba cifs-utils lshw libtool p7zip htop nethogs iotop parted emacs zip unzip curl fakeroot alsa-utils linux-tools-generic fuse cmake pkg-config python git screen nmap bzip2 sharutils rsync subversion ttf-dejavu tsocks exfat-utils sshfs davfs2 ntp dtach tmux ntfs-3g subversion sdparm hdparm dnsutils traceroute lzip tree cups ghostscript mercurial dosfstools intltool netcat cabextract bwm-ng lynx apache2 php libapache2-mod-php markdown cloc arj unar unace tig lhasa openvpn ghc dvtm clang libomp5 byobu rar vim iptables steam playonlinux pidgin xterm gksu rxvt-unicode lightdm lightdm-gtk-greeter terminator pulseaudio pavucontrol paprefs mate-themes wicd wicd-gtk xfce4 xfce4-goodies xfce4-artwork xfce4-session xfce4-settings xfwm4 xfwm4-themes xfconf thunar numlockx pinta ruby imagemagick iptraf-ng arandr elementary-icon-theme gnome-keyring seahorse python-setuptools tlp bash-completion lsb-release smartmontools graphviz thunderbird vlc pidgin gparted filezilla keepassx xfburn faac libboost-all-dev dbus icoutils zenity hexchat ario audacity deluge libreoffice gimp inkscape thunderbird calibre acetoneiso latex2rtf lyx texmaker pstotext texlive-full pandoc texstudio golang maven gradle openjfx openjfx-source gitg xdot owncloud-client filelight gdmap qt5-default youtube-dl mcomix unetbootin paman pavumeter xprintidle jabref pdftk wireshark-gtk wine update-manager
 #skype veracrypt system-config-printer-commone
 
 apt-file update
