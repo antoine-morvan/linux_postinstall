@@ -10,8 +10,8 @@ source /arch_func.sh
 #######	 SETUP	 #########
 ##########################
 
-PACKS="xorg xorg-server xorg-xinit xorg-utils xorg-server-utils xorg-twm xorg-xclock xdg-user-dirs xterm gksu rxvt-unicode urxvt-url-select lightdm lightdm-gtk-greeter terminator geany pulseaudio pavucontrol paprefs mate-themes wicd wicd-gtk xfce4 xfce4-goodies xfce4-artwork xfce4-session xfce4-settings xfwm4 xfwm4-themes xfconf xscreensaver-arch-logo thunar numlockx pinta gvfs-smb ruby imagemagick librsvg iptraf-ng arandr elementary-icon-theme gtk-engines xarchiver-gtk2 gnome-keyring seahorse gtk-engine-murrine python-setuptools"
-PACKS+=" tlp bash-completion lsb-release smartmontools graphviz thunderbird system-config-printer vlc pidgin gparted filezilla keepassx xfburn geany-plugins veracrypt faac boost glu mesa-demos dbus jdk8-openjdk icoutils wxpython zenity"
+PACKS="xorg xorg-server xorg-xinit xorg-utils xorg-server-utils xorg-twm xorg-xclock xdg-user-dirs xterm gksu rxvt-unicode urxvt-url-select lightdm lightdm-gtk-greeter terminator pulseaudio pavucontrol paprefs mate-themes wicd wicd-gtk xfce4 xfce4-goodies xfce4-artwork xfce4-session xfce4-settings xfwm4 xfwm4-themes xfconf xscreensaver-arch-logo thunar numlockx pinta gvfs-smb ruby imagemagick librsvg iptraf-ng arandr elementary-icon-theme gtk-engines xarchiver-gtk2 gnome-keyring seahorse gtk-engine-murrine python-setuptools"
+PACKS+=" tlp bash-completion lsb-release smartmontools graphviz thunderbird system-config-printer vlc pidgin gparted filezilla keepassx xfburn veracrypt faac boost glu mesa-demos dbus jdk8-openjdk icoutils wxpython zenity"
 
 if [ "$TESTSYSTEM" != "YES" ]; then
 	EXTRA=" hexchat ario audacity avidemux-cli deluge"
@@ -21,7 +21,7 @@ if [ "$TESTSYSTEM" != "YES" ]; then
 	EXTRA+=" mcomix tigervnc unetbootin"
 fi
 
-AURPACKS="pasystray-gtk2-standalone paman pavumeter qalculate-gtk-nognome xprintidle archlinux-artwork xfce4-multiload-ng-plugin-gtk2 gnome-keyring-query acpi_call-dkms evince2-light geany-themes elementary-xfce-icons numix-themes-darkblue xfce-theme-greybird"
+AURPACKS="pasystray-gtk2-standalone paman pavumeter qalculate-gtk-nognome xprintidle archlinux-artwork xfce4-multiload-ng-plugin-gtk2 gnome-keyring-query acpi_call-dkms evince2-light elementary-xfce-icons numix-themes-darkblue xfce-theme-greybird"
 # arc-faenza-icon-theme"  
 
 if [ "$TESTSYSTEM" != "YES" ]; then
@@ -54,6 +54,8 @@ fi
 dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/xfce-4.12/arch.sh
 
 dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/terminator/arch.sh
+dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/geany/arch.sh
+
 dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/conky/arch.sh
 dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/quicktile/arch.sh
 dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/chrome/arch.sh
@@ -128,41 +130,6 @@ EOF
 sed -i 's/load-module module-role-cork/#load-module module-role-cork/g' /etc/pulse/default.pa
 sed -i 's/load-module module-udev-detect/load-module module-udev-detect tsched=0/g' /etc/pulse/default.pa
 echo -e "\ndefault-fragments = 5\ndefault-fragment-size-msec = 2\n" >> /etc/pulse/daemon.conf
-
-##############################
-#######	 TERMINATOR  #########
-##############################
-
-echo "   Terminator"
-mkdir -p /etc/skel/.config/terminator/
-cat >  /etc/skel/.config/terminator/config << "EOF"
-[global_config]
-  geometry_hinting = False[global_config]
-  dbus = False
-[keybindings]
-[profiles]
-  [[default]]
-    background_darkness = 0.9
-    background_type = transparent
-    foreground_color = "#ffffff"
-    scrollback_infinite = True
-[plugins]
-EOF
-
-########################
-####### GEANY ##########
-########################
-
-echo "   Geany"
-mkdir -p /etc/skel/.config/geany/
-cat > /etc/skel/.config/geany/geany.conf << "EOF"
-[geany]
-line_wrapping=true
-color_scheme=oblivion2.conf
-
-[plugins]
-active_plugins=/usr/lib/geany/saveactions.so;/usr/lib/geany/addons.so;/usr/lib/geany/commander.so;/usr/lib/geany/geanylatex.so;/usr/lib/geany/filebrowser.so;/usr/lib/geany/lineoperations.so;/usr/lib/geany/overview.so;
-EOF
 
 ########################
 #######	 WICD  #########

@@ -22,7 +22,7 @@ else
 fi
 
 #utility functions
-[ ! -e ubuntu_func.sh ] &&  wget -q ${SETUP_SCRIPT_LOCATION}/func/ubuntu_func.sh -O ubuntu_func.sh
+[ ! -e ubuntu_func.sh ] &&  wget -q ${SETUP_SCRIPT_LOCATION}/01_func/ubuntu_func.sh -O ubuntu_func.sh
 source ubuntu_func.sh
 
 #update source.list
@@ -53,7 +53,7 @@ fi
 apt-get -y remove unity-webapps-common
 
 #install various tools
-apt-get -y install htop geany bwm-ng qalculate-gtk filezilla vlc playonlinux
+apt-get -y install htop geany bwm-ng qalculate-gtk filezilla vlc
 
 ###
 ### instantané 2
