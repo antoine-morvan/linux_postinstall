@@ -9,7 +9,7 @@ source ubuntu_func.sh
 upgrade
 install_packs terminator
 
-
+mkdir -p /etc/skel/.config/terminator/
 retry "wget -q -O /etc/skel/.config/terminator/config ${SETUP_SCRIPT_LOCATION}/02_apps/terminator/config"
 
 exit 0

@@ -11,6 +11,7 @@ AURPKGS=""
 install_packs "$PKGS"
 install_packs_aur "$AURPKGS"
 
+mkdir -p /etc/skel/.config/terminator/
 retry "wget -q -O /etc/skel/.config/terminator/config ${SETUP_SCRIPT_LOCATION}/02_apps/terminator/config"
 
 exit 0
