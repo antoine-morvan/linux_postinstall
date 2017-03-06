@@ -8,13 +8,14 @@ source ubuntu_func.sh
 
 upgrade 
 install_packs librsvg2-bin byobu xfce4 xfce4-goodies libgtk2.0-dev pasystray qalculate-gtk xscreensaver \
-	murrine-themes gtk2-engines-murrine community-themes libxfce4ui-1-dev xfce4-panel-dev libxfce4util-dev git checkinstall
+	murrine-themes gtk2-engines-murrine community-themes libxfce4ui-1-dev xfce4-panel-dev libxfce4util-dev \
+	git checkinstall hddtemp
 
 #install multiload ng for xfce
 git clone https://github.com/udda/multiload-ng.git multiload
 (cd multiload && \
 	./autogen.sh && \
-	./configure --prefix=/usr --with-xfce4 --with-gtk=2.0 && \
+	./configure --prefix=/usr --with-xfce4 --with-gtk=2.0 --disable-autostart && \
 	make
 )
 (cd multiload/extras/checkinstall && \
@@ -22,6 +23,10 @@ git clone https://github.com/udda/multiload-ng.git multiload
 	dpkg -i multiload-ng*.deb
 )
 rm -rf multiload
+
+chmod u+s /usr/sbin/hddtemp
+systemctl enable hddtemp
+
 
 echo ""
 echo "** Config XFCE 4.12"
@@ -259,18 +264,6 @@ image/gif=pinta.desktop
 
 EOF
 
-##########################
-#######	 LIGHTDM #########
-##########################
-
-cat >> /etc/lightdm/lightdm.conf.d/50-greeter-insa.conf << EOF
-theme-name=Numix-DarkBlue
-xft-antialias=true
-xft-dpi=80
-xft-hintstyle=hintfull
-xft-rgba=rgb
-show-indicators=~language;~session;~power
-EOF
 
 ############################################
 #################  END  ####################
