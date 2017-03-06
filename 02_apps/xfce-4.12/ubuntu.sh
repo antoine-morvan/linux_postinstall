@@ -9,7 +9,7 @@ source ubuntu_func.sh
 upgrade 
 install_packs librsvg2-bin byobu xfce4 xfce4-goodies libgtk2.0-dev pasystray qalculate-gtk xscreensaver \
 	murrine-themes gtk2-engines-murrine community-themes libxfce4ui-1-dev xfce4-panel-dev libxfce4util-dev \
-	git checkinstall hddtemp
+	git checkinstall hddtemp lightdm-gtk-greeter
 
 #install multiload ng for xfce
 git clone https://github.com/udda/multiload-ng.git multiload
@@ -241,6 +241,21 @@ retry "wget -q -O ${FILE} ${SETUP_SCRIPT_LOCATION}/02_apps/xfce-4.12/xscreensave
 #disable volumed (replaced by pasystray)
 #rm -f /etc/xdg/autostart/xfce4-volumed.desktop
 [ ! -e /etc/xdg/autostart/pasystray.desktop ] && ln -s /usr/share/applications/pasystray.desktop /etc/xdg/autostart/pasystray.desktop
+
+
+##########################
+#######	 LIGHTDM #########
+##########################
+
+cat >> /etc/lightdm/lightdm-gtk-greeter.conf << EOF
+#background=$BG
+theme-name=Numix-DarkBlue
+xft-antialias=true
+xft-dpi=80
+xft-hintstyle=hintfull
+xft-rgba=rgb
+show-indicators=~language;~session;~power
+EOF
 
 ###################################
 #######	File association  #########
