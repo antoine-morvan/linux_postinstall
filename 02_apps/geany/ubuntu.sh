@@ -1,9 +1,10 @@
 #!/bin/bash
-BG=`cat /setup.dat | sed '1q;d'`
-SETUP_SCRIPT_LOCATION=`cat /setup.dat | sed '2q;d'`
-TESTSYSTEM=`cat /setup.dat | sed '3q;d'`
-INSTALLHEAD=`cat /setup.dat | sed '4q;d'`
-source /arch_func.sh
+
+#configure script variables
+[ `whoami` != root ] && echo "should run as root" && exit 1
+export SETUP_SCRIPT_LOCATION=http://koub.org/files/linux/
+[ ! -e ubuntu_func.sh ] &&  wget -q ${SETUP_SCRIPT_LOCATION}/01_func/ubuntu_func.sh -O ubuntu_func.sh
+source ubuntu_func.sh
 
 echo "   Geany"
 
