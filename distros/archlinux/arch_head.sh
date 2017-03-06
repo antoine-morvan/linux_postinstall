@@ -17,8 +17,8 @@ if [ "$TESTSYSTEM" != "YES" ]; then
 	EXTRA=" hexchat ario audacity avidemux-cli deluge"
 	EXTRA+=" libreoffice libreoffice-fresh-fr gimp inkscape thunderbird thunderbird-i18n-fr calibre acetoneiso2"
 	EXTRA+=" latex2rtf lyx texmaker pstotext texlive-most pandoc texstudio yed jdk7-openjdk"
-	EXTRA+=" go maven gradle java-openjfx gitg xdot nextcloud nextcloud-client dropbox filelight gdmap qt5 youtube-dl cordova"
-	EXTRA+=" mcomix tigervnc unetbootin"
+	EXTRA+=" go maven gradle java-openjfx java-openjfx-doc java-openjfx-src gitg xdot nextcloud nextcloud-client dropbox filelight gdmap qt5 youtube-dl cordova"
+	EXTRA+=" mcomix tigervnc unetbootin wireshark-gtk"
 fi
 
 AURPACKS="pasystray-gtk2-standalone paman pavumeter qalculate-gtk-nognome xprintidle archlinux-artwork xfce4-multiload-ng-plugin-gtk2 gnome-keyring-query acpi_call-dkms evince2-light elementary-xfce-icons numix-themes-darkblue xfce-theme-greybird"
