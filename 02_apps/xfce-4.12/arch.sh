@@ -27,6 +27,11 @@ retry "wget -q -O /usr/share/themes/121685-BSM_Simple_13.tar.gz ${SETUP_SCRIPT_L
 (cd /usr/share/themes &&
         tar xf 121685-BSM_Simple_13.tar.gz &&
         rm 121685-BSM_Simple_13.tar.gz)
+        
+retry "wget -q -O /usr/share/themes/Numix-DarkBlue.tar.bz2 ${SETUP_SCRIPT_LOCATION}/99_shared/themes/Numix-DarkBlue.tar.bz2"
+(cd /usr/share/themes &&
+	tar xf Numix-DarkBlue.tar.bz2 &&
+	rm Numix-DarkBlue.tar.bz2)
 
 chmod -R 755 /usr/share/themes
 # link broken
@@ -38,6 +43,12 @@ retry "wget -q -O /usr/share/icons/Fog.tar.bz2 ${SETUP_SCRIPT_LOCATION}/99_share
 (cd /usr/share/icons &&
 	tar xf Fog.tar.bz2 &&
 	rm Fog.tar.bz2)
+
+retry "wget -q -O /usr/share/icons/	elementary-xfce.tar.bz2 ${SETUP_SCRIPT_LOCATION}/99_shared/themes/	elementary-xfce.tar.bz2"
+(cd /usr/share/icons &&
+	tar xf 	elementary-xfce.tar.bz2 &&
+	rm 	elementary-xfce.tar.bz2)
+
 chmod -R 755 /usr/share/icons
 
 mkdir -p /etc/xdg/xfce4/xfconf/xfce-perchannel-xml/
