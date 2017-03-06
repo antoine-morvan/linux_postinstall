@@ -44,11 +44,53 @@ else
 	echo "VirtualBox not found"
 fi
 
+#configure kernel for not stalling when moving big files on slow devices
+cat > /etc/sysctl.d/99-vm_dirty.conf << EOF
+vm.dirty_background_bytes = 16777216
+vm.dirty_bytes = 16777216
+EOF
+#	following parameters does not have write access from sysctl (as of
+#	late January 2017)
+cat > /etc/tmpfiles.d/transparent_hugepages.conf << EOF
+w /sys/kernel/mm/transparent_hugepage/enabled - - - - madvise
+w /sys/kernel/mm/transparent_hugepage/defrag - - - - always
+w /sys/kernel/mm/transparent_hugepage/khugepaged/defrag - - - - 0
+EOF
+
+
+sed -i -e "s#alias ll='ls -alF'##g" /etc/skel/.bashrc
+echo "alias ll='ls -ailhF'" >> /etc/skel/.bashrc
+echo "alias vi='vim'" >> /etc/skel/.bashrc
+
+#vim
+cp /usr/share/vim/vimfiles/archlinux.vim /etc/skel/.vimrc
+cat >> /etc/skel/.vimrc << "EOF"
+syntax on
+colorscheme elflord
+set number
+set mouse=a
+filetype plugin indent on
+EOF
+
+cat >> /etc/skel/.profile << "EOF"
+export EDITOR=vim
+EOF
+chmod +x /etc/skel/.profile
+
+#git tool
+cat > /usr/local/bin/gitstorecredential-10h << "EOF"
+#!/bin/bash
+git config --global credential.helper 'cache --timeout=36000'
+EOF
+chmod +x /usr/local/bin/gitstorecredential-10h
+
+
 #remove amazon app. FFS
 apt-get -y remove unity-webapps-common
 
 #install various tools
-apt-get -y install htop geany bwm-ng qalculate-gtk filezilla vlc apt-file autotools-dev m4 libtool automake autoconf intltool wget bash net-tools zsh samba cifs-utils lshw libtool p7zip htop nethogs iotop parted emacs zip unzip curl fakeroot alsa-utils linux-tools-generic fuse cmake pkg-config python git screen nmap bzip2 sharutils rsync subversion ttf-dejavu tsocks exfat-utils sshfs davfs2 ntp dtach tmux ntfs-3g subversion sdparm hdparm dnsutils traceroute lzip tree cups ghostscript mercurial dosfstools intltool netcat cabextract bwm-ng lynx apache2 php libapache2-mod-php markdown cloc arj unar unace tig lhasa openvpn ghc dvtm clang libomp5 byobu rar vim iptables
+apt-get -y install htop geany bwm-ng qalculate-gtk filezilla vlc apt-file autotools-dev m4 libtool automake autoconf intltool wget bash net-tools zsh samba cifs-utils lshw libtool p7zip htop nethogs iotop parted emacs zip unzip curl fakeroot alsa-utils linux-tools-generic fuse cmake pkg-config python git screen nmap bzip2 sharutils rsync subversion ttf-dejavu tsocks exfat-utils sshfs davfs2 ntp dtach tmux ntfs-3g subversion sdparm hdparm dnsutils traceroute lzip tree cups ghostscript mercurial dosfstools intltool netcat cabextract bwm-ng lynx apache2 php libapache2-mod-php markdown cloc arj unar unace tig lhasa openvpn ghc dvtm clang libomp5 byobu rar vim iptables steam skype playonlinux pidgin xterm gksu rxvt-unicode lightdm lightdm-gtk-greeter terminator pulseaudio pavucontrol paprefs mate-themes wicd wicd-gtk xfce4 xfce4-goodies xfce4-artwork xfce4-session xfce4-settings xfwm4 xfwm4-themes xfconf thunar numlockx pinta ruby imagemagick iptraf-ng arandr elementary-icon-theme gnome-keyring seahorse python-setuptools tlp bash-completion lsb-release smartmontools graphviz thunderbird vlc pidgin gparted filezilla keepassx xfburn veracrypt faac libboost-all-dev dbus icoutils zenity hexchat ario audacity deluge libreoffice gimp inkscape thunderbird calibre acetoneiso latex2rtf lyx texmaker pstotext texlive-full pandoc texstudio golang maven gradle openjfx openjfx-source gitg xdot owncloud-client filelight gdmap qt5-default youtube-dl mcomix unetbootin paman pavumeter xprintidle jabref pdftk system-config-printer-commone wireshark-gtk
+
 
 apt-file update
 
