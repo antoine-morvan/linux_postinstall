@@ -60,9 +60,24 @@ apt-get -y install htop geany bwm-ng qalculate-gtk filezilla vlc playonlinux
 ###
 
 dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/xfce-4.12/ubuntu.sh
+dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/terminator/ubuntu.sh
 dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/conky/ubuntu.sh
 dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/quicktile/ubuntu.sh
 dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/truecrypt/ubuntu.sh
+
+echo ""
+echo ""
+echo ""
+echo " Installed users :"
+echo ""
+ls -ailh /home/
+echo ""
+
+RESUSR=1
+while [ $RESUSR != 0 ]; do read -p "user to config : " USR; bash -c "id $USR > /dev/null"; RESUSR=$?; done
+
+cp -R `find /etc/skel -mindepth 1 -maxdepth 1` /home/$USR/
+chown -R $USR:$USR /home/$USR
 
 exit
 

@@ -53,6 +53,7 @@ fi
 
 dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/xfce-4.12/arch.sh
 
+dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/terminator/arch.sh
 dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/conky/arch.sh
 dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/quicktile/arch.sh
 dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/chrome/arch.sh
