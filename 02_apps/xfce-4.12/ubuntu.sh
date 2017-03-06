@@ -7,7 +7,7 @@ export SETUP_SCRIPT_LOCATION=http://koub.org/files/linux/
 source ubuntu_func.sh
 
 upgrade 
-install_packs librsvg2-bin byobu xfce4 xfce4-goodies pasystray geany qalculate terminator xscreensaver murrine-themes gtk2-engines-murrine community-themes
+install_packs librsvg2-bin byobu xfce4 xfce4-goodies pasystray geany qalculate-gtk terminator xscreensaver murrine-themes gtk2-engines-murrine community-themes
 
 
 echo ""
@@ -45,7 +45,7 @@ retry "wget -q -O /usr/share/icons/Fog.tar.bz2 ${SETUP_SCRIPT_LOCATION}/99_share
 	tar xf Fog.tar.bz2 &&
 	rm Fog.tar.bz2)
 
-retry "wget -q -O /usr/share/icons/	elementary-xfce.tar.bz2 ${SETUP_SCRIPT_LOCATION}/99_shared/themes/	elementary-xfce.tar.bz2"
+retry "wget -q -O /usr/share/icons/	elementary-xfce.tar.bz2 ${SETUP_SCRIPT_LOCATION}/99_shared/themes/elementary-xfce.tar.bz2"
 (cd /usr/share/icons &&
 	tar xf 	elementary-xfce.tar.bz2 &&
 	rm 	elementary-xfce.tar.bz2)
