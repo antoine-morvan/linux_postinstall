@@ -5,6 +5,9 @@ TESTSYSTEM=`cat /setup.dat | sed '3q;d'`
 INSTALLHEAD=`cat /setup.dat | sed '4q;d'`
 source /arch_func.sh
 
+upgrade
+install_packs openjdk8-src jdk8-openjdk
+
 mkdir -p /usr/local/bin/
 retry "wget -q -O /usr/local/bin/gen-eclipse ${SETUP_SCRIPT_LOCATION}/02_apps/gen-eclipse/gen-eclipse-caller"
 chmod +x /usr/local/bin/gen-eclipse

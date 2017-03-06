@@ -68,12 +68,12 @@ HOMEDIR=$HOME
 [ ! -d ${HOMEDIR} ] && HOMEDIR=`cat /etc/passwd | grep "$USER" | cut -d":" -f 6`
 [ ! -d ${HOMEDIR} ] && echo "Could not locate Home directory (${HOMEDIR})" && exit 1
 
-JAVA7=`java -version 2>&1 | grep 1.7 | wc -l`
-[ "$JAVA7" == "0" ] && JAVA8=`java -version 2>&1 | grep 1.8 | wc -l`
-if [ "$JAVA8" == "0" ]; then
+JAVA8=`java -version 2>&1 | grep 1.8 | wc -l`
+[ "$JAVA8" == "0" ] && JAVA9=`java -version 2>&1 | grep 1.9 | wc -l`
+if [ "$JAVA9" == "0" ]; then
 	echo "GeCoS requires Java 7 or higher. On debian like systems (as root) :"
-	echo "   $ apt-get install openjdk-7-jdk"
-	echo "   $ JVM=\`update-java-alternatives -l | grep 1.7 | cut -d\" \" -f 1\`"
+	echo "   $ apt-get install openjdk-8-jdk openjdk-8-source"
+	echo "   $ JVM=\`update-java-alternatives -l | grep 1.8 | cut -d\" \" -f 1\`"
 	echo "   $ update-java-alternatives -s \$JVM"
 	exit 1
 fi
