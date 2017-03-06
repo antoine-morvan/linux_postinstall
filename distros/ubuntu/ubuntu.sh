@@ -84,12 +84,9 @@ while [ $RESUSR != 0 ]; do read -p "user to config : " USR; bash -c "id $USR > /
 cp -R `find /etc/skel -mindepth 1 -maxdepth 1` /home/$USR/
 chown -R $USR:$USR /home/$USR
 
+
+
+#clean
+rm -f retry_* ubuntu_func.sh
+
 exit
-
-
-
-
-#désactiver les sons
-
-#installer xfce4
-
