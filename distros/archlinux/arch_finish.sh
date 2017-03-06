@@ -279,7 +279,7 @@ set mouse=a
 filetype plugin indent on
 EOF
 
-cat > /etc/skel/.profile << "EOF"
+cat >> /etc/skel/.profile << "EOF"
 export EDITOR=vim
 EOF
 chmod +x /etc/skel/.profile
