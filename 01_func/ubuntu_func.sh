@@ -28,7 +28,11 @@ function pause {
 
 function upgrade {
 	echo "   Upgrade"
-	pacman --noconfirm -Syu
+	apt-get update
+	apt-get -y upgrade
+	apt-get -y dist-upgrade
+	apt-get -y autoremove
+	apt-get -y clean
 }
 function install_packs {
 	PACKS=$@
@@ -37,36 +41,11 @@ function install_packs {
 	if [ "$ENABLE_PAUSE" == "YES" ]; then
 		for package in $PACKS; do
 			#pause "pacman --noconfirm -S $package"
-			retry "pacman --noconfirm -S $package"
+			retry "apt-get -y install $package"
 		done
 	else 
-		retry "pacman --noconfirm -S $PACKS"
+		retry "apt-get -y install $PACKS"
 	fi
-}
-
-function upgrade_aur {
-	echo "   Upgrade AUR"
-	cd /tmp && su build -c "yaourt --noconfirm -Syu"
-}
-function install_packs_aur {
-	PACKS=$@
-	echo "   Installing AUR packages [$PACKS]"
-	[ "$PACKS" == "" ] && echo "Warning : package list is empty" && return
-	for package in $PACKS; do
-		pause "yaourt --noconfirm -S $package"
-		cd /tmp && su build -c "yaourt --noconfirm -S $package"
-		RES=$?
-		if [ "$RES" != "0" ]; then
-			sleep 2
-			cd /tmp && su build -c "yaourt --noconfirm -S $package"
-			RES=$?
-			if [ "$RES" != "0" ]; then
-				echo -e "\nAn error occured during installation of \"$package\"\n"
-				echo -e "command was 'cd /tmp && su build -c \"yaourt --noconfirm -S $package\"'"
-				read -p "Press enter ..."
-			fi
-		fi
-	done
 }
 
 function dl_and_execute {
