@@ -48,8 +48,8 @@ fi
 apt-get -y remove unity-webapps-common
 
 #install various tools
-apt-get -y install htop geany bwm-ng qalculate-gtk filezilla vlc apt-file
-apt-get -y install autotools-dev m4 libtool automake autoconf intltool
+apt-get -y install htop geany bwm-ng qalculate-gtk filezilla vlc apt-file autotools-dev m4 libtool automake autoconf intltool wget bash net-tools zsh samba cifs-utils lshw libtool p7zip htop nethogs iotop parted emacs zip unzip curl fakeroot alsa-utils linux-tools-generic fuse cmake pkg-config python git screen nmap bzip2 sharutils rsync subversion ttf-dejavu tsocks exfat-utils sshfs davfs2 ntp dtach tmux ntfs-3g subversion sdparm hdparm dnsutils traceroute lzip tree cups ghostscript mercurial dosfstools intltool netcat cabextract bwm-ng lynx apache2 php libapache2-mod-php markdown cloc arj unar unace tig lhasa openvpn ghc dvtm clang libomp5 byobu rar vim iptables
+
 apt-file update
 
 ###
@@ -62,6 +62,7 @@ apt-file update
 
 dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/xfce-4.12/ubuntu.sh
 dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/terminator/ubuntu.sh
+dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/geany/ubuntu.sh
 dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/conky/ubuntu.sh
 dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/quicktile/ubuntu.sh
 dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/truecrypt/ubuntu.sh
