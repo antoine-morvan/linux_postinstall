@@ -60,6 +60,7 @@ dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/conky/arch.sh
 dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/quicktile/arch.sh
 dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/chrome/arch.sh
 
+dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/gen-eclipse/arch.sh
 
 if [ "$TESTSYSTEM" != "YES" ]; then
 	dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/deadbeef/arch.sh
@@ -172,53 +173,6 @@ cat > /usr/local/bin/notifkoubi << "EOF"
 
 notify-send -u critical -i /usr/share/icons/elementary/emotes/16/face-cool.svg "*[ Koubi Notification ]*" "$@"
 EOF
-
-###################################
-###### Eclipse Generator ##########
-###################################
-
-cat > /usr/local/bin/gen-eclipse << 'EOF'
-#!/bin/bash
-
-USER=`whoami`
-[ "$USER" == "root" ] && echo "Should not be run as root" && exit 1
-
-if [ "$1" == "" ];
-then
-	echo "Folder installation path: "
-	read installationpath
-else
-	installationpath="$1"
-fi
-
-SOURCE_SCRIPT=http://home.koub.org/files/linux/gen-eclipse
-
-#use remote url
-export MIRROR_URL=http://home.koub.org/files/
-
-ping -c 1 -i 0.2 gw.diablan 2> /dev/null
-PINGRESULT=$?
-if [ "$PINGRESULT" == "0" ]; then
-	#use local url
-	export MIRROR_URL=http://gw.diablan/files/
-	SOURCE_SCRIPT=http://gw.diablan/files/linux/gen-eclipse
-fi
-
-ping -c 1 -i 0.2 koubifix.tocea.local 2> /dev/null
-PINGRESULT=$?
-if [ "$PINGRESULT" == "0" ]; then
-	#use local url
-	export MIRROR_URL=http://koubifix.tocea.local/share/files/
-fi
-
-TMPFILE=`mktemp`
-wget $SOURCE_SCRIPT -O $TMPFILE
-chmod +x $TMPFILE
-$TMPFILE $installationpath $MIRROR_URL
-rm $TMPFILE
-
-EOF
-chmod +x /usr/local/bin/gen-eclipse
 
 ##############################
 ######## XDG Folders #########

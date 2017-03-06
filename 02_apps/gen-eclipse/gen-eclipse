@@ -40,13 +40,13 @@ SETUP_TOMCAT=YES		# Tomcat plugin
 SETUP_WTP=YES			# Web Tool Plugins
 SETUP_JAVAFX=YES		# JavaFX Design Tools
 SETUP_PTP=YES			# Parallel Tools
-SETUP_PHOTRAN=NO		# Fortran support (from PTP)
+SETUP_PHOTRAN=YES		# Fortran support (from PTP)
 
 
 #specific plugins (deprecated)
-SETUP_GRECLIPSE=NO 		#groovy for eclipse
-SETUP_TEXCLIPSE=NO 		#latex support in eclipse
-SETUP_CUP_LEX=NO   		#cup & lex (similar to yacc & lex, but in java)
+SETUP_GRECLIPSE=YES 		#groovy for eclipse
+SETUP_TEXCLIPSE=YES 		#latex support in eclipse
+SETUP_CUP_LEX=YES   		#cup & lex (similar to yacc & lex, but in java)
 
 #CAIRN plugins (deprecated)
 SETUP_TOM=NO
