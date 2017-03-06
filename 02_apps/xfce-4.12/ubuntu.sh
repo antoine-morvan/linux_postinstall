@@ -36,6 +36,11 @@ echo ""
 #originated from :
 #http://xfce-look.org/CONTENT/content-files/121685-BSM%20Simple%2013.tar.gz
 #http://xfce-look.org/CONTENT/content-files/145188-Lines_0.3.1.tar.gz
+
+mkdir -p /usr/share/backgrounds/xfce
+retry "wget -q -O /usr/share/backgrounds/xfce/wallubuntu_wide_16_10.png ${SETUP_SCRIPT_LOCATION}/99_shared/wallpapers/wallubuntu_wide_16_10.png"
+retry "wget -q -O /usr/share/backgrounds/xfce/wallubuntu_wide_16_9.jpg ${SETUP_SCRIPT_LOCATION}/99_shared/wallpapers/wallubuntu_wide_16_9.jpg"
+
 mkdir -p /usr/share/themes
 retry "wget -q -O /usr/share/themes/145188-Lines_0.3.1.tar.gz ${SETUP_SCRIPT_LOCATION}/99_shared/themes/145188-Lines_0.3.1.tar.gz"
 (cd /usr/share/themes &&
