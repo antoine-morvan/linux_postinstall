@@ -44,7 +44,7 @@ retry "wget -q -O /usr/share/icons/Fog.tar.bz2 ${SETUP_SCRIPT_LOCATION}/99_share
 	tar xf Fog.tar.bz2 &&
 	rm Fog.tar.bz2)
 
-retry "wget -q -O /usr/share/icons/	elementary-xfce.tar.bz2 ${SETUP_SCRIPT_LOCATION}/99_shared/themes/elementary-xfce.tar.bz2"
+retry "wget -q -O /usr/share/icons/elementary-xfce.tar.bz2 ${SETUP_SCRIPT_LOCATION}/99_shared/themes/elementary-xfce.tar.bz2"
 (cd /usr/share/icons &&
 	tar xf 	elementary-xfce.tar.bz2 &&
 	rm 	elementary-xfce.tar.bz2)
