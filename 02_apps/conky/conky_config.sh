@@ -7,7 +7,7 @@ if [ -e /setup.dat ]; then
 	#TESTSYSTEM=`cat /setup.dat | sed '3q;d'`
 	#INSTALLHEAD=`cat /setup.dat | sed '4q;d'`
 else 
-	SETUP_SCRIPT_LOCATION=http://home.koub.org/files/linux/
+	SETUP_SCRIPT_LOCATION=http://koub.org/files/linux/
 fi
 
 CONFFILE=/etc/conky/koubi_conky.conf
