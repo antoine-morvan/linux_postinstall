@@ -53,7 +53,7 @@ fi
 apt-get -y remove unity-webapps-common
 
 #install various tools
-apt-get -y install htop geany bwm-ng qalculate-gtk filezilla vlc
+apt-get -y install htop geany bwm-ng qalculate-gtk filezilla vlc playonlinux
 
 ###
 ### instantané 2
