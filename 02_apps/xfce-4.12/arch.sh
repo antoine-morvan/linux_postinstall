@@ -229,6 +229,45 @@ retry "wget -q -O ${FILE} ${SETUP_SCRIPT_LOCATION}/02_apps/xfce-4.12/xscreensave
 #rm -f /etc/xdg/autostart/xfce4-volumed.desktop
 [ ! -e /etc/xdg/autostart/pasystray.desktop ] && ln -s /usr/share/applications/pasystray.desktop /etc/xdg/autostart/pasystray.desktop
 
+###################################
+#######	File association  #########
+###################################
+
+echo "   File association"
+mkdir -p /etc/skel/.config/
+cat > /etc/skel/.config/mimeapps.list << "EOF"
+[Default Applications]
+application/x-shellscript=geany.desktop;
+text/plain=geany.desktop
+text/x-tex=geany.desktop
+text/x-bibtex=geany.desktop
+application/pdf=evince.desktop
+application/xml=geany.desktop
+image/png=pinta.desktop
+image/tiff=pinta.desktop
+image/bmp=pinta.desktop
+image/jpeg=pinta.desktop
+image/gif=pinta.desktop
+
+EOF
+
+##########################
+#######	 LIGHTDM #########
+##########################
+
+# >> dont forget to install numlockx or lightdm will not work
+sed -i -e 's%#greeter-setup-script=%greeter-setup-script=/usr/bin/numlockx on%g' /etc/lightdm/lightdm.conf
+
+cat >> /etc/lightdm/lightdm-gtk-greeter.conf << EOF
+background=$BG
+theme-name=Numix-DarkBlue
+xft-antialias=true
+xft-dpi=80
+xft-hintstyle=hintfull
+xft-rgba=rgb
+show-indicators=~language;~session;~power
+EOF
+
 ############################################
 #################  END  ####################
 ############################################

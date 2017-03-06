@@ -1,5 +1,5 @@
 [global_config]
-  geometry_hinting = False[global_config]
+  geometry_hinting = False
   dbus = False
 [keybindings]
 [profiles]

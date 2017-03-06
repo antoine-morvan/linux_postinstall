@@ -103,25 +103,6 @@ systemctl enable tlp
 
 retry "wget -q -O /etc/X11/xorg.conf.d/50-synaptics.conf ${SETUP_SCRIPT_LOCATION}/distros/archlinux/50-synaptics.conf"
 
-
-##########################
-#######	 LIGHTDM #########
-##########################
-
-# >> dont forget to install numlockx or lightdm will not work
-sed -i -e 's%#greeter-setup-script=%greeter-setup-script=/usr/bin/numlockx on%g' /etc/lightdm/lightdm.conf
-
-cat >> /etc/lightdm/lightdm-gtk-greeter.conf << EOF
-background=$BG
-theme-name=Numix-DarkBlue
-xft-antialias=true
-xft-dpi=80
-xft-hintstyle=hintfull
-xft-rgba=rgb
-show-indicators=~language;~session;~power
-EOF
-
-
 ##############################
 #######  PULSEAUDIO  #########
 ##############################
@@ -238,28 +219,6 @@ rm $TMPFILE
 
 EOF
 chmod +x /usr/local/bin/gen-eclipse
-
-###################################
-#######	File association  #########
-###################################
-
-echo "   File association"
-mkdir -p /etc/skel/.config/
-cat > /etc/skel/.config/mimeapps.list << "EOF"
-[Default Applications]
-application/x-shellscript=geany.desktop;
-text/plain=geany.desktop
-text/x-tex=geany.desktop
-text/x-bibtex=geany.desktop
-application/pdf=evince.desktop
-application/xml=geany.desktop
-image/png=pinta.desktop
-image/tiff=pinta.desktop
-image/bmp=pinta.desktop
-image/jpeg=pinta.desktop
-image/gif=pinta.desktop
-
-EOF
 
 ##############################
 ######## XDG Folders #########
