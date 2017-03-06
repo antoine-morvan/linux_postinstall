@@ -6,9 +6,8 @@ export SETUP_SCRIPT_LOCATION=http://koub.org/files/linux/
 [ ! -e ubuntu_func.sh ] &&  wget -q ${SETUP_SCRIPT_LOCATION}/01_func/ubuntu_func.sh -O ubuntu_func.sh
 source ubuntu_func.sh
 
-
 upgrade 
-install_packs librsvg2-bin byobu xfce4 xfce4-goodies pasystray geany qalculate terminator xscreensaver
+install_packs librsvg2-bin byobu xfce4 xfce4-goodies pasystray geany qalculate terminator xscreensaver murrine-themes gtk2-engines-murrine community-themes
 
 
 echo ""
@@ -20,15 +19,20 @@ echo ""
 #http://xfce-look.org/CONTENT/content-files/121685-BSM%20Simple%2013.tar.gz
 #http://xfce-look.org/CONTENT/content-files/145188-Lines_0.3.1.tar.gz
 mkdir -p /usr/share/themes
-retry "wget -q -O /usr/share/themes/145188-Lines_0.3.1.tar.gz ${SETUP_SCRIPT_LOCATION}/02_apps/xfce-4.12/145188-Lines_0.3.1.tar.gz"
+retry "wget -q -O /usr/share/themes/145188-Lines_0.3.1.tar.gz ${SETUP_SCRIPT_LOCATION}/99_shared/themes/145188-Lines_0.3.1.tar.gz"
 (cd /usr/share/themes &&
 	tar xf 145188-Lines_0.3.1.tar.gz &&
 	rm 145188-Lines_0.3.1.tar.gz)
 
-retry "wget -q -O /usr/share/themes/121685-BSM_Simple_13.tar.gz ${SETUP_SCRIPT_LOCATION}/02_apps/xfce-4.12/121685-BSM_Simple_13.tar.gz"
+retry "wget -q -O /usr/share/themes/121685-BSM_Simple_13.tar.gz ${SETUP_SCRIPT_LOCATION}/99_shared/themes/121685-BSM_Simple_13.tar.gz"
 (cd /usr/share/themes &&
         tar xf 121685-BSM_Simple_13.tar.gz &&
         rm 121685-BSM_Simple_13.tar.gz)
+        
+retry "wget -q -O /usr/share/themes/Numix-DarkBlue.tar.bz2 ${SETUP_SCRIPT_LOCATION}/99_shared/themes/Numix-DarkBlue.tar.bz2"
+(cd /usr/share/themes &&
+	tar xf Numix-DarkBlue.tar.bz2 &&
+	rm Numix-DarkBlue.tar.bz2)
 
 chmod -R 755 /usr/share/themes
 # link broken
@@ -36,7 +40,7 @@ chmod -R 755 /usr/share/themes
 
 #get icons
 mkdir -p /usr/share/icons
-retry "wget -q -O /usr/share/icons/Fog.tar.bz2 ${SETUP_SCRIPT_LOCATION}/02_apps/xfce-4.12/Fog.tar.bz2"
+retry "wget -q -O /usr/share/icons/Fog.tar.bz2 ${SETUP_SCRIPT_LOCATION}/99_shared/themes/Fog.tar.bz2"
 (cd /usr/share/icons &&
 	tar xf Fog.tar.bz2 &&
 	rm Fog.tar.bz2)

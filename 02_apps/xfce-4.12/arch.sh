@@ -5,6 +5,10 @@ TESTSYSTEM=`cat /setup.dat | sed '3q;d'`
 INSTALLHEAD=`cat /setup.dat | sed '4q;d'`
 source /arch_func.sh
 
+
+upgrade
+#install_packs 
+
 echo ""
 echo "** Config XFCE 4.12"
 echo ""
@@ -14,12 +18,12 @@ echo ""
 #http://xfce-look.org/CONTENT/content-files/121685-BSM%20Simple%2013.tar.gz
 #http://xfce-look.org/CONTENT/content-files/145188-Lines_0.3.1.tar.gz
 mkdir -p /usr/share/themes
-retry "wget -q -O /usr/share/themes/145188-Lines_0.3.1.tar.gz ${SETUP_SCRIPT_LOCATION}/02_apps/xfce-4.12/145188-Lines_0.3.1.tar.gz"
+retry "wget -q -O /usr/share/themes/145188-Lines_0.3.1.tar.gz ${SETUP_SCRIPT_LOCATION}/99_shared/themes/145188-Lines_0.3.1.tar.gz"
 (cd /usr/share/themes &&
 	tar xf 145188-Lines_0.3.1.tar.gz &&
 	rm 145188-Lines_0.3.1.tar.gz)
 
-retry "wget -q -O /usr/share/themes/121685-BSM_Simple_13.tar.gz ${SETUP_SCRIPT_LOCATION}/02_apps/xfce-4.12/121685-BSM_Simple_13.tar.gz"
+retry "wget -q -O /usr/share/themes/121685-BSM_Simple_13.tar.gz ${SETUP_SCRIPT_LOCATION}/99_shared/themes/121685-BSM_Simple_13.tar.gz"
 (cd /usr/share/themes &&
         tar xf 121685-BSM_Simple_13.tar.gz &&
         rm 121685-BSM_Simple_13.tar.gz)
@@ -30,7 +34,7 @@ chmod -R 755 /usr/share/themes
 
 #get icons
 mkdir -p /usr/share/icons
-retry "wget -q -O /usr/share/icons/Fog.tar.bz2 ${SETUP_SCRIPT_LOCATION}/02_apps/xfce-4.12/Fog.tar.bz2"
+retry "wget -q -O /usr/share/icons/Fog.tar.bz2 ${SETUP_SCRIPT_LOCATION}/99_shared/themes/Fog.tar.bz2"
 (cd /usr/share/icons &&
 	tar xf Fog.tar.bz2 &&
 	rm Fog.tar.bz2)
