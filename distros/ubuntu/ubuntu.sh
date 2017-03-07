@@ -29,10 +29,8 @@ apt-get -y install wget
 source ubuntu_func.sh
 
 #update source.list
-
-echo "deb http://archive.canonical.com/ubuntu xenial partner" >> /etc/apt/source.list
-echo "deb-src http://archive.canonical.com/ubuntu xenial partner" >> /etc/apt/source.list
-
+[ `grep "^deb-src http://fr.archive.ubuntu.com/ubuntu/ xenial multiverse" /etc/apt/sources.list | wc -l` == 0 ] && \
+	echo "deb http://archive.canonical.com/ubuntu xenial partner" >> /etc/apt/sources.list
 
 #do a full upgrade
 upgrade
@@ -61,23 +59,13 @@ w /sys/kernel/mm/transparent_hugepage/khugepaged/defrag - - - - 0
 EOF
 
 
-sed -i -e "s#alias ll='ls -alF'##g" /etc/skel/.bashrc
-echo "alias ll='ls -ailhF'" >> /etc/skel/.bashrc
-echo "alias vi='vim'" >> /etc/skel/.bashrc
+[ `grep "alias ll='ls -ailhF'" /etc/skel/.bashrc | wc -l` == 0 ] && \
+	sed -i -e "s#alias ll='ls -alF'##g" /etc/skel/.bashrc && \
+	echo "alias ll='ls -ailhF'" >> /etc/skel/.bashrc && \
+	echo "alias vi='vim'" >> /etc/skel/.bashrc
 
-#vim
-cp /usr/share/vim/vimfiles/archlinux.vim /etc/skel/.vimrc
-cat >> /etc/skel/.vimrc << "EOF"
-syntax on
-colorscheme elflord
-set number
-set mouse=a
-filetype plugin indent on
-EOF
-
-cat >> /etc/skel/.profile << "EOF"
-export EDITOR=vim
-EOF
+[ `grep "export EDITOR=vim" /etc/skel/.profile | wc -l` == 0 ] && \
+	echo "export EDITOR=vim" >> /etc/skel/.profile
 chmod +x /etc/skel/.profile
 
 #git tool
