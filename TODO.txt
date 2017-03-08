@@ -12,6 +12,7 @@ ajouter la directive suivante dans mpd.conf : audio_output_format "44100:16:2"
 
 ##### à trouver une solution
 
+http://proxychains.sourceforge.net/
 vsync @ intel IGP
 systeme de backup => backintime
 	tester backintime (en cli avec autoconf? voir ce que génère la GUI)
@@ -23,7 +24,7 @@ gen-eclipse
 	-	install PTP
 	-	config easyshell
 	-	vue par défaut : java
-	-	splitter en plusieurs scripts
+	-	splitter en plusieurs scripts ?
 check conky config (HDDs) avec une installation depuis USB et/ou gros partitionage crypté (arch+deb?)
 
 ##### done & validated #####
