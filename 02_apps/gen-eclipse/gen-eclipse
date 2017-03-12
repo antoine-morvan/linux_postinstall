@@ -36,17 +36,18 @@ SETUP_GRADLE=YES			# Web Tool Plugins
 SETUP_ECLEMMAJCC=YES	# Java Code Coverage
 SETUP_JAUTODOC=YES		# Java AutoDoc
 
-SETUP_TOMCAT=YES		# Tomcat plugin
 SETUP_WTP=YES			# Web Tool Plugins
 SETUP_JAVAFX=YES		# JavaFX Design Tools
-SETUP_PTP=YES			# Parallel Tools
 SETUP_PHOTRAN=YES		# Fortran support (from PTP)
 
-
 #specific plugins (deprecated)
-SETUP_GRECLIPSE=YES 		#groovy for eclipse
 SETUP_TEXCLIPSE=YES 		#latex support in eclipse
-SETUP_CUP_LEX=YES   		#cup & lex (similar to yacc & lex, but in java)
+
+#failing ..
+SETUP_PTP=NO			# Parallel Tools
+SETUP_CUP_LEX=NO   		#cup & lex (similar to yacc & lex, but in java)
+SETUP_TOMCAT=NO		# Tomcat plugin
+SETUP_GRECLIPSE=NO 		#groovy for eclipse
 
 #CAIRN plugins (deprecated)
 SETUP_TOM=NO
@@ -222,30 +223,16 @@ if [ "$FAST" != "YES" ]; then
 	BASE_RESULT=$?
 
 	echo ""
-	echo " * Setup TMF"
+	echo " * Setup Xtet/Xtend/Mwe/Ecore"
 	echo ""
 	${ECLIPSE} -nosplash \
 	  -application org.eclipse.equinox.p2.director \
-	  -repository http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases/ \
+	  -repository http://download.eclipse.org/releases/${ECLIPSE_VERSION} \
 	  -destination ${installationpath}/eclipse/ \
-	  -installIU org.eclipse.xtext.sdk.feature.group \
-	  -installIU org.eclipse.xtext.xbase.source.feature.group \
-	  -installIU org.eclipse.xtext.xbase.feature.group \
-	  -installIU org.eclipse.xtext.xbase.lib.source.feature.group \
-	  -installIU org.eclipse.xtext.xbase.lib.feature.group \
-	  -installIU org.eclipse.xtext.examples.source.feature.group \
-	  -installIU org.eclipse.xtext.examples.feature.group \
-	  -installIU org.eclipse.xtext.ui.source.feature.group \
-	  -installIU org.eclipse.xtext.ui.feature.group \
-	  -installIU org.eclipse.xtext.xtext.ui.source.feature.group \
-	  -installIU org.eclipse.xtext.xtext.ui.feature.group \
-	  -installIU org.eclipse.xtext.docs.feature.group \
-	  -installIU org.eclipse.xtext.runtime.source.feature.group \
-	  -installIU org.eclipse.xtext.runtime.feature.group \
-	  -installIU org.eclipse.xtend.sdk.feature.group \
+	  -installIU org.eclipse.emf.ecoretools.sdk.feature.group \
 	  -installIU org.eclipse.emf.mwe2.runtime.sdk.feature.group \
-	  -installIU org.eclipse.emf.mwe2.runtime.sdk.source.feature.group \
-	  -installIU org.eclipse.emf.ecore.xcore.feature.group
+	  -installIU org.eclipse.xtend.sdk.feature.group \
+	  -installIU org.eclipse.xtext.sdk.feature.group
 	TMF_RESULT=$?
 fi
 
@@ -305,8 +292,7 @@ if [ "$SETUP_TEXCLIPSE" == "YES" ]; then
 	  -application org.eclipse.equinox.p2.director \
 	  -repository http://texlipse.sourceforge.net \
 	  -destination ${installationpath}/eclipse/ \
-	  -installIU net.sourceforge.texlipse.feature.group \
-	  -installIU org.bibsonomy.texlipseExtension.feature.group
+	  -installIU net.sourceforge.texlipse.feature.group
 	TEXCLIPSE_RESULT=$?
 fi
 
@@ -773,3 +759,31 @@ exit
 ##################################
 ##	END.
 ##################################
+
+#archive:
+	  
+	echo ""
+	echo " * Setup TMF"
+	echo ""
+	${ECLIPSE} -nosplash \
+	  -application org.eclipse.equinox.p2.director \
+	  -repository http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases/ \
+	  -destination ${installationpath}/eclipse/ \
+	  -installIU org.eclipse.xtext.sdk.feature.group \
+	  -installIU org.eclipse.xtext.xbase.source.feature.group \
+	  -installIU org.eclipse.xtext.xbase.feature.group \
+	  -installIU org.eclipse.xtext.xbase.lib.source.feature.group \
+	  -installIU org.eclipse.xtext.xbase.lib.feature.group \
+	  -installIU org.eclipse.xtext.examples.source.feature.group \
+	  -installIU org.eclipse.xtext.examples.feature.group \
+	  -installIU org.eclipse.xtext.ui.source.feature.group \
+	  -installIU org.eclipse.xtext.ui.feature.group \
+	  -installIU org.eclipse.xtext.xtext.ui.source.feature.group \
+	  -installIU org.eclipse.xtext.xtext.ui.feature.group \
+	  -installIU org.eclipse.xtext.docs.feature.group \
+	  -installIU org.eclipse.xtext.runtime.source.feature.group \
+	  -installIU org.eclipse.xtext.runtime.feature.group \
+	  -installIU org.eclipse.xtend.sdk.feature.group \
+	  -installIU org.eclipse.emf.mwe2.runtime.sdk.feature.group \
+	  -installIU org.eclipse.emf.mwe2.runtime.sdk.source.feature.group \
+	  -installIU org.eclipse.emf.ecore.xcore.feature.group
