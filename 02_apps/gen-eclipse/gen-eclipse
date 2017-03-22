@@ -40,6 +40,7 @@ SETUP_WTP=YES			# Web Tool Plugins
 SETUP_JAVAFX=YES		# JavaFX Design Tools
 SETUP_PHOTRAN=YES		# Fortran support (from PTP)
 
+SETUP_DLTK=YES			#Dynamic Languages Toolkit
 SETUP_EASE=YES			#Eclipse Advanced Scripting Environment
 
 #specific plugins (deprecated)
@@ -222,6 +223,7 @@ if [ "$FAST" != "YES" ]; then
 	  -installIU org.eclipse.jpt.jaxb.feature.feature.group \
 	  -installIU org.eclipse.tm.terminal.feature.feature.group \
 	  -installIU org.eclipse.stardust.modeling.wst-feature.feature.group
+	  
 	BASE_RESULT=$?
 
 	echo ""
@@ -237,6 +239,24 @@ if [ "$FAST" != "YES" ]; then
 	  -installIU org.eclipse.xtext.sdk.feature.group
 	TMF_RESULT=$?
 fi
+
+
+if [ "$SETUP_DLTK" == "YES" ]; then
+	echo ""
+	echo " * setup Dynamic Language ToolKit"
+	echo ""
+	
+	
+	${ECLIPSE} -nosplash \
+	  -application org.eclipse.equinox.p2.director \
+	  -repository http://download.eclipse.org/releases/${ECLIPSE_VERSION} \
+	  -destination ${installationpath}/eclipse/ \
+	  -installIU org.eclipse.dltk.itcl.feature.group \
+	  -installIU org.eclipse.dltk.ruby.feature.group \
+	  -installIU org.eclipse.dltk.sh.feature.group
+	DLTK_RESULT=$?
+fi
+
 
 if [ "$SETUP_GRADLE" == "YES" ]; then
 	echo ""
@@ -779,6 +799,7 @@ echo "####"
 [ ! -z $BASE_RESULT ] && echo "Base Setup : $BASE_RESULT"
 [ ! -z $COLORTHEME_RESULT ] && echo "Color Themes : $COLORTHEME_RESULT"
 [ ! -z $EASE_RESULT ] && echo "EASE : $EASE_RESULT"
+[ ! -z $DLTK_RESULT ] && echo "DLTK : $DLTK_RESULT"
 
 
 exit
