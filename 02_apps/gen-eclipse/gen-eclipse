@@ -39,12 +39,13 @@ SETUP_JAUTODOC=YES		# Java AutoDoc
 SETUP_WTP=YES			# Web Tool Plugins
 SETUP_JAVAFX=YES		# JavaFX Design Tools
 SETUP_PHOTRAN=YES		# Fortran support (from PTP)
-
-SETUP_DLTK=YES			#Dynamic Languages Toolkit
-SETUP_EASE=YES			#Eclipse Advanced Scripting Environment
+SETUP_DLTK=YES			# Dynamic Languages Toolkit
 
 #specific plugins (deprecated)
-SETUP_TEXCLIPSE=YES 	#latex support in eclipse
+SETUP_TEXCLIPSE=YES 	# latex support in eclipse
+
+#causing annoying behavior
+SETUP_EASE=NO			# Eclipse Advanced Scripting Environment
 
 #failing ..
 SETUP_PTP=NO			# Parallel Tools
