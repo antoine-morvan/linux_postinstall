@@ -32,7 +32,7 @@ SETUP_EASYSHELL=YES		# External Terminal
 SETUP_ANYEDITTOOLS=YES  # UI enhancement
 SETUP_FINDBUGS=YES		# More error/warnings
 
-SETUP_GRADLE=YES			# Web Tool Plugins
+SETUP_GRADLE=YES		# Web Tool Plugins
 SETUP_ECLEMMAJCC=YES	# Java Code Coverage
 SETUP_JAUTODOC=YES		# Java AutoDoc
 
@@ -40,13 +40,15 @@ SETUP_WTP=YES			# Web Tool Plugins
 SETUP_JAVAFX=YES		# JavaFX Design Tools
 SETUP_PHOTRAN=YES		# Fortran support (from PTP)
 
+SETUP_EASE=YES			#Eclipse Advanced Scripting Environment
+
 #specific plugins (deprecated)
-SETUP_TEXCLIPSE=YES 		#latex support in eclipse
+SETUP_TEXCLIPSE=YES 	#latex support in eclipse
 
 #failing ..
 SETUP_PTP=NO			# Parallel Tools
 SETUP_CUP_LEX=NO   		#cup & lex (similar to yacc & lex, but in java)
-SETUP_TOMCAT=NO		# Tomcat plugin
+SETUP_TOMCAT=NO			# Tomcat plugin
 SETUP_GRECLIPSE=NO 		#groovy for eclipse
 
 #CAIRN plugins (deprecated)
@@ -519,7 +521,30 @@ if [ "$SETUP_JAVAFX" == "YES" ]; then
 	  -installIU org.eclipse.fx.ide.feature.feature.group
 	JAVAFX_RESULT=$?
 fi
- 
+
+if [ "$SETUP_EASE" == "YES" ]; then
+	echo ""
+	echo " * Setup EASE"
+	echo ""
+	${ECLIPSE} -nosplash \
+	  -application org.eclipse.equinox.p2.director \
+	  -repository http://download.eclipse.org/ease/update/release \
+	  -destination ${installationpath}/eclipse/ \
+	  -installIU org.eclipse.ease.modules.charting.feature.feature.group \
+	  -installIU org.eclipse.ease.modules.team.git.feature.feature.group \
+	  -installIU org.eclipse.ease.lang.javascript.feature.feature.group \
+	  -installIU org.eclipse.ease.lang.jvm.feature.feature.group \
+	  -installIU org.eclipse.ease.python.jython.feature.feature.group \
+	  -installIU org.eclipse.ease.modules.modeling.feature.feature.group \
+	  -installIU org.eclipse.ease.modules.feature.feature.group \
+	  -installIU org.eclipse.ease.lang.python.feature.feature.group \
+	  -installIU org.eclipse.ease.lang.python.py4j.feature.feature.group \
+	  -installIU org.eclipse.ease.modules.unittest.feature.feature.group \
+	  -installIU org.eclipse.ease.lang.groovy.feature.feature.group \
+	  -installIU org.eclipse.ease.lang.ruby.feature.feature.group
+	EASE_RESULT=$?
+fi
+
 
 echo ""
 echo "####"
@@ -753,6 +778,7 @@ echo "####"
 [ ! -z $TMF_RESULT ] && echo "TMF : $TMF_RESULT"
 [ ! -z $BASE_RESULT ] && echo "Base Setup : $BASE_RESULT"
 [ ! -z $COLORTHEME_RESULT ] && echo "Color Themes : $COLORTHEME_RESULT"
+[ ! -z $EASE_RESULT ] && echo "EASE : $EASE_RESULT"
 
 
 exit
