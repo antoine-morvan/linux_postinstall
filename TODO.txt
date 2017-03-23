@@ -30,6 +30,7 @@ gen-eclipse
 	-	config easyshell
 	-	vue par défaut : java
 	-	splitter en plusieurs scripts ?
+	-	./eclipse -nosplash -application org.eclipse.equinox.p2.director -h
 check conky config (HDDs) avec une installation depuis USB et/ou gros partitionage crypté (arch+deb?)
 
 ##### done & validated #####
