@@ -12,6 +12,7 @@ ajouter la directive suivante dans mpd.conf : audio_output_format "44100:16:2"
 
 ##### à trouver une solution
 
+libfelix-gogo ??
 Fix deadbeef setup for ubuntu
 nscd (name user cache daemon)
 config apt ubuntu (activer tous les dépots, désactiver les maj auto)
