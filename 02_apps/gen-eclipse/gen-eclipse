@@ -242,6 +242,18 @@ if [ "$FAST" != "YES" ]; then
 fi
 
 
+echo ""
+echo " * Setup Tycho"
+echo ""
+${ECLIPSE} -nosplash \
+  -application org.eclipse.equinox.p2.director \
+  -repository http://repo1.maven.org/maven2/.m2e/connectors/m2eclipse-tycho/0.8.0/N/0.8.0.201409231215/ \
+  -destination ${installationpath}/eclipse/ \
+  -installIU org.sonatype.tycho.m2e.feature.feature.group
+TYCHO_RESULT=$?
+
+
+
 if [ "$SETUP_DLTK" == "YES" ]; then
 	echo ""
 	echo " * setup Dynamic Language ToolKit"
@@ -801,6 +813,8 @@ echo "####"
 [ ! -z $COLORTHEME_RESULT ] && echo "Color Themes : $COLORTHEME_RESULT"
 [ ! -z $EASE_RESULT ] && echo "EASE : $EASE_RESULT"
 [ ! -z $DLTK_RESULT ] && echo "DLTK : $DLTK_RESULT"
+[ ! -z $TYCHO_RESULT ] && echo "Tycho : $TYCHO_RESULT"
+
 
 
 exit
