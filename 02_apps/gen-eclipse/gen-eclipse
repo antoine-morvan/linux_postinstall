@@ -66,7 +66,8 @@ FAST=NO
 ##	Check script configuration
 ##################################
 
-OPTIONS=-nosplash -followReferences
+OPTIONS=-nosplash
+P2OPTIONS=-followReferences
 
 USER=`whoami`
 [ "$USER" == "root" ] && echo "Should not be run as root" && exit 1
@@ -194,7 +195,7 @@ echo ""
 ${ECLIPSE} ${OPTIONS} \
   -application org.eclipse.equinox.p2.director \
   -repository http://eclipse-color-theme.github.io/update/ \
-  -destination ${installationpath}/eclipse/ \
+  ${P2OPTIONS} -destination ${installationpath}/eclipse/ \
   -installIU com.github.eclipsecolortheme.feature.feature.group
 COLORTHEME_RESULT=$?
 	  
@@ -206,7 +207,7 @@ if [ "$FAST" != "YES" ]; then
 	${ECLIPSE} ${OPTIONS} \
 	  -application org.eclipse.equinox.p2.director \
 	  -repository http://download.eclipse.org/releases/${ECLIPSE_VERSION} \
-	  -destination ${installationpath}/eclipse/ \
+	  ${P2OPTIONS} -destination ${installationpath}/eclipse/ \
 	  -installIU org.eclipse.cdt.feature.group \
 	  -installIU org.eclipse.cdt.platform.feature.group \
 	  -installIU org.eclipse.cdt.gnu.dsf.feature.group \
@@ -238,7 +239,7 @@ if [ "$FAST" != "YES" ]; then
 	${ECLIPSE} ${OPTIONS} \
 	  -application org.eclipse.equinox.p2.director \
 	  -repository http://download.eclipse.org/releases/${ECLIPSE_VERSION} \
-	  -destination ${installationpath}/eclipse/ \
+	  ${P2OPTIONS} -destination ${installationpath}/eclipse/ \
 	  -installIU org.eclipse.emf.ecoretools.sdk.feature.group \
 	  -installIU org.eclipse.emf.mwe2.runtime.sdk.feature.group \
 	  -installIU org.eclipse.xtend.sdk.feature.group \
@@ -253,7 +254,7 @@ echo ""
 ${ECLIPSE} ${OPTIONS} \
   -application org.eclipse.equinox.p2.director \
   -repository http://repo1.maven.org/maven2/.m2e/connectors/m2eclipse-tycho/0.8.0/N/0.8.0.201409231215/ \
-  -destination ${installationpath}/eclipse/ \
+  ${P2OPTIONS} -destination ${installationpath}/eclipse/ \
   -installIU org.sonatype.tycho.m2e.feature.feature.group
 TYCHO_RESULT=$?
 
@@ -264,7 +265,7 @@ echo ""
 ${ECLIPSE} ${OPTIONS} \
   -application org.eclipse.equinox.p2.director \
   -repository http://download.eclipse.org/eclipse/updates/4.6 \
-  -destination ${installationpath}/eclipse/ \
+  ${P2OPTIONS} -destination ${installationpath}/eclipse/ \
   -installIU org.eclipse.releng.tools.feature.group
 RELENG_RESULT=$?
 
@@ -279,7 +280,7 @@ if [ "$SETUP_DLTK" == "YES" ]; then
 	${ECLIPSE} ${OPTIONS} \
 	  -application org.eclipse.equinox.p2.director \
 	  -repository http://download.eclipse.org/releases/${ECLIPSE_VERSION} \
-	  -destination ${installationpath}/eclipse/ \
+	  ${P2OPTIONS} -destination ${installationpath}/eclipse/ \
 	  -installIU org.eclipse.dltk.itcl.feature.group \
 	  -installIU org.eclipse.dltk.ruby.feature.group \
 	  -installIU org.eclipse.dltk.sh.feature.group
@@ -294,7 +295,7 @@ if [ "$SETUP_GRADLE" == "YES" ]; then
 	${ECLIPSE} ${OPTIONS} \
 	  -application org.eclipse.equinox.p2.director \
 	  -repository http://download.eclipse.org/buildship/updates/e46/releases/1.0 \
-	  -destination ${installationpath}/eclipse/ \
+	  ${P2OPTIONS} -destination ${installationpath}/eclipse/ \
 	  -installIU org.eclipse.buildship.feature.group
 	GRADLE_RESULT=$?
 	
@@ -307,7 +308,7 @@ if [ "$SETUP_SVN" == "YES" ]; then
 	${ECLIPSE} ${OPTIONS} \
 	  -application org.eclipse.equinox.p2.director \
 	  -repository http://download.eclipse.org/releases/${ECLIPSE_VERSION} \
-	  -destination ${installationpath}/eclipse/ \
+	  ${P2OPTIONS} -destination ${installationpath}/eclipse/ \
 	  -installIU org.eclipse.team.svn.feature.group
 	SVN_RESULT=$?
 	
@@ -317,7 +318,7 @@ if [ "$SETUP_SVN" == "YES" ]; then
 	${ECLIPSE} ${OPTIONS} \
 	  -application org.eclipse.equinox.p2.director \
 	  -repository http://community.polarion.com/projects/subversive/download/eclipse/6.0/neon-site/ \
-	  -destination ${installationpath}/eclipse/ \
+	  ${P2OPTIONS} -destination ${installationpath}/eclipse/ \
 	  -installIU org.polarion.eclipse.team.svn.connector.feature.group \
 	  -installIU org.polarion.eclipse.team.svn.connector.svnkit18.feature.group
 	SUBVERSIVE_RESULT=$?
@@ -330,7 +331,7 @@ if [ "$SETUP_EASYSHELL" == "YES" ]; then
 	${ECLIPSE} ${OPTIONS} \
 	  -application org.eclipse.equinox.p2.director \
 	  -repository http://anb0s.github.io/EasyShell \
-	  -destination ${installationpath}/eclipse/ \
+	  ${P2OPTIONS} -destination ${installationpath}/eclipse/ \
 	  -installIU de.anbos.eclipse.easyshell.feature.feature.group
 	EASYSHELL_RESULT=$?
 fi
@@ -342,7 +343,7 @@ if [ "$SETUP_TEXCLIPSE" == "YES" ]; then
 	${ECLIPSE} ${OPTIONS} \
 	  -application org.eclipse.equinox.p2.director \
 	  -repository http://texlipse.sourceforge.net \
-	  -destination ${installationpath}/eclipse/ \
+	  ${P2OPTIONS} -destination ${installationpath}/eclipse/ \
 	  -installIU net.sourceforge.texlipse.feature.group
 	TEXCLIPSE_RESULT=$?
 fi
@@ -354,7 +355,7 @@ if [ "$SETUP_CUP_LEX" == "YES" ]; then
 	${ECLIPSE} ${OPTIONS} \
 	  -application org.eclipse.equinox.p2.director \
 	  -repository http://cup-lex-eclipse.sourceforge.net/update/ \
-	  -destination ${installationpath}/eclipse/ \
+	  ${P2OPTIONS} -destination ${installationpath}/eclipse/ \
 	  -installIU pi.eclipse.cle.feature.group
 	CUP_LEX_RESULT=$?
 fi
@@ -366,7 +367,7 @@ if [ "$SETUP_TOM" == "YES" ]; then
 	${ECLIPSE} ${OPTIONS} \
 	  -application org.eclipse.equinox.p2.director \
 	  -repository http://gecos.gforge.inria.fr/updates/mars/snapshot/ \
-	  -destination ${installationpath}/eclipse/ \
+	  ${P2OPTIONS} -destination ${installationpath}/eclipse/ \
 	  -installIU cairn.tools.tom.dev.feature.group
 	TOM_RESULT=$?
 fi
@@ -378,7 +379,7 @@ if [ "$SETUP_JNIMAP" == "YES" ]; then
 	${ECLIPSE} ${OPTIONS} \
 	  -application org.eclipse.equinox.p2.director \
 	  -repository http://gecos.gforge.inria.fr/updates/mars/snapshot/ \
-	  -destination ${installationpath}/eclipse/ \
+	  ${P2OPTIONS} -destination ${installationpath}/eclipse/ \
 	  -installIU cairn.tools.jni.mapper.feature.group
 	JNIMAP_RESULT=$?
 fi
@@ -390,7 +391,7 @@ if [ "$SETUP_GECOS_SCRIPT" == "YES" ]; then
 	${ECLIPSE} ${OPTIONS} \
 	  -application org.eclipse.equinox.p2.director \
 	  -repository http://gecos.gforge.inria.fr/updates/mars/snapshot/ \
-	  -destination ${installationpath}/eclipse/ \
+	  ${P2OPTIONS} -destination ${installationpath}/eclipse/ \
 	  -installIU gecos.framework.feature.group
 	GECOS_SCRIPT_RESULT=$?
 fi
@@ -402,7 +403,7 @@ if [ "$SETUP_GECOS_UI" == "YES" ]; then
 	${ECLIPSE} ${OPTIONS} \
 	  -application org.eclipse.equinox.p2.director \
 	  -repository http://gecos.gforge.inria.fr/updates/mars/snapshot/ \
-	  -destination ${installationpath}/eclipse/ \
+	  ${P2OPTIONS} -destination ${installationpath}/eclipse/ \
 	  -installIU gecos.ui.feature.group \
 	  -installIU gecos.alma.feature.group
 	GECOS_UI_RESULT=$?
@@ -415,7 +416,7 @@ if [ "$SETUP_GRECLIPSE" == "YES" ]; then
 	${ECLIPSE} ${OPTIONS} \
 	  -application org.eclipse.equinox.p2.director \
 	  -repository http://dist.springsource.org/snapshot/GRECLIPSE/e4.5/ \
-	  -destination ${installationpath}/eclipse/ \
+	  ${P2OPTIONS} -destination ${installationpath}/eclipse/ \
 	  -installIU org.codehaus.groovy.eclipse.feature.feature.group \
 	  -installIU org.codehaus.groovy.m2eclipse.feature.feature.group \
 	  -installIU org.codehaus.groovy.jdt.patch.feature.group \
@@ -430,7 +431,7 @@ if [ "$SETUP_ECLEMMAJCC" == "YES" ]; then
 	${ECLIPSE} ${OPTIONS} \
 	  -application org.eclipse.equinox.p2.director \
 	  -repository http://update.eclemma.org/ \
-	  -destination ${installationpath}/eclipse/ \
+	  ${P2OPTIONS} -destination ${installationpath}/eclipse/ \
 	  -installIU com.mountainminds.eclemma.feature.feature.group
 	ECLEMMAJCC_RESULT=$?
 fi
@@ -442,7 +443,7 @@ if [ "$SETUP_JAUTODOC" == "YES" ]; then
 	${ECLIPSE} ${OPTIONS} \
 	  -application org.eclipse.equinox.p2.director \
 	  -repository http://jautodoc.sourceforge.net/update/ \
-	  -destination ${installationpath}/eclipse/ \
+	  ${P2OPTIONS} -destination ${installationpath}/eclipse/ \
 	  -installIU net.sf.jautodoc.feature.feature.group
 	JAUTODOC_RESULT=$?
 fi
@@ -454,7 +455,7 @@ if [ "$SETUP_ANYEDITTOOLS" == "YES" ]; then
 	${ECLIPSE} ${OPTIONS} \
 	  -application org.eclipse.equinox.p2.director \
 	  -repository http://andrei.gmxhome.de/eclipse/ \
-	  -destination ${installationpath}/eclipse/ \
+	  ${P2OPTIONS} -destination ${installationpath}/eclipse/ \
 	  -installIU AnyEditTools.feature.group
 	ANYEDITTOOLS_RESULT=$?
 fi
@@ -466,7 +467,7 @@ if [ "$SETUP_FINDBUGS" == "YES" ]; then
 	${ECLIPSE} ${OPTIONS} \
 	  -application org.eclipse.equinox.p2.director \
 	  -repository http://findbugs.cs.umd.edu/eclipse/ \
-	  -destination ${installationpath}/eclipse/ \
+	  ${P2OPTIONS} -destination ${installationpath}/eclipse/ \
 	  -installIU edu.umd.cs.findbugs.plugin.eclipse.feature.group
 	FINDBUGS_RESULT=$?
 fi
@@ -478,7 +479,7 @@ if [ "$SETUP_TOMCAT" == "YES" ]; then
 	${ECLIPSE} ${OPTIONS} \
 	  -application org.eclipse.equinox.p2.director \
 	  -repository https://sourceforge.net/projects/tomcatplugin/files/updatesite/ \
-	  -destination ${installationpath}/eclipse/ \
+	  ${P2OPTIONS} -destination ${installationpath}/eclipse/ \
 	  -installIU net.sf.eclipse.tomcat.feature.feature.group
 	TOMCAT_RESULT=$?
 fi
@@ -491,7 +492,7 @@ if [ "$SETUP_PTP" == "YES" ]; then
 	${ECLIPSE} ${OPTIONS} \
 	  -application org.eclipse.equinox.p2.director \
 	  -repository http://download.eclipse.org/releases/${ECLIPSE_VERSION} \
-	  -destination ${installationpath}/eclipse/ \
+	  ${P2OPTIONS} -destination ${installationpath}/eclipse/ \
 	  -installIU org.eclipse.cdt.bupc.feature.group \
 	  -installIU org.eclipse.cdt.core.parser.upc.feature.feature.group \
 	  -installIU org.eclipse.cdt.core.parser.upc.sdk.feature.group \
@@ -503,7 +504,7 @@ if [ "$SETUP_PTP" == "YES" ]; then
 	${ECLIPSE} ${OPTIONS} \
 	  -application org.eclipse.equinox.p2.director \
 	  -repository http://download.eclipse.org/tools/ptp/updates/neon/ \
-	  -destination ${installationpath}/eclipse/ \
+	  ${P2OPTIONS} -destination ${installationpath}/eclipse/ \
 	  -installIU org.eclipse.ptp.feature.group \
 	  -installIU org.eclipse.ptp.sdk.feature.group \
 	  -installIU org.eclipse.ptp.rm.jaxb.contrib.feature.group \
@@ -526,7 +527,7 @@ if [ "$SETUP_PHOTRAN" == "YES" ]; then
 	${ECLIPSE} ${OPTIONS} \
 	  -application org.eclipse.equinox.p2.director \
 	  -repository http://download.eclipse.org/tools/ptp/updates/neon/ \
-	  -destination ${installationpath}/eclipse/ \
+	  ${P2OPTIONS} -destination ${installationpath}/eclipse/ \
 	  -installIU org.eclipse.photran.feature.group \
 	  -installIU org.eclipse.photran.xlf.feature.group \
 	  -installIU org.eclipse.photran.intel.feature.group
@@ -541,7 +542,7 @@ if [ "$SETUP_WTP" == "YES" ]; then
 	${ECLIPSE} ${OPTIONS} \
 	  -application org.eclipse.equinox.p2.director \
 	  -repository http://download.eclipse.org/webtools/repository/neon/ \
-	  -destination ${installationpath}/eclipse/ \
+	  ${P2OPTIONS} -destination ${installationpath}/eclipse/ \
 	  -installIU org.eclipse.jst.ws.cxf.feature.feature.group \
 	  -installIU org.eclipse.jpt.common.eclipselink.feature.feature.group \
 	  -installIU org.eclipse.jpt.dbws.eclipselink.feature.feature.group \
@@ -566,7 +567,7 @@ if [ "$SETUP_JAVAFX" == "YES" ]; then
 	${ECLIPSE} ${OPTIONS} \
 	  -application org.eclipse.equinox.p2.director \
 	  -repository http://download.eclipse.org/efxclipse/updates-released/2.4.0/site \
-	  -destination ${installationpath}/eclipse/ \
+	  ${P2OPTIONS} -destination ${installationpath}/eclipse/ \
 	  -installIU org.eclipse.fx.ide.feature.feature.group
 	JAVAFX_RESULT=$?
 fi
@@ -578,7 +579,7 @@ if [ "$SETUP_EASE" == "YES" ]; then
 	${ECLIPSE} ${OPTIONS} \
 	  -application org.eclipse.equinox.p2.director \
 	  -repository http://download.eclipse.org/ease/update/release \
-	  -destination ${installationpath}/eclipse/ \
+	  ${P2OPTIONS} -destination ${installationpath}/eclipse/ \
 	  -installIU org.eclipse.ease.modules.charting.feature.feature.group \
 	  -installIU org.eclipse.ease.modules.team.git.feature.feature.group \
 	  -installIU org.eclipse.ease.lang.javascript.feature.feature.group \
@@ -847,7 +848,7 @@ exit
 	${ECLIPSE} ${OPTIONS} \
 	  -application org.eclipse.equinox.p2.director \
 	  -repository http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases/ \
-	  -destination ${installationpath}/eclipse/ \
+	  ${P2OPTIONS} -destination ${installationpath}/eclipse/ \
 	  -installIU org.eclipse.xtext.sdk.feature.group \
 	  -installIU org.eclipse.xtext.xbase.source.feature.group \
 	  -installIU org.eclipse.xtext.xbase.feature.group \
