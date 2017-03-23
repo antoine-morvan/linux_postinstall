@@ -66,6 +66,8 @@ FAST=NO
 ##	Check script configuration
 ##################################
 
+OPTIONS=-nosplash -followReferences
+
 USER=`whoami`
 [ "$USER" == "root" ] && echo "Should not be run as root" && exit 1
 
@@ -189,7 +191,7 @@ mkdir -p ${installationpath}/workspace/.metadata/.plugins/org.eclipse.core.runti
 echo ""
 echo " * setup color theme"
 echo ""
-${ECLIPSE} -nosplash \
+${ECLIPSE} ${OPTIONS} \
   -application org.eclipse.equinox.p2.director \
   -repository http://eclipse-color-theme.github.io/update/ \
   -destination ${installationpath}/eclipse/ \
@@ -201,7 +203,7 @@ if [ "$FAST" != "YES" ]; then
 	echo ""
 	echo " * setup from ${ECLIPSE_VERSION} repo (cdt, xml, web, m2e, ...)"
 	echo ""
-	${ECLIPSE} -nosplash \
+	${ECLIPSE} ${OPTIONS} \
 	  -application org.eclipse.equinox.p2.director \
 	  -repository http://download.eclipse.org/releases/${ECLIPSE_VERSION} \
 	  -destination ${installationpath}/eclipse/ \
@@ -233,7 +235,7 @@ if [ "$FAST" != "YES" ]; then
 	echo ""
 	echo " * Setup Xtet/Xtend/Mwe/Ecore"
 	echo ""
-	${ECLIPSE} -nosplash \
+	${ECLIPSE} ${OPTIONS} \
 	  -application org.eclipse.equinox.p2.director \
 	  -repository http://download.eclipse.org/releases/${ECLIPSE_VERSION} \
 	  -destination ${installationpath}/eclipse/ \
@@ -248,7 +250,7 @@ fi
 echo ""
 echo " * Setup Tycho"
 echo ""
-${ECLIPSE} -nosplash \
+${ECLIPSE} ${OPTIONS} \
   -application org.eclipse.equinox.p2.director \
   -repository http://repo1.maven.org/maven2/.m2e/connectors/m2eclipse-tycho/0.8.0/N/0.8.0.201409231215/ \
   -destination ${installationpath}/eclipse/ \
@@ -259,7 +261,7 @@ TYCHO_RESULT=$?
 echo ""
 echo " * Setup Releng Tools"
 echo ""
-${ECLIPSE} -nosplash \
+${ECLIPSE} ${OPTIONS} \
   -application org.eclipse.equinox.p2.director \
   -repository http://download.eclipse.org/eclipse/updates/4.6 \
   -destination ${installationpath}/eclipse/ \
@@ -274,7 +276,7 @@ if [ "$SETUP_DLTK" == "YES" ]; then
 	echo ""
 	
 	
-	${ECLIPSE} -nosplash \
+	${ECLIPSE} ${OPTIONS} \
 	  -application org.eclipse.equinox.p2.director \
 	  -repository http://download.eclipse.org/releases/${ECLIPSE_VERSION} \
 	  -destination ${installationpath}/eclipse/ \
@@ -289,7 +291,7 @@ if [ "$SETUP_GRADLE" == "YES" ]; then
 	echo ""
 	echo " * setup Gradle (buildship)"
 	echo ""
-	${ECLIPSE} -nosplash \
+	${ECLIPSE} ${OPTIONS} \
 	  -application org.eclipse.equinox.p2.director \
 	  -repository http://download.eclipse.org/buildship/updates/e46/releases/1.0 \
 	  -destination ${installationpath}/eclipse/ \
@@ -302,7 +304,7 @@ if [ "$SETUP_SVN" == "YES" ]; then
 	echo ""
 	echo " * setup svn"
 	echo ""
-	${ECLIPSE} -nosplash \
+	${ECLIPSE} ${OPTIONS} \
 	  -application org.eclipse.equinox.p2.director \
 	  -repository http://download.eclipse.org/releases/${ECLIPSE_VERSION} \
 	  -destination ${installationpath}/eclipse/ \
@@ -312,7 +314,7 @@ if [ "$SETUP_SVN" == "YES" ]; then
 	echo ""
 	echo " * Setup subversive"
 	echo ""
-	${ECLIPSE} -nosplash \
+	${ECLIPSE} ${OPTIONS} \
 	  -application org.eclipse.equinox.p2.director \
 	  -repository http://community.polarion.com/projects/subversive/download/eclipse/6.0/neon-site/ \
 	  -destination ${installationpath}/eclipse/ \
@@ -325,7 +327,7 @@ if [ "$SETUP_EASYSHELL" == "YES" ]; then
 	echo ""
 	echo " * Setup easyshell"
 	echo ""
-	${ECLIPSE} -nosplash \
+	${ECLIPSE} ${OPTIONS} \
 	  -application org.eclipse.equinox.p2.director \
 	  -repository http://anb0s.github.io/EasyShell \
 	  -destination ${installationpath}/eclipse/ \
@@ -337,7 +339,7 @@ if [ "$SETUP_TEXCLIPSE" == "YES" ]; then
 	echo ""
 	echo " * Setup texclipse"
 	echo ""
-	${ECLIPSE} -nosplash \
+	${ECLIPSE} ${OPTIONS} \
 	  -application org.eclipse.equinox.p2.director \
 	  -repository http://texlipse.sourceforge.net \
 	  -destination ${installationpath}/eclipse/ \
@@ -349,7 +351,7 @@ if [ "$SETUP_CUP_LEX" == "YES" ]; then
 	echo ""
 	echo " * Setup cup/lex"
 	echo ""
-	${ECLIPSE} -nosplash \
+	${ECLIPSE} ${OPTIONS} \
 	  -application org.eclipse.equinox.p2.director \
 	  -repository http://cup-lex-eclipse.sourceforge.net/update/ \
 	  -destination ${installationpath}/eclipse/ \
@@ -361,7 +363,7 @@ if [ "$SETUP_TOM" == "YES" ]; then
 	echo ""
 	echo " * Setup TOM"
 	echo ""
-	${ECLIPSE} -nosplash \
+	${ECLIPSE} ${OPTIONS} \
 	  -application org.eclipse.equinox.p2.director \
 	  -repository http://gecos.gforge.inria.fr/updates/mars/snapshot/ \
 	  -destination ${installationpath}/eclipse/ \
@@ -373,7 +375,7 @@ if [ "$SETUP_JNIMAP" == "YES" ]; then
 	echo ""
 	echo " * Setup jnimap"
 	echo ""
-	${ECLIPSE} -nosplash \
+	${ECLIPSE} ${OPTIONS} \
 	  -application org.eclipse.equinox.p2.director \
 	  -repository http://gecos.gforge.inria.fr/updates/mars/snapshot/ \
 	  -destination ${installationpath}/eclipse/ \
@@ -385,7 +387,7 @@ if [ "$SETUP_GECOS_SCRIPT" == "YES" ]; then
 	echo ""
 	echo " * Setup gecos scripts"
 	echo ""
-	${ECLIPSE} -nosplash \
+	${ECLIPSE} ${OPTIONS} \
 	  -application org.eclipse.equinox.p2.director \
 	  -repository http://gecos.gforge.inria.fr/updates/mars/snapshot/ \
 	  -destination ${installationpath}/eclipse/ \
@@ -397,7 +399,7 @@ if [ "$SETUP_GECOS_UI" == "YES" ]; then
 	echo ""
 	echo " * Setup gecos UI"
 	echo ""
-	${ECLIPSE} -nosplash \
+	${ECLIPSE} ${OPTIONS} \
 	  -application org.eclipse.equinox.p2.director \
 	  -repository http://gecos.gforge.inria.fr/updates/mars/snapshot/ \
 	  -destination ${installationpath}/eclipse/ \
@@ -410,7 +412,7 @@ if [ "$SETUP_GRECLIPSE" == "YES" ]; then
 	echo ""
 	echo " * Setup greclipse (groovy)"
 	echo ""
-	${ECLIPSE} -nosplash \
+	${ECLIPSE} ${OPTIONS} \
 	  -application org.eclipse.equinox.p2.director \
 	  -repository http://dist.springsource.org/snapshot/GRECLIPSE/e4.5/ \
 	  -destination ${installationpath}/eclipse/ \
@@ -425,7 +427,7 @@ if [ "$SETUP_ECLEMMAJCC" == "YES" ]; then
 	echo ""
 	echo " * Setup eclemmajcc (code coverage)"
 	echo ""
-	${ECLIPSE} -nosplash \
+	${ECLIPSE} ${OPTIONS} \
 	  -application org.eclipse.equinox.p2.director \
 	  -repository http://update.eclemma.org/ \
 	  -destination ${installationpath}/eclipse/ \
@@ -437,7 +439,7 @@ if [ "$SETUP_JAUTODOC" == "YES" ]; then
 	echo ""
 	echo " * Setup JAutodoc"
 	echo ""
-	${ECLIPSE} -nosplash \
+	${ECLIPSE} ${OPTIONS} \
 	  -application org.eclipse.equinox.p2.director \
 	  -repository http://jautodoc.sourceforge.net/update/ \
 	  -destination ${installationpath}/eclipse/ \
@@ -449,7 +451,7 @@ if [ "$SETUP_ANYEDITTOOLS" == "YES" ]; then
 	echo ""
 	echo " * Setup anyedit tools"
 	echo ""
-	${ECLIPSE} -nosplash \
+	${ECLIPSE} ${OPTIONS} \
 	  -application org.eclipse.equinox.p2.director \
 	  -repository http://andrei.gmxhome.de/eclipse/ \
 	  -destination ${installationpath}/eclipse/ \
@@ -461,7 +463,7 @@ if [ "$SETUP_FINDBUGS" == "YES" ]; then
 	echo ""
 	echo " * Setup findbugs"
 	echo ""
-	${ECLIPSE} -nosplash \
+	${ECLIPSE} ${OPTIONS} \
 	  -application org.eclipse.equinox.p2.director \
 	  -repository http://findbugs.cs.umd.edu/eclipse/ \
 	  -destination ${installationpath}/eclipse/ \
@@ -473,7 +475,7 @@ if [ "$SETUP_TOMCAT" == "YES" ]; then
 	echo ""
 	echo " * Setup Tocmat"
 	echo ""
-	${ECLIPSE} -nosplash \
+	${ECLIPSE} ${OPTIONS} \
 	  -application org.eclipse.equinox.p2.director \
 	  -repository https://sourceforge.net/projects/tomcatplugin/files/updatesite/ \
 	  -destination ${installationpath}/eclipse/ \
@@ -486,7 +488,7 @@ if [ "$SETUP_PTP" == "YES" ]; then
 	echo " * Setup Parallel Tools"
 	echo ""
 	
-	${ECLIPSE} -nosplash \
+	${ECLIPSE} ${OPTIONS} \
 	  -application org.eclipse.equinox.p2.director \
 	  -repository http://download.eclipse.org/releases/${ECLIPSE_VERSION} \
 	  -destination ${installationpath}/eclipse/ \
@@ -498,7 +500,7 @@ if [ "$SETUP_PTP" == "YES" ]; then
 	  -installIU org.eclipse.tm.terminal.connector.remote.feature.feature.group
 	PTP_PRE_RESULT=$?
 	  
-	${ECLIPSE} -nosplash \
+	${ECLIPSE} ${OPTIONS} \
 	  -application org.eclipse.equinox.p2.director \
 	  -repository http://download.eclipse.org/tools/ptp/updates/neon/ \
 	  -destination ${installationpath}/eclipse/ \
@@ -521,7 +523,7 @@ if [ "$SETUP_PHOTRAN" == "YES" ]; then
 	echo ""
 	echo " * Setup Photran (from PTP)"
 	echo ""
-	${ECLIPSE} -nosplash \
+	${ECLIPSE} ${OPTIONS} \
 	  -application org.eclipse.equinox.p2.director \
 	  -repository http://download.eclipse.org/tools/ptp/updates/neon/ \
 	  -destination ${installationpath}/eclipse/ \
@@ -536,7 +538,7 @@ if [ "$SETUP_WTP" == "YES" ]; then
 	echo ""
 	echo " * Setup WTP"
 	echo ""
-	${ECLIPSE} -nosplash \
+	${ECLIPSE} ${OPTIONS} \
 	  -application org.eclipse.equinox.p2.director \
 	  -repository http://download.eclipse.org/webtools/repository/neon/ \
 	  -destination ${installationpath}/eclipse/ \
@@ -561,7 +563,7 @@ if [ "$SETUP_JAVAFX" == "YES" ]; then
 	echo ""
 	echo " * Setup JavaFX"
 	echo ""
-	${ECLIPSE} -nosplash \
+	${ECLIPSE} ${OPTIONS} \
 	  -application org.eclipse.equinox.p2.director \
 	  -repository http://download.eclipse.org/efxclipse/updates-released/2.4.0/site \
 	  -destination ${installationpath}/eclipse/ \
@@ -573,7 +575,7 @@ if [ "$SETUP_EASE" == "YES" ]; then
 	echo ""
 	echo " * Setup EASE"
 	echo ""
-	${ECLIPSE} -nosplash \
+	${ECLIPSE} ${OPTIONS} \
 	  -application org.eclipse.equinox.p2.director \
 	  -repository http://download.eclipse.org/ease/update/release \
 	  -destination ${installationpath}/eclipse/ \
@@ -842,7 +844,7 @@ exit
 	echo ""
 	echo " * Setup TMF"
 	echo ""
-	${ECLIPSE} -nosplash \
+	${ECLIPSE} ${OPTIONS} \
 	  -application org.eclipse.equinox.p2.director \
 	  -repository http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases/ \
 	  -destination ${installationpath}/eclipse/ \
