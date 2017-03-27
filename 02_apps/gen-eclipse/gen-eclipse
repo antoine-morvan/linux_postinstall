@@ -241,7 +241,7 @@ if [ "$FAST" != "YES" ]; then
 	  -repository http://download.eclipse.org/releases/${ECLIPSE_VERSION} \
 	  ${P2OPTIONS} -destination ${installationpath}/eclipse/ \
 	  -uninstallIU org.eclipse.emf.ecoretools.sdk.feature.group \
-	  -installIU org.eclipse.emf.ecoretools.sdk.feature.group \	  
+	  -installIU org.eclipse.emf.ecoretools.sdk.feature.group \
 	  -installIU org.eclipse.emf.mwe2.runtime.sdk.feature.group \
 	  -installIU org.eclipse.xtend.sdk.feature.group \
 	  -installIU org.eclipse.xtext.sdk.feature.group
