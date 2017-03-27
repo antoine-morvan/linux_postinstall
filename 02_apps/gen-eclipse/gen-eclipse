@@ -66,8 +66,8 @@ FAST=NO
 ##	Check script configuration
 ##################################
 
-OPTIONS=-nosplash -consolelog 
-P2OPTIONS=-followReferences
+OPTIONS="-nosplash -consolelog"
+P2OPTIONS="-followReferences"
 
 USER=`whoami`
 [ "$USER" == "root" ] && echo "Should not be run as root" && exit 1
