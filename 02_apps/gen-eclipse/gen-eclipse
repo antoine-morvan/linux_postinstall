@@ -228,7 +228,7 @@ if [ "$FAST" != "YES" ]; then
 	  -installIU org.eclipse.tm.terminal.feature.feature.group \
 	  -installIU org.eclipse.stardust.modeling.wst-feature.feature.group \
 	  -installIU org.eclipse.linuxtools.changelog.feature.group \
-	  -installIU org.eclipse.egit.feature.groupg \
+	  -installIU org.eclipse.egit.feature.group \
 	  -installIU org.eclipse.egit.gitflow.feature.feature.group
 	  
 	BASE_RESULT=$?
