@@ -207,9 +207,6 @@ SETUP_JNIMAP=NO
 SETUP_GECOS_SCRIPT=NO
 SETUP_GECOS_UI=NO
 
-ECLIPSE_OPTIONS="-nosplash -consolelog"
-
-
 { ##	Check & config script
   ##################################
 	
@@ -251,7 +248,7 @@ ECLIPSE_OPTIONS="-nosplash -consolelog"
 			;;
 	esac
 	rm ${TMPFILE}
-	chmod -R +x ${installationpath}
+	chmod -R +rwx ${installationpath}
 	
 	echo "${ECHOPREFIX} Setup done."
 }
@@ -259,7 +256,7 @@ ECLIPSE_OPTIONS="-nosplash -consolelog"
 ##################################
 ##	Config Eclipse
 ##################################
-
+WORKSPACE_PATH=${installationpath}/workspace
 {
 	TMPCONFFILE=$(mktemp tmp_XXXXXXX_eclipse.ini)
 	mkdir -p ${HOMEDIR}/.eclipse
@@ -271,15 +268,18 @@ ECLIPSE_OPTIONS="-nosplash -consolelog"
 		echo -e "--launcher.GTK_version\n2" >> ${TMPCONFFILE}
 	fi
 	cat ${installationpath}/${ECLIPSE_INIT_FOLDER}/eclipse.ini >> ${TMPCONFFILE}
-	mv ${TMPCONFFILE} ${installationpath}/${ECLIPSE_INIT_FOLDER}/eclipse.ini
+	cat ${TMPCONFFILE} > ${installationpath}/${ECLIPSE_INIT_FOLDER}/eclipse.ini
+	rm ${TMPCONFFILE}
 
 	#initialize configuration
 	TMPCONFFILE=$(mktemp tmp_XXXXXXX_config.ini)
 	cat ${installationpath}/${ECLIPSE_INIT_FOLDER}/configuration/config.ini | grep -v "osgi.instance.area.default" > $TMPCONFFILE
-	mv $TMPCONFFILE ${installationpath}/${ECLIPSE_INIT_FOLDER}/configuration/config.ini
+	cat $TMPCONFFILE > ${installationpath}/${ECLIPSE_INIT_FOLDER}/configuration/config.ini
 	cat >> ${installationpath}/${ECLIPSE_INIT_FOLDER}/configuration/config.ini << EOF
-osgi.instance.area.default=${installationpath}/workspace
+osgi.instance.area.default=${WORKSPACE_PATH}
 EOF
+	rm $TMPCONFFILE
+	
 	#Config skip workspace selection
 	mkdir -p ${installationpath}/${ECLIPSE_INIT_FOLDER}/configuration/.settings/
 	cat > ${installationpath}/${ECLIPSE_INIT_FOLDER}/configuration/.settings/org.eclipse.ui.ide.prefs << "EOF"
@@ -287,9 +287,9 @@ SHOW_WORKSPACE_SELECTION_DIALOG=false
 eclipse.preferences.version=1
 EOF
 
-	mkdir -p ${installationpath}/workspace/.metadata/.plugins/org.eclipse.core.runtime/.settings/
+	mkdir -p ${WORKSPACE_PATH}/.metadata/.plugins/org.eclipse.core.runtime/.settings/
 	#Always exit without prompt
-	cat > ${installationpath}/workspace/.metadata/.plugins/org.eclipse.core.runtime/.settings/org.eclipse.ui.ide.prefs << "EOF"
+	cat > ${WORKSPACE_PATH}/.metadata/.plugins/org.eclipse.core.runtime/.settings/org.eclipse.ui.ide.prefs << "EOF"
 EXIT_PROMPT_ON_CLOSE_LAST_WINDOW=false
 REFRESH_WORKSPACE_ON_STARTUP=true
 eclipse.preferences.version=1
@@ -302,26 +302,31 @@ EOF
 ##	Setup Eclipse plug-ins
 ##################################
 
+ECLIPSE_OPTIONS="-nosplash -consolelog -clean -data ${WORKSPACE_PATH}"
 ECLIPSE="${installationpath}/${ECLIPSE_BIN_FOLDER}/eclipse${ECLIPSE_BIN_EXTENSTION} ${ECLIPSE_OPTIONS}"
 P2APP="${ECLIPSE} -application org.eclipse.equinox.p2.director"
 
 echo "${ECHOPREFIX} Testing eclipse p2 director application ..."
-#{P2APP} -h > /dev/null
-RES=0
+${P2APP} -h > /dev/null
+RES=$?
 if [ "$RES" != "0" ]; then
 	echo "Something went wrong (could not execute p2 director application)."
 	exit 1
 fi
+echo ""
 
 SETUP_RESULT_TMPFILE=`mktemp setup_result_tmpfile_XXXXXXXXXXXXXX.txt`
 function setup_eclipse_plugins {
 	TITLE=$1
 	echo "${ECHOPREFIX}   * Installing '$TITLE' plugins"
 	DESTFOLDER=$2
-	REPO=$3
+	REPOS=$3
 	shift
 	shift
 	shift
+	echo "${ECHOPREFIX}      - P2 Repository  : $REPOS"
+	echo "${ECHOPREFIX}      - Eclipse folder : $DESTFOLDER"
+	echo "${ECHOPREFIX}      - Features       : " #multiline echo
 	FEATURES=
 	while [ $# -ge 1 ]; do
 		if [ "$FEATURES" != "" ]; then
@@ -329,17 +334,24 @@ function setup_eclipse_plugins {
 		fi
 		FEATURE="-installIU $1"
 		FEATURES+=`echo $FEATURE | sed 's/-installIU %U/-uninstallIU /g'`
+		echo "${ECHOPREFIX}                         - $1"
 		shift
 	done
-	echo "${ECHOPREFIX}      - P2 Repository  : $REPO"
-	echo "${ECHOPREFIX}      - Eclipse folder : $DESTFOLDER"
-	echo -n "${ECHOPREFIX}      - Features       : " #multiline echo
-	echo "`echo $FEATURES | sed "s/ -/\n${ECHOPREFIX}                         -/g"`"
 	echo "${ECHOPREFIX}    Launching ..."
+	echo ""
 	
-	${P2APP} -repository ${REPO} -destination ${DESTFOLDER} ${FEATURES}
+		#-metadataRepository ${REPOS}
+		#-artifactRepository ${REPOS}
+	${P2APP} \
+		-repository ${REPOS} \
+		-destination ${DESTFOLDER} \
+		-profile org.eclipse.gmf.sdk.feature.group.profile \
+		-profileProperties org.eclipse.update.install.features=true \
+		${FEATURES}
+	
 	SETUP_RESULT=$?
-	echo "${ECHOPREFIX}   - $TITLE Setup : $SETUP_RESULT" >> $SETUP_RESULT_TMPFILE
+	echo ""
+	echo "${ECHOPREFIX}   - Setup $TITLE : $SETUP_RESULT" >> $SETUP_RESULT_TMPFILE
 	echo "${ECHOPREFIX}    $TITLE Setup done : $SETUP_RESULT"
 	echo "${ECHOPREFIX}"
 }
@@ -356,13 +368,63 @@ function finish {
 rm -f $SETUP_RESULT_TMPFILE
 ECLIPSE_PLUGINS_INSTALL_PATH=${installationpath}/${ECLIPSE_INIT_FOLDER}
 
+
+setup_eclipse_plugins \
+	"Color Theme" \
+	${ECLIPSE_PLUGINS_INSTALL_PATH} \
+	http://download.eclipse.org/eclipse/updates/4.6,http://eclipse-color-theme.github.io/update/,http://download.eclipse.org/releases/${ECLIPSE_VERSION},http://repo1.maven.org/maven2/.m2e/connectors/m2eclipse-tycho/0.8.0/N/0.8.0.201409231215/,http://download.eclipse.org/buildship/updates/e46/releases/1.0,http://community.polarion.com/projects/subversive/download/eclipse/6.0/neon-site/,http://anb0s.github.io/EasyShell,http://update.eclemma.org/,http://jautodoc.sourceforge.net/update/,http://andrei.gmxhome.de/eclipse/,http://findbugs.cs.umd.edu/eclipse/,http://download.eclipse.org/efxclipse/updates-released/2.4.0/site \
+	org.eclipse.releng.tools.feature.group \
+	com.github.eclipsecolortheme.feature.feature.group \
+	org.eclipse.cdt.feature.group \
+	org.eclipse.cdt.platform.feature.group \
+	org.eclipse.cdt.gnu.dsf.feature.group \
+	org.eclipse.cdt.gnu.build.feature.group \
+	org.eclipse.cdt.gnu.debug.feature.group \
+	org.eclipse.cdt.gdb.feature.group \
+	org.eclipse.cdt.debug.standalone.feature.group \
+	org.eclipse.jst.web_ui.feature.feature.group \
+	org.eclipse.jpt.jpa.feature.feature.group \
+	org.eclipse.jpt.jpadiagrameditor.feature.feature.group \
+	org.eclipse.wst.xsl.feature.feature.group \
+	org.eclipse.wst.xml_ui.feature.feature.group \
+	org.eclipse.wst.web_ui.feature.feature.group \
+	org.eclipse.m2e.feature.feature.group \
+	org.sonatype.m2e.mavenarchiver.feature.feature.group \
+	org.eclipse.m2e.wtp.feature.feature.group \
+	org.eclipse.jpt.jaxb.feature.feature.group \
+	org.eclipse.tm.terminal.feature.feature.group \
+	org.eclipse.stardust.modeling.wst-feature.feature.group \
+	org.eclipse.linuxtools.changelog.feature.group \
+	org.eclipse.egit.feature.group \
+	org.eclipse.egit.gitflow.feature.feature.group \
+	org.eclipse.emf.mwe2.runtime.sdk.feature.group \
+	org.eclipse.xtend.sdk.feature.group \
+	org.eclipse.xtext.sdk.feature.group \
+	org.eclipse.team.svn.feature.group \
+	org.sonatype.tycho.m2e.feature.feature.group \
+	org.eclipse.dltk.itcl.feature.group \
+	org.eclipse.dltk.ruby.feature.group \
+	org.eclipse.dltk.sh.feature.group \
+	org.eclipse.buildship.feature.group \
+	org.polarion.eclipse.team.svn.connector.feature.group \
+	org.polarion.eclipse.team.svn.connector.svnkit18.feature.group \
+	de.anbos.eclipse.easyshell.feature.feature.group \
+	com.mountainminds.eclemma.feature.feature.group \
+	net.sf.jautodoc.feature.feature.group \
+	AnyEditTools.feature.group \
+	edu.umd.cs.findbugs.plugin.eclipse.feature.group \
+	org.eclipse.fx.ide.feature.feature.group
+
+
+
+exit
 setup_eclipse_plugins \
 	"Color Theme" \
 	${ECLIPSE_PLUGINS_INSTALL_PATH} \
 	http://eclipse-color-theme.github.io/update/ \
 	com.github.eclipsecolortheme.feature.feature.group
 
-finish
+#finish
 
 setup_eclipse_plugins \
 	"cdt, xml, web, m2e, ..." \
@@ -388,9 +450,9 @@ setup_eclipse_plugins \
 	org.eclipse.tm.terminal.feature.feature.group \
 	org.eclipse.stardust.modeling.wst-feature.feature.group \
 	org.eclipse.linuxtools.changelog.feature.group \
-	%Uorg.eclipse.egit.feature.group \
 	org.eclipse.egit.feature.group \
 	org.eclipse.egit.gitflow.feature.feature.group
+
 
 finish
 
@@ -399,7 +461,7 @@ finish
 		echo ""
 		${ECLIPSE} \
 		  -application org.eclipse.equinox.p2.director \
-		  ${P2OPTIONS} \
+		  ${P2OPTIONS} -followReferences \
 		  -repository http://download.eclipse.org/releases/${ECLIPSE_VERSION} \
 		  -destination ${installationpath}/eclipse/ \
 		  -installIU org.eclipse.emf.mwe2.runtime.sdk.feature.group \
