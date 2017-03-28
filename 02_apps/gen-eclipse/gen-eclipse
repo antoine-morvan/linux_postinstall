@@ -6,14 +6,104 @@
 #
 # Helper script to setup a proper Eclipse environment. Setups  
 # Eclipse in the given folder, initializes the workspace with few 
-# parameters, fix GTK2 startup, and install plugins. By default, 
-# CDT, Maven, Gradle, JAXB, WebTools, and XText plugins.
+# parameters, fix GTK2 startup, and install plugins. 
 #
 ####################################################################
 
+function check_java_version {	
+	JAVA8=`java -version 2>&1 | grep 1.9 | wc -l`
+	[ "$JAVA8" == "0" ] && JAVA9=`java -version 2>&1 | grep 1.9 | wc -l`
+	if [ "$JAVA9" == "0" ]; then
+		cat << "EOF"
+
+Eclipse requires Java 8 or higher. On debian like systems (as root) :
+   $ apt-get install openjdk-8-jdk openjdk-8-source
+   $ JVM=`update-java-alternatives -l | grep 1.8 | cut -d" " -f 1 | head -n 1` 
+   $ update-java-alternatives -s $JVM
+On other Linux distributions, Windows and MacOSX systems, please
+visit http://www.oracle.com/technetwork/java/javase/downloads/index.html
+
+EOF
+		exit 1
+	fi
+}
+
+function check_user {	
+	USER=`whoami`
+	[ "$USER" == "root" ] && echo "Should not be run as root" && exit 1
+}
+
+function check_homedir {	
+	HOMEDIR=$HOME
+	[ ! -d ${HOMEDIR} ] && HOMEDIR=`cat /etc/passwd | grep "$USER" | cut -d":" -f 6`
+	[ ! -d ${HOMEDIR} ] && echo "Could not locate Home directory (${HOMEDIR})" && exit 1
+}
+
+function check_and_set_installation_path {
+	installationpath="$1"
+	[ "$1" == "" ] && read -p "Folder installation path: " installationpath
+
+	if [ -d "${installationpath}" ]; then 
+		if [ -d "${installationpath}/eclipse" ]; then 
+			echo "Error: eclipse folder already exist at the location specified"
+			exit 1
+		fi
+		if [ -d "${installationpath}/workspace" ]; then
+			echo "Error: workspace folder already exist at the location specified"
+			exit 1
+		fi
+	else
+		mkdir -p ${installationpath}
+	fi
+
+	installationpath=`(cd ${installationpath} && echo $PWD)`
+	#test write permission
+	[ ! -w ${installationpath} ] && echo "Cannot write into ${installationpath}" && exit 1
+	echo ""
+	echo "Installing in ${installationpath}"
+	echo ""
+}
+
+function check_and_set_platform {
+	# Supported platforms
+	#   - Windows
+	#   - Windows (x86_64)
+	#   - Linux (x86/GTK+)
+	#   - Linux (x86_64/GTK+)
+	#   - Mac OSX (Mac/Cocoa/x86_64)
+
+	PLATFORM=`uname -s`
+	ARCH=`uname -m`
+
+	ECLIPSE_ARCHSUFF=
+	[ "${ARCH}" == "x86_64" ] && ECLIPSE_ARCHSUFF=-x86_64
+
+	case $PLATFORM in
+		Linux)
+			ECLIPSE_PLATFORM=linux-gtk
+			ARCHIVE_EXTENSION=tar.gz
+			;;
+		Darwin)
+			ECLIPSE_PLATFORM=macosx-cocoa
+			ARCHIVE_EXTENSION=tar.gz
+			INIT_FOLDER="./Eclipse.app/Contents/MacOS/"
+			;;
+		CYGWIN_NT-6.1 | CYGWIN_NT-10.0)
+			ECLIPSE_PLATFORM=linux-gtk
+			ARCHIVE_EXTENSION=zip
+			;;
+		*)
+			echo "Unsupported platform $PLATFORM."
+			exit 1
+			;;
+	esac
+}
+
+# 
 ## TODO:
 # redmine
-# gradle?
+# jdk = www.google.com/search?btnI=I'm+Feeling+Lucky&q=jdk
+# eclipse : http://download.eclipse.org/eclipse/downloads/
 
 export MIRROR_URL=http://home.koub.org/files/
 
@@ -21,10 +111,9 @@ if [ "$2" != "" ]; then
 	export MIRROR_URL=$2
 fi
 
-ECLIPSE_VERSION=neon
-ECLIPSE_PRE=2
+ECLIPSE_VERSION=4.6.3
 
-DARKTHEME=YES
+DARKTHEME=NO
 
 #useful plugins
 SETUP_SVN=YES 	# SVN Client
@@ -62,96 +151,31 @@ SETUP_GECOS_UI=NO
 #if set to YES, skip generic & tmf plugins 
 FAST=NO
 
-##################################
-##	Check script configuration
-##################################
 
 OPTIONS="-nosplash -consolelog"
 P2OPTIONS="-followReferences"
 
-USER=`whoami`
-[ "$USER" == "root" ] && echo "Should not be run as root" && exit 1
 
-HOMEDIR=$HOME
-[ ! -d ${HOMEDIR} ] && HOMEDIR=`cat /etc/passwd | grep "$USER" | cut -d":" -f 6`
-[ ! -d ${HOMEDIR} ] && echo "Could not locate Home directory (${HOMEDIR})" && exit 1
+##################################
+##	Check & config script
+##################################
 
-JAVA8=`java -version 2>&1 | grep 1.8 | wc -l`
-[ "$JAVA8" == "0" ] && JAVA9=`java -version 2>&1 | grep 1.9 | wc -l`
-if [ "$JAVA9" == "0" ]; then
-	echo "GeCoS requires Java 7 or higher. On debian like systems (as root) :"
-	echo "   $ apt-get install openjdk-8-jdk openjdk-8-source"
-	echo "   $ JVM=\`update-java-alternatives -l | grep 1.8 | cut -d\" \" -f 1\`"
-	echo "   $ update-java-alternatives -s \$JVM"
-	exit 1
-fi
+{
+check_user
+check_homedir
+check_java_version
 
-if [ "$1" == "" ];
-then
-	echo "Folder installation path: "
-	read installationpath
-else
-	installationpath="$1"
-fi
+check_and_set_installation_path $1
+check_and_set_platform
 
-if [ -d "${installationpath}" ];
-then 
-	if [ -d "${installationpath}/eclipse" ];
-	then 
-		echo "Error: eclipse folder already exist at the location specified"
-		exit 1
-	fi
-	if [ -d "${installationpath}/workspace" ];
-	then
-		echo "Error: workspace folder already exist at the location specified"
-		exit 1
-	fi
-else
-	mkdir -p ${installationpath}
-fi
+ECLIPSE_ARCHIVE_NAME=eclipse-platform-${ECLIPSE_VERSION}-${ECLIPSE_PLATFORM}${ECLIPSE_ARCHSUFF}.${ARCHIVE_EXTENSION}
 
-installationpath=`(cd ${installationpath} && echo $PWD)`
-
-#test write permission
-[ ! -w ${installationpath} ] && echo "Cannot write into ${installationpath}" && exit 1
-echo ""
-echo "Installing in ${installationpath}."
-echo ""
 ECLIPSE=${installationpath}/eclipse/eclipse
 
-SYSTEM=`uname -s`
-ARCH=`uname -m`
-ECLIPSE_SUF=
-if [ "${ARCH}" == "x86_64" ];
-then
-	ECLIPSE_SUF=-x86_64
-fi
+echo $ECLIPSE_ARCHIVE_NAME
+}
 
-if [ "${SYSTEM}" == "Darwin" ];
-then
-	ECLIPSE_PLATFORM=macosx-cocoa
-	WGET=curl
-	WGET_OPT=-o
-	INIT_FOLDER="./Eclipse.app/Contents/MacOS/"
-else
-	if [ "${SYSTEM}" == "Linux" ];
-	then
-		ECLIPSE_PLATFORM=linux-gtk
-		WGET=wget
-		WGET_OPT=-O
-		INIT_FOLDER=
-	else
-		echo "Unsupported operating system : ${SYSTEM}"
-		exit 1
-		#ECLIPSE_PLATFORM=win32
-		#WGET=wget
-		#WGET_OPT=-O
-		#INIT_FOLDER=
-	fi
-fi
-
-
-
+exit 
 ##################################
 ##	Setup Eclipse
 ##################################
