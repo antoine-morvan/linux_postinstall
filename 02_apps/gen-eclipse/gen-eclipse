@@ -11,7 +11,7 @@
 ####################################################################
 
 function check_java_version {	
-	JAVA8=`java -version 2>&1 | grep 1.9 | wc -l`
+	JAVA8=`java -version 2>&1 | grep 1.8 | wc -l`
 	[ "$JAVA8" == "0" ] && JAVA9=`java -version 2>&1 | grep 1.9 | wc -l`
 	if [ "$JAVA9" == "0" ]; then
 		cat << "EOF"
@@ -59,9 +59,6 @@ function check_and_set_installation_path {
 	installationpath=`(cd ${installationpath} && echo $PWD)`
 	#test write permission
 	[ ! -w ${installationpath} ] && echo "Cannot write into ${installationpath}" && exit 1
-	echo ""
-	echo "Installing in ${installationpath}"
-	echo ""
 }
 
 function check_and_set_platform {
@@ -99,19 +96,47 @@ function check_and_set_platform {
 	esac
 }
 
-# 
-## TODO:
-# redmine
-# jdk = www.google.com/search?btnI=I'm+Feeling+Lucky&q=jdk
-# eclipse : http://download.eclipse.org/eclipse/downloads/
+function check_and_set_download_tool {
+	CURL=/usr/bin/curl
+	WGET=/usr/bin/wget
+	
+	$WGET --version 2&> /dev/null
+	WGETPRESENT=$?
+	$CURL --version 2&> /dev/null
+	CURLPRESENT=$?
+	
+	if [ "$CURLPRESENT" == "0" ]; then
+		DOWNLOADTOOL=$CURL
+		DOWNLOADOPTION="-o"
+	else 
+		if [ "$WGETPRESENT" == 0 ]; then
+			DOWNLOADTOOL=$WGET
+			DOWNLOADOPTION="-O"
+		else
+			echo "Could not locate download tools (WGet or CURL)."
+			exit 1
+		fi
+	fi
+}
 
-export MIRROR_URL=http://home.koub.org/files/
+function check_and_set_eclipse_mirror {
+	# MIRROR List :
+	#http://ftp.fau.de/eclipse/
+	#http://mirror.ibcp.fr/pub/eclipse/
+	#http://mirror.ibcp.fr/pub/eclipse/
+	#http://ftp.halifax.rwth-aachen.de/eclipse/
+	#http://eclipse.mirror.wearetriple.com/
+	#http://artfiles.org/eclipse.org/
+	#http://mirror.switch.ch/eclipse/
+	
+	MIRRORURL="http://ftp.fau.de/eclipse/"
+	PATH="technology/epp/downloads/release/${ECLIPSE_VERSION}/${ECLIPSE_VERSION_MINOR}/"
+	ECLIPSE_ARCHIVE_NAME=eclipse-java-${ECLIPSE_VERSION}-${ECLIPSE_VERSION_MINOR}-${ECLIPSE_PLATFORM}${ECLIPSE_ARCHSUFF}.${ARCHIVE_EXTENSION}
+	URL=${MIRRORURL}${PATH}${ECLIPSE_ARCHIVE_NAME}
+}
 
-if [ "$2" != "" ]; then
-	export MIRROR_URL=$2
-fi
-
-ECLIPSE_VERSION=4.6.3
+ECLIPSE_VERSION=neon
+ECLIPSE_VERSION_MINOR=3
 
 DARKTHEME=NO
 
@@ -155,30 +180,37 @@ FAST=NO
 OPTIONS="-nosplash -consolelog"
 P2OPTIONS="-followReferences"
 
+{ ##	Check & config script
+  ##################################
+	
+	check_user
+	check_homedir
+	check_java_version
+	
+	check_and_set_installation_path $1
+	check_and_set_platform
+	check_and_set_download_tool
+	check_and_set_eclipse_mirror
 
-##################################
-##	Check & config script
-##################################
+	ECLIPSE=${installationpath}/eclipse/eclipse
 
-{
-check_user
-check_homedir
-check_java_version
-
-check_and_set_installation_path $1
-check_and_set_platform
-
-ECLIPSE_ARCHIVE_NAME=eclipse-platform-${ECLIPSE_VERSION}-${ECLIPSE_PLATFORM}${ECLIPSE_ARCHSUFF}.${ARCHIVE_EXTENSION}
-
-ECLIPSE=${installationpath}/eclipse/eclipse
-
-echo $ECLIPSE_ARCHIVE_NAME
+	echo ""
+	echo "Installing in ${installationpath}"
+	echo "Archive name : ${ECLIPSE_ARCHIVE_NAME}"
+	echo "URL = $URL"
+	echo ""
 }
 
-exit 
 ##################################
 ##	Setup Eclipse
 ##################################
+
+TMPFILE=$(mktemp)
+echo "${DOWNLOADTOOL} ${DOWNLOADOPTION} ${TMPFILE} ${URL}"
+
+exit
+
+
 # Eclipse mars modeling download and unrar
 ${WGET} ${MIRROR_URL}/eclipse-modeling-${ECLIPSE_VERSION}-${ECLIPSE_PRE}-${ECLIPSE_PLATFORM}${ECLIPSE_SUF}.tar.gz ${WGET_OPT} /tmp/eclipse.tar.gz
 tar -xf /tmp/eclipse.tar.gz -C ${installationpath}
