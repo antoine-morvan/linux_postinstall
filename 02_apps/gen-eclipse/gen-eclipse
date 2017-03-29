@@ -22,7 +22,7 @@ if [ "$2" != "" ]; then
 fi
 
 ECLIPSE_VERSION=neon
-ECLIPSE_PRE=2
+ECLIPSE_PRE=3
 
 DARKTHEME=YES
 
