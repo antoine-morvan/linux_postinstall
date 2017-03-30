@@ -106,7 +106,7 @@ function check_and_set_platform {
 			
 			ECLIPSE_INIT_FOLDER="eclipse/"
 			ECLIPSE_BIN_FOLDER="eclipse/"
-			ECLIPSE_BIN_EXTENSTION=".exe"
+			ECLIPSE_BIN_EXTENSTION="c.exe"
 			;;
 		*)
 			echo "Unsupported platform $PLATFORM."
@@ -302,8 +302,10 @@ EOF
 ##################################
 ##	Setup Eclipse plug-ins
 ##################################
-
-ECLIPSE_OPTIONS="-nosplash -consolelog -clean -data ${WORKSPACE_PATH}"
+#-data ${WORKSPACE_PATH}
+ECLIPSE_PLUGINS_INSTALL_PATH=${installationpath}/${ECLIPSE_INIT_FOLDER}
+ECLIPSE_OPTIONS="-nosplash -consolelog -clean -purgeHistory"
+P2OPTIONS="-followReferences"
 ECLIPSE="${installationpath}/${ECLIPSE_BIN_FOLDER}/eclipse${ECLIPSE_BIN_EXTENSTION} ${ECLIPSE_OPTIONS}"
 P2APP="${ECLIPSE} -application org.eclipse.equinox.p2.director"
 
@@ -366,27 +368,6 @@ function finish {
 	exit
 }
 
-
-
-
-#TODO remove and replace
-MIRROR_URL="${MIRRORURL}${ECLIPSE_URL_PATH}"
-ECLIPSE=${installationpath}/eclipse/eclipse
-SYSTEM=$PLATFORM
-#ARCH=`uname -m`
-ECLIPSE_SUF=$ECLIPSE_ARCHSUFF
-#ECLIPSE_PLATFORM=linux-gtk
-WGET=wget
-WGET_OPT=-O
-#TODO : fix use below
-INIT_FOLDER=
-OPTIONS="-nosplash -consolelog"
-P2OPTIONS="-followReferences"
-
-
-ECLIPSE_PLUGINS_INSTALL_PATH=${installationpath}/${ECLIPSE_INIT_FOLDER}
-
-
 setup_eclipse_plugins \
 	"ALL" \
 	${ECLIPSE_PLUGINS_INSTALL_PATH} \
@@ -432,9 +413,11 @@ setup_eclipse_plugins \
 	AnyEditTools.feature.group \
 	edu.umd.cs.findbugs.plugin.eclipse.feature.group \
 	org.eclipse.fx.ide.feature.feature.group
-	
+
+
+finish	
 exit
-#finish
+#
 
 setup_eclipse_plugins \
 	"cdt, xml, web, m2e, ..." \
