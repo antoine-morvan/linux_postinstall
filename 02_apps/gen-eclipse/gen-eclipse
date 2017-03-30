@@ -88,24 +88,24 @@ function check_and_set_platform {
 			ECLIPSE_PLATFORM=linux-gtk
 			ARCHIVE_EXTENSION=tar.gz
 			
-			ECLIPSE_INIT_FOLDER="./eclipse/"
-			ECLIPSE_BIN_FOLDER="./eclipse/"
+			ECLIPSE_INIT_FOLDER="eclipse/"
+			ECLIPSE_BIN_FOLDER="eclipse/"
 			ECLIPSE_BIN_EXTENSTION=
 			;;
 		Darwin)
 			ECLIPSE_PLATFORM=macosx-cocoa
 			ARCHIVE_EXTENSION=tar.gz
 			
-			ECLIPSE_INIT_FOLDER="./Eclipse.app/Contents/Eclipse/"
-			ECLIPSE_BIN_FOLDER="./Eclipse.app/Contents/MacOS/"
+			ECLIPSE_INIT_FOLDER="Eclipse.app/Contents/Eclipse/"
+			ECLIPSE_BIN_FOLDER="Eclipse.app/Contents/MacOS/"
 			ECLIPSE_BIN_EXTENSTION=
 			;;
 		CYGWIN_NT-6.1 | CYGWIN_NT-10.0)
 			ECLIPSE_PLATFORM=win32
 			ARCHIVE_EXTENSION=zip
 			
-			ECLIPSE_INIT_FOLDER="./eclipse/"
-			ECLIPSE_BIN_FOLDER="./eclipse/"
+			ECLIPSE_INIT_FOLDER="eclipse/"
+			ECLIPSE_BIN_FOLDER="eclipse/"
 			ECLIPSE_BIN_EXTENSTION=".exe"
 			;;
 		*)
@@ -171,6 +171,7 @@ function check_and_set_eclipse_mirror {
 
 ECLIPSE_VERSION=neon
 ECLIPSE_VERSION_MINOR=3
+ECLIPSE_PRE=${ECLIPSE_VERSION_MINOR}
 
 DARKTHEME=NO
 
@@ -207,13 +208,14 @@ SETUP_JNIMAP=NO
 SETUP_GECOS_SCRIPT=NO
 SETUP_GECOS_UI=NO
 
-{ ##	Check & config script
-  ##################################
-	
+##################################
+##	Check script configuration
+##################################
+{
 	check_user
 	check_homedir
 	check_java_version
-	
+
 	check_and_set_installation_path $1
 	check_and_set_platform
 	check_and_set_download_tool
@@ -229,7 +231,7 @@ SETUP_GECOS_UI=NO
 ##################################
 ##	Setup Eclipse
 ##################################
-
+	
 {
 	TMPFILE=$(mktemp tmp_XXXXXXX_${ECLIPSE_ARCHIVE_NAME})
 	echo "${ECHOPREFIX} ${DOWNLOADTOOL} ${DOWNLOADOPTION} ${TMPFILE} ${URL}"
@@ -297,7 +299,6 @@ EOF
 
 	echo "${ECHOPREFIX} Basic config done"
 }
-
 ##################################
 ##	Setup Eclipse plug-ins
 ##################################
@@ -345,8 +346,7 @@ function setup_eclipse_plugins {
 	${P2APP} \
 		-repository ${REPOS} \
 		-destination ${DESTFOLDER} \
-		-profile org.eclipse.gmf.sdk.feature.group.profile \
-		-profileProperties org.eclipse.update.install.features=true \
+		${P2OPTIONS} \
 		${FEATURES}
 	
 	SETUP_RESULT=$?
@@ -355,6 +355,7 @@ function setup_eclipse_plugins {
 	echo "${ECHOPREFIX}    $TITLE Setup done : $SETUP_RESULT"
 	echo "${ECHOPREFIX}"
 }
+rm -f $SETUP_RESULT_TMPFILE
 
 function finish {
 	echo "${ECHOPREFIX}"
@@ -365,12 +366,29 @@ function finish {
 	exit
 }
 
-rm -f $SETUP_RESULT_TMPFILE
+
+
+
+#TODO remove and replace
+MIRROR_URL="${MIRRORURL}${ECLIPSE_URL_PATH}"
+ECLIPSE=${installationpath}/eclipse/eclipse
+SYSTEM=$PLATFORM
+#ARCH=`uname -m`
+ECLIPSE_SUF=$ECLIPSE_ARCHSUFF
+#ECLIPSE_PLATFORM=linux-gtk
+WGET=wget
+WGET_OPT=-O
+#TODO : fix use below
+INIT_FOLDER=
+OPTIONS="-nosplash -consolelog"
+P2OPTIONS="-followReferences"
+
+
 ECLIPSE_PLUGINS_INSTALL_PATH=${installationpath}/${ECLIPSE_INIT_FOLDER}
 
 
 setup_eclipse_plugins \
-	"Color Theme" \
+	"ALL" \
 	${ECLIPSE_PLUGINS_INSTALL_PATH} \
 	http://download.eclipse.org/eclipse/updates/4.6,http://eclipse-color-theme.github.io/update/,http://download.eclipse.org/releases/${ECLIPSE_VERSION},http://repo1.maven.org/maven2/.m2e/connectors/m2eclipse-tycho/0.8.0/N/0.8.0.201409231215/,http://download.eclipse.org/buildship/updates/e46/releases/1.0,http://community.polarion.com/projects/subversive/download/eclipse/6.0/neon-site/,http://anb0s.github.io/EasyShell,http://update.eclemma.org/,http://jautodoc.sourceforge.net/update/,http://andrei.gmxhome.de/eclipse/,http://findbugs.cs.umd.edu/eclipse/,http://download.eclipse.org/efxclipse/updates-released/2.4.0/site \
 	org.eclipse.releng.tools.feature.group \
@@ -414,16 +432,8 @@ setup_eclipse_plugins \
 	AnyEditTools.feature.group \
 	edu.umd.cs.findbugs.plugin.eclipse.feature.group \
 	org.eclipse.fx.ide.feature.feature.group
-
-
-
+	
 exit
-setup_eclipse_plugins \
-	"Color Theme" \
-	${ECLIPSE_PLUGINS_INSTALL_PATH} \
-	http://eclipse-color-theme.github.io/update/ \
-	com.github.eclipsecolortheme.feature.feature.group
-
 #finish
 
 setup_eclipse_plugins \
@@ -453,371 +463,402 @@ setup_eclipse_plugins \
 	org.eclipse.egit.feature.group \
 	org.eclipse.egit.gitflow.feature.feature.group
 
+exit
+echo ""
+echo " * setup from ${ECLIPSE_VERSION} repo (cdt, xml, web, m2e, ...)"
+echo ""
+${ECLIPSE} ${OPTIONS} \
+  -application org.eclipse.equinox.p2.director \
+  -repository http://download.eclipse.org/releases/${ECLIPSE_VERSION} \
+  ${P2OPTIONS} -destination ${installationpath}/eclipse/ \
+  -installIU org.eclipse.cdt.feature.group \
+  -installIU org.eclipse.cdt.platform.feature.group \
+  -installIU org.eclipse.cdt.gnu.dsf.feature.group \
+  -installIU org.eclipse.cdt.gnu.build.feature.group \
+  -installIU org.eclipse.cdt.gnu.debug.feature.group \
+  -installIU org.eclipse.cdt.gdb.feature.group \
+  -installIU org.eclipse.cdt.debug.standalone.feature.group \
+  -installIU org.eclipse.jst.web_ui.feature.feature.group \
+  -installIU org.eclipse.jpt.jpa.feature.feature.group \
+  -installIU org.eclipse.jpt.jpadiagrameditor.feature.feature.group \
+  -installIU org.eclipse.wst.xsl.feature.feature.group \
+  -installIU org.eclipse.wst.xml_ui.feature.feature.group \
+  -installIU org.eclipse.wst.web_ui.feature.feature.group \
+  -installIU org.eclipse.m2e.feature.feature.group \
+  -installIU org.sonatype.m2e.mavenarchiver.feature.feature.group \
+  -installIU org.eclipse.m2e.wtp.feature.feature.group \
+  -installIU org.eclipse.jpt.jaxb.feature.feature.group \
+  -installIU org.eclipse.tm.terminal.feature.feature.group \
+  -installIU org.eclipse.stardust.modeling.wst-feature.feature.group \
+  -installIU org.eclipse.linuxtools.changelog.feature.group \
+  -uninstallIU org.eclipse.egit.feature.group \
+  -installIU org.eclipse.egit.feature.group \
+  -installIU org.eclipse.egit.gitflow.feature.feature.group
+  
+BASE_RESULT=$?
 
-finish
-
-		echo ""
-		echo " * Setup Xtet/Xtend/Mwe/Ecore"
-		echo ""
-		${ECLIPSE} \
-		  -application org.eclipse.equinox.p2.director \
-		  ${P2OPTIONS} -followReferences \
-		  -repository http://download.eclipse.org/releases/${ECLIPSE_VERSION} \
-		  -destination ${installationpath}/eclipse/ \
-		  -installIU org.eclipse.emf.mwe2.runtime.sdk.feature.group \
-		  -installIU org.eclipse.xtend.sdk.feature.group \
-		  -installIU org.eclipse.xtext.sdk.feature.group
-		TMF_RESULT=$?
-	fi
+echo ""
+echo " * Setup Xtet/Xtend/Mwe/Ecore"
+echo ""
+${ECLIPSE} ${OPTIONS} \
+  -application org.eclipse.equinox.p2.director \
+  -repository http://download.eclipse.org/releases/${ECLIPSE_VERSION} \
+  ${P2OPTIONS} -destination ${installationpath}/eclipse/ \
+  -installIU org.eclipse.emf.mwe2.runtime.sdk.feature.group \
+  -installIU org.eclipse.xtend.sdk.feature.group \
+  -installIU org.eclipse.xtext.sdk.feature.group
+TMF_RESULT=$?
 
 
+echo ""
+echo " * Setup Tycho"
+echo ""
+${ECLIPSE} ${OPTIONS} \
+  -application org.eclipse.equinox.p2.director \
+  -repository http://repo1.maven.org/maven2/.m2e/connectors/m2eclipse-tycho/0.8.0/N/0.8.0.201409231215/ \
+  ${P2OPTIONS} -destination ${installationpath}/eclipse/ \
+  -installIU org.sonatype.tycho.m2e.feature.feature.group
+TYCHO_RESULT=$?
+
+
+echo ""
+echo " * Setup Releng Tools"
+echo ""
+${ECLIPSE} ${OPTIONS} \
+  -application org.eclipse.equinox.p2.director \
+  -repository http://download.eclipse.org/eclipse/updates/4.6 \
+  ${P2OPTIONS} -destination ${installationpath}/eclipse/ \
+  -installIU org.eclipse.releng.tools.feature.group
+RELENG_RESULT=$?
+
+
+
+if [ "$SETUP_DLTK" == "YES" ]; then
 	echo ""
-	echo " * Setup Tycho"
+	echo " * setup Dynamic Language ToolKit"
+	echo ""
+	
+	
+	${ECLIPSE} ${OPTIONS} \
+	  -application org.eclipse.equinox.p2.director \
+	  -repository http://download.eclipse.org/releases/${ECLIPSE_VERSION} \
+	  ${P2OPTIONS} -destination ${installationpath}/eclipse/ \
+	  -installIU org.eclipse.dltk.itcl.feature.group \
+	  -installIU org.eclipse.dltk.ruby.feature.group \
+	  -installIU org.eclipse.dltk.sh.feature.group
+	DLTK_RESULT=$?
+fi
+
+
+if [ "$SETUP_GRADLE" == "YES" ]; then
+	echo ""
+	echo " * setup Gradle (buildship)"
 	echo ""
 	${ECLIPSE} ${OPTIONS} \
 	  -application org.eclipse.equinox.p2.director \
-	  -repository http://repo1.maven.org/maven2/.m2e/connectors/m2eclipse-tycho/0.8.0/N/0.8.0.201409231215/ \
+	  -repository http://download.eclipse.org/buildship/updates/e46/releases/1.0 \
 	  ${P2OPTIONS} -destination ${installationpath}/eclipse/ \
-	  -installIU org.sonatype.tycho.m2e.feature.feature.group
-	TYCHO_RESULT=$?
+	  -installIU org.eclipse.buildship.feature.group
+	GRADLE_RESULT=$?
+	
+fi
 
-
+if [ "$SETUP_SVN" == "YES" ]; then
 	echo ""
-	echo " * Setup Releng Tools"
+	echo " * setup svn"
 	echo ""
 	${ECLIPSE} ${OPTIONS} \
 	  -application org.eclipse.equinox.p2.director \
-	  -repository http://download.eclipse.org/eclipse/updates/4.6 \
+	  -repository http://download.eclipse.org/releases/${ECLIPSE_VERSION} \
 	  ${P2OPTIONS} -destination ${installationpath}/eclipse/ \
-	  -installIU org.eclipse.releng.tools.feature.group
-	RELENG_RESULT=$?
+	  -installIU org.eclipse.team.svn.feature.group
+	SVN_RESULT=$?
+	
+	echo ""
+	echo " * Setup subversive"
+	echo ""
+	${ECLIPSE} ${OPTIONS} \
+	  -application org.eclipse.equinox.p2.director \
+	  -repository http://community.polarion.com/projects/subversive/download/eclipse/6.0/neon-site/ \
+	  ${P2OPTIONS} -destination ${installationpath}/eclipse/ \
+	  -installIU org.polarion.eclipse.team.svn.connector.feature.group \
+	  -installIU org.polarion.eclipse.team.svn.connector.svnkit18.feature.group
+	SUBVERSIVE_RESULT=$?
+fi
 
+if [ "$SETUP_EASYSHELL" == "YES" ]; then
+	echo ""
+	echo " * Setup easyshell"
+	echo ""
+	${ECLIPSE} ${OPTIONS} \
+	  -application org.eclipse.equinox.p2.director \
+	  -repository http://anb0s.github.io/EasyShell \
+	  ${P2OPTIONS} -destination ${installationpath}/eclipse/ \
+	  -installIU de.anbos.eclipse.easyshell.feature.feature.group
+	EASYSHELL_RESULT=$?
+fi
 
+if [ "$SETUP_TEXCLIPSE" == "YES" ]; then
+	echo ""
+	echo " * Setup texclipse"
+	echo ""
+	${ECLIPSE} ${OPTIONS} \
+	  -application org.eclipse.equinox.p2.director \
+	  -repository http://texlipse.sourceforge.net \
+	  ${P2OPTIONS} -destination ${installationpath}/eclipse/ \
+	  -installIU net.sourceforge.texlipse.feature.group
+	TEXCLIPSE_RESULT=$?
+fi
 
-	if [ "$SETUP_DLTK" == "YES" ]; then
-		echo ""
-		echo " * setup Dynamic Language ToolKit"
-		echo ""
-		
-		
-		${ECLIPSE} ${OPTIONS} \
-		  -application org.eclipse.equinox.p2.director \
-		  -repository http://download.eclipse.org/releases/${ECLIPSE_VERSION} \
-		  ${P2OPTIONS} -destination ${installationpath}/eclipse/ \
-		  -installIU org.eclipse.dltk.itcl.feature.group \
-		  -installIU org.eclipse.dltk.ruby.feature.group \
-		  -installIU org.eclipse.dltk.sh.feature.group
-		DLTK_RESULT=$?
-	fi
+if [ "$SETUP_CUP_LEX" == "YES" ]; then
+	echo ""
+	echo " * Setup cup/lex"
+	echo ""
+	${ECLIPSE} ${OPTIONS} \
+	  -application org.eclipse.equinox.p2.director \
+	  -repository http://cup-lex-eclipse.sourceforge.net/update/ \
+	  ${P2OPTIONS} -destination ${installationpath}/eclipse/ \
+	  -installIU pi.eclipse.cle.feature.group
+	CUP_LEX_RESULT=$?
+fi
 
+if [ "$SETUP_TOM" == "YES" ]; then
+	echo ""
+	echo " * Setup TOM"
+	echo ""
+	${ECLIPSE} ${OPTIONS} \
+	  -application org.eclipse.equinox.p2.director \
+	  -repository http://gecos.gforge.inria.fr/updates/mars/snapshot/ \
+	  ${P2OPTIONS} -destination ${installationpath}/eclipse/ \
+	  -installIU cairn.tools.tom.dev.feature.group
+	TOM_RESULT=$?
+fi
 
-	if [ "$SETUP_GRADLE" == "YES" ]; then
-		echo ""
-		echo " * setup Gradle (buildship)"
-		echo ""
-		${ECLIPSE} ${OPTIONS} \
-		  -application org.eclipse.equinox.p2.director \
-		  -repository http://download.eclipse.org/buildship/updates/e46/releases/1.0 \
-		  ${P2OPTIONS} -destination ${installationpath}/eclipse/ \
-		  -installIU org.eclipse.buildship.feature.group
-		GRADLE_RESULT=$?
-		
-	fi
+if [ "$SETUP_JNIMAP" == "YES" ]; then
+	echo ""
+	echo " * Setup jnimap"
+	echo ""
+	${ECLIPSE} ${OPTIONS} \
+	  -application org.eclipse.equinox.p2.director \
+	  -repository http://gecos.gforge.inria.fr/updates/mars/snapshot/ \
+	  ${P2OPTIONS} -destination ${installationpath}/eclipse/ \
+	  -installIU cairn.tools.jni.mapper.feature.group
+	JNIMAP_RESULT=$?
+fi
 
-	if [ "$SETUP_SVN" == "YES" ]; then
-		echo ""
-		echo " * setup svn"
-		echo ""
-		${ECLIPSE} ${OPTIONS} \
-		  -application org.eclipse.equinox.p2.director \
-		  -repository http://download.eclipse.org/releases/${ECLIPSE_VERSION} \
-		  ${P2OPTIONS} -destination ${installationpath}/eclipse/ \
-		  -installIU org.eclipse.team.svn.feature.group
-		SVN_RESULT=$?
-		
-		echo ""
-		echo " * Setup subversive"
-		echo ""
-		${ECLIPSE} ${OPTIONS} \
-		  -application org.eclipse.equinox.p2.director \
-		  -repository http://community.polarion.com/projects/subversive/download/eclipse/6.0/neon-site/ \
-		  ${P2OPTIONS} -destination ${installationpath}/eclipse/ \
-		  -installIU org.polarion.eclipse.team.svn.connector.feature.group \
-		  -installIU org.polarion.eclipse.team.svn.connector.svnkit18.feature.group
-		SUBVERSIVE_RESULT=$?
-	fi
+if [ "$SETUP_GECOS_SCRIPT" == "YES" ]; then
+	echo ""
+	echo " * Setup gecos scripts"
+	echo ""
+	${ECLIPSE} ${OPTIONS} \
+	  -application org.eclipse.equinox.p2.director \
+	  -repository http://gecos.gforge.inria.fr/updates/mars/snapshot/ \
+	  ${P2OPTIONS} -destination ${installationpath}/eclipse/ \
+	  -installIU gecos.framework.feature.group
+	GECOS_SCRIPT_RESULT=$?
+fi
 
-	if [ "$SETUP_EASYSHELL" == "YES" ]; then
-		echo ""
-		echo " * Setup easyshell"
-		echo ""
-		${ECLIPSE} ${OPTIONS} \
-		  -application org.eclipse.equinox.p2.director \
-		  -repository http://anb0s.github.io/EasyShell \
-		  ${P2OPTIONS} -destination ${installationpath}/eclipse/ \
-		  -installIU de.anbos.eclipse.easyshell.feature.feature.group
-		EASYSHELL_RESULT=$?
-	fi
+if [ "$SETUP_GECOS_UI" == "YES" ]; then
+	echo ""
+	echo " * Setup gecos UI"
+	echo ""
+	${ECLIPSE} ${OPTIONS} \
+	  -application org.eclipse.equinox.p2.director \
+	  -repository http://gecos.gforge.inria.fr/updates/mars/snapshot/ \
+	  ${P2OPTIONS} -destination ${installationpath}/eclipse/ \
+	  -installIU gecos.ui.feature.group \
+	  -installIU gecos.alma.feature.group
+	GECOS_UI_RESULT=$?
+fi
 
-	if [ "$SETUP_TEXCLIPSE" == "YES" ]; then
-		echo ""
-		echo " * Setup texclipse"
-		echo ""
-		${ECLIPSE} ${OPTIONS} \
-		  -application org.eclipse.equinox.p2.director \
-		  -repository http://texlipse.sourceforge.net \
-		  ${P2OPTIONS} -destination ${installationpath}/eclipse/ \
-		  -installIU net.sourceforge.texlipse.feature.group
-		TEXCLIPSE_RESULT=$?
-	fi
+if [ "$SETUP_GRECLIPSE" == "YES" ]; then
+	echo ""
+	echo " * Setup greclipse (groovy)"
+	echo ""
+	${ECLIPSE} ${OPTIONS} \
+	  -application org.eclipse.equinox.p2.director \
+	  -repository http://dist.springsource.org/snapshot/GRECLIPSE/e4.5/ \
+	  ${P2OPTIONS} -destination ${installationpath}/eclipse/ \
+	  -installIU org.codehaus.groovy.eclipse.feature.feature.group \
+	  -installIU org.codehaus.groovy.m2eclipse.feature.feature.group \
+	  -installIU org.codehaus.groovy.jdt.patch.feature.group \
+	  -installIU org.codehaus.groovy24.feature.feature.group
+	GRECLIPSE_RESULT=$?
+fi
 
-	if [ "$SETUP_CUP_LEX" == "YES" ]; then
-		echo ""
-		echo " * Setup cup/lex"
-		echo ""
-		${ECLIPSE} ${OPTIONS} \
-		  -application org.eclipse.equinox.p2.director \
-		  -repository http://cup-lex-eclipse.sourceforge.net/update/ \
-		  ${P2OPTIONS} -destination ${installationpath}/eclipse/ \
-		  -installIU pi.eclipse.cle.feature.group
-		CUP_LEX_RESULT=$?
-	fi
+if [ "$SETUP_ECLEMMAJCC" == "YES" ]; then
+	echo ""
+	echo " * Setup eclemmajcc (code coverage)"
+	echo ""
+	${ECLIPSE} ${OPTIONS} \
+	  -application org.eclipse.equinox.p2.director \
+	  -repository http://update.eclemma.org/ \
+	  ${P2OPTIONS} -destination ${installationpath}/eclipse/ \
+	  -installIU com.mountainminds.eclemma.feature.feature.group
+	ECLEMMAJCC_RESULT=$?
+fi
 
-	if [ "$SETUP_TOM" == "YES" ]; then
-		echo ""
-		echo " * Setup TOM"
-		echo ""
-		${ECLIPSE} ${OPTIONS} \
-		  -application org.eclipse.equinox.p2.director \
-		  -repository http://gecos.gforge.inria.fr/updates/mars/snapshot/ \
-		  ${P2OPTIONS} -destination ${installationpath}/eclipse/ \
-		  -installIU cairn.tools.tom.dev.feature.group
-		TOM_RESULT=$?
-	fi
+if [ "$SETUP_JAUTODOC" == "YES" ]; then
+	echo ""
+	echo " * Setup JAutodoc"
+	echo ""
+	${ECLIPSE} ${OPTIONS} \
+	  -application org.eclipse.equinox.p2.director \
+	  -repository http://jautodoc.sourceforge.net/update/ \
+	  ${P2OPTIONS} -destination ${installationpath}/eclipse/ \
+	  -installIU net.sf.jautodoc.feature.feature.group
+	JAUTODOC_RESULT=$?
+fi
 
-	if [ "$SETUP_JNIMAP" == "YES" ]; then
-		echo ""
-		echo " * Setup jnimap"
-		echo ""
-		${ECLIPSE} ${OPTIONS} \
-		  -application org.eclipse.equinox.p2.director \
-		  -repository http://gecos.gforge.inria.fr/updates/mars/snapshot/ \
-		  ${P2OPTIONS} -destination ${installationpath}/eclipse/ \
-		  -installIU cairn.tools.jni.mapper.feature.group
-		JNIMAP_RESULT=$?
-	fi
+if [ "$SETUP_ANYEDITTOOLS" == "YES" ]; then
+	echo ""
+	echo " * Setup anyedit tools"
+	echo ""
+	${ECLIPSE} ${OPTIONS} \
+	  -application org.eclipse.equinox.p2.director \
+	  -repository http://andrei.gmxhome.de/eclipse/ \
+	  ${P2OPTIONS} -destination ${installationpath}/eclipse/ \
+	  -installIU AnyEditTools.feature.group
+	ANYEDITTOOLS_RESULT=$?
+fi
 
-	if [ "$SETUP_GECOS_SCRIPT" == "YES" ]; then
-		echo ""
-		echo " * Setup gecos scripts"
-		echo ""
-		${ECLIPSE} ${OPTIONS} \
-		  -application org.eclipse.equinox.p2.director \
-		  -repository http://gecos.gforge.inria.fr/updates/mars/snapshot/ \
-		  ${P2OPTIONS} -destination ${installationpath}/eclipse/ \
-		  -installIU gecos.framework.feature.group
-		GECOS_SCRIPT_RESULT=$?
-	fi
+# original repo : http://findbugs.cs.umd.edu/eclipse/
+# latest version here : http://andrei.gmxhome.de/eclipse/
+if [ "$SETUP_FINDBUGS" == "YES" ]; then
+	echo ""
+	echo " * Setup findbugs"
+	echo ""
+	${ECLIPSE} ${OPTIONS} \
+	  -application org.eclipse.equinox.p2.director \
+	  -repository http://andrei.gmxhome.de/eclipse/ \
+	  ${P2OPTIONS} -destination ${installationpath}/eclipse/ \
+	  -installIU edu.umd.cs.findbugs.plugin.eclipse.feature.group
+	FINDBUGS_RESULT=$?
+fi
 
-	if [ "$SETUP_GECOS_UI" == "YES" ]; then
-		echo ""
-		echo " * Setup gecos UI"
-		echo ""
-		${ECLIPSE} ${OPTIONS} \
-		  -application org.eclipse.equinox.p2.director \
-		  -repository http://gecos.gforge.inria.fr/updates/mars/snapshot/ \
-		  ${P2OPTIONS} -destination ${installationpath}/eclipse/ \
-		  -installIU gecos.ui.feature.group \
-		  -installIU gecos.alma.feature.group
-		GECOS_UI_RESULT=$?
-	fi
+if [ "$SETUP_TOMCAT" == "YES" ]; then
+	echo ""
+	echo " * Setup Tocmat"
+	echo ""
+	${ECLIPSE} ${OPTIONS} \
+	  -application org.eclipse.equinox.p2.director \
+	  -repository https://sourceforge.net/projects/tomcatplugin/files/updatesite/ \
+	  ${P2OPTIONS} -destination ${installationpath}/eclipse/ \
+	  -installIU net.sf.eclipse.tomcat.feature.feature.group
+	TOMCAT_RESULT=$?
+fi
 
-	if [ "$SETUP_GRECLIPSE" == "YES" ]; then
-		echo ""
-		echo " * Setup greclipse (groovy)"
-		echo ""
-		${ECLIPSE} ${OPTIONS} \
-		  -application org.eclipse.equinox.p2.director \
-		  -repository http://dist.springsource.org/snapshot/GRECLIPSE/e4.5/ \
-		  ${P2OPTIONS} -destination ${installationpath}/eclipse/ \
-		  -installIU org.codehaus.groovy.eclipse.feature.feature.group \
-		  -installIU org.codehaus.groovy.m2eclipse.feature.feature.group \
-		  -installIU org.codehaus.groovy.jdt.patch.feature.group \
-		  -installIU org.codehaus.groovy24.feature.feature.group
-		GRECLIPSE_RESULT=$?
-	fi
+if [ "$SETUP_PTP" == "YES" ]; then
+	echo ""
+	echo " * Setup Parallel Tools"
+	echo ""
+	
+	${ECLIPSE} ${OPTIONS} \
+	  -application org.eclipse.equinox.p2.director \
+	  -repository http://download.eclipse.org/releases/${ECLIPSE_VERSION} \
+	  ${P2OPTIONS} -destination ${installationpath}/eclipse/ \
+	  -installIU org.eclipse.cdt.bupc.feature.group \
+	  -installIU org.eclipse.cdt.core.parser.upc.feature.feature.group \
+	  -installIU org.eclipse.cdt.core.parser.upc.sdk.feature.group \
+	  -installIU org.eclipse.ptp.rdt.sync.cdt.feature.group \
+	  -installIU org.eclipse.cdt.core.parser.upc.source.feature.group \
+	  -installIU org.eclipse.tm.terminal.connector.remote.feature.feature.group
+	PTP_PRE_RESULT=$?
+	  
+	${ECLIPSE} ${OPTIONS} \
+	  -application org.eclipse.equinox.p2.director \
+	  -repository http://download.eclipse.org/tools/ptp/updates/neon/ \
+	  ${P2OPTIONS} -destination ${installationpath}/eclipse/ \
+	  -installIU org.eclipse.ptp.feature.group \
+	  -installIU org.eclipse.ptp.sdk.feature.group \
+	  -installIU org.eclipse.ptp.rm.jaxb.contrib.feature.group \
+	  -installIU org.eclipse.ptp.etfw.feedback.perfsuite.feature.group \
+	  -installIU org.eclipse.ptp.etfw.tau.feature.group \
+	  -installIU org.eclipse.ptp.etfw.tau.fortran.feature.group \
+	  -installIU org.eclipse.ptp.fortran.feature.group \
+	  -installIU org.eclipse.ptp.gem.feature.group \
+	  -installIU org.eclipse.ptp.pldt.fortran.feature.group \
+	  -installIU org.eclipse.ptp.pldt.upc.feature.group \
+	  -installIU org.eclipse.ptp.sci.feature.group \
+	  -installIU org.eclipse.ptp.debug.sdm.feature.group
+	PTP_RESULT=$?
+fi
 
-	if [ "$SETUP_ECLEMMAJCC" == "YES" ]; then
-		echo ""
-		echo " * Setup eclemmajcc (code coverage)"
-		echo ""
-		${ECLIPSE} ${OPTIONS} \
-		  -application org.eclipse.equinox.p2.director \
-		  -repository http://update.eclemma.org/ \
-		  ${P2OPTIONS} -destination ${installationpath}/eclipse/ \
-		  -installIU com.mountainminds.eclemma.feature.feature.group
-		ECLEMMAJCC_RESULT=$?
-	fi
+if [ "$SETUP_PHOTRAN" == "YES" ]; then
+	echo ""
+	echo " * Setup Photran (from PTP)"
+	echo ""
+	${ECLIPSE} ${OPTIONS} \
+	  -application org.eclipse.equinox.p2.director \
+	  -repository http://download.eclipse.org/tools/ptp/updates/neon/ \
+	  ${P2OPTIONS} -destination ${installationpath}/eclipse/ \
+	  -installIU org.eclipse.photran.feature.group \
+	  -installIU org.eclipse.photran.xlf.feature.group \
+	  -installIU org.eclipse.photran.intel.feature.group
+	  #-installIU org.eclipse.ptp.rdt.sync.fortran.feature.group
+	PHOTRAN_RESULT=$?
+fi
 
-	if [ "$SETUP_JAUTODOC" == "YES" ]; then
-		echo ""
-		echo " * Setup JAutodoc"
-		echo ""
-		${ECLIPSE} ${OPTIONS} \
-		  -application org.eclipse.equinox.p2.director \
-		  -repository http://jautodoc.sourceforge.net/update/ \
-		  ${P2OPTIONS} -destination ${installationpath}/eclipse/ \
-		  -installIU net.sf.jautodoc.feature.feature.group
-		JAUTODOC_RESULT=$?
-	fi
+if [ "$SETUP_WTP" == "YES" ]; then
+	echo ""
+	echo " * Setup WTP"
+	echo ""
+	${ECLIPSE} ${OPTIONS} \
+	  -application org.eclipse.equinox.p2.director \
+	  -repository http://download.eclipse.org/webtools/repository/neon/ \
+	  ${P2OPTIONS} -destination ${installationpath}/eclipse/ \
+	  -installIU org.eclipse.jst.ws.cxf.feature.feature.group \
+	  -installIU org.eclipse.jpt.common.eclipselink.feature.feature.group \
+	  -installIU org.eclipse.jpt.dbws.eclipselink.feature.feature.group \
+	  -installIU org.eclipse.jpt.jaxb.eclipselink.feature.feature.group \
+	  -installIU org.eclipse.jpt.jpa.eclipselink.feature.feature.group \
+	  -installIU org.eclipse.jst.ws.jaxws.dom.feature.feature.group \
+	  -installIU org.eclipse.jst.ws.jaxws.feature.feature.group \
+	  -installIU org.eclipse.jsf.feature.feature.group \
+	  -installIU org.eclipse.jst.jsf.apache.trinidad.tagsupport.feature.feature.group \
+	  -installIU org.eclipse.jst.webpageeditor.feature.feature.group \
+	  -installIU org.eclipse.jst.server_adapters.feature.feature.group \
+	  -installIU org.eclipse.jst.server_adapters.ext.feature.feature.group \
+	  -installIU org.eclipse.jst.server_ui.feature.feature.group \
+	  -installIU org.eclipse.wst.server_adapters.feature.feature.group
+	WTP_RESULT=$?
+fi
 
-	if [ "$SETUP_ANYEDITTOOLS" == "YES" ]; then
-		echo ""
-		echo " * Setup anyedit tools"
-		echo ""
-		${ECLIPSE} ${OPTIONS} \
-		  -application org.eclipse.equinox.p2.director \
-		  -repository http://andrei.gmxhome.de/eclipse/ \
-		  ${P2OPTIONS} -destination ${installationpath}/eclipse/ \
-		  -installIU AnyEditTools.feature.group
-		ANYEDITTOOLS_RESULT=$?
-	fi
+if [ "$SETUP_JAVAFX" == "YES" ]; then
+	echo ""
+	echo " * Setup JavaFX"
+	echo ""
+	${ECLIPSE} ${OPTIONS} \
+	  -application org.eclipse.equinox.p2.director \
+	  -repository http://download.eclipse.org/efxclipse/updates-released/2.4.0/site \
+	  ${P2OPTIONS} -destination ${installationpath}/eclipse/ \
+	  -installIU org.eclipse.fx.ide.feature.feature.group
+	JAVAFX_RESULT=$?
+fi
 
-	if [ "$SETUP_FINDBUGS" == "YES" ]; then
-		echo ""
-		echo " * Setup findbugs"
-		echo ""
-		${ECLIPSE} ${OPTIONS} \
-		  -application org.eclipse.equinox.p2.director \
-		  -repository http://findbugs.cs.umd.edu/eclipse/ \
-		  ${P2OPTIONS} -destination ${installationpath}/eclipse/ \
-		  -installIU edu.umd.cs.findbugs.plugin.eclipse.feature.group
-		FINDBUGS_RESULT=$?
-	fi
+if [ "$SETUP_EASE" == "YES" ]; then
+	echo ""
+	echo " * Setup EASE"
+	echo ""
+	${ECLIPSE} ${OPTIONS} \
+	  -application org.eclipse.equinox.p2.director \
+	  -repository http://download.eclipse.org/ease/update/release \
+	  ${P2OPTIONS} -destination ${installationpath}/eclipse/ \
+	  -installIU org.eclipse.ease.modules.charting.feature.feature.group \
+	  -installIU org.eclipse.ease.modules.team.git.feature.feature.group \
+	  -installIU org.eclipse.ease.lang.javascript.feature.feature.group \
+	  -installIU org.eclipse.ease.lang.jvm.feature.feature.group \
+	  -installIU org.eclipse.ease.python.jython.feature.feature.group \
+	  -installIU org.eclipse.ease.modules.modeling.feature.feature.group \
+	  -installIU org.eclipse.ease.modules.feature.feature.group \
+	  -installIU org.eclipse.ease.lang.python.feature.feature.group \
+	  -installIU org.eclipse.ease.lang.python.py4j.feature.feature.group \
+	  -installIU org.eclipse.ease.modules.unittest.feature.feature.group \
+	  -installIU org.eclipse.ease.lang.groovy.feature.feature.group \
+	  -installIU org.eclipse.ease.lang.ruby.feature.feature.group
+	EASE_RESULT=$?
+fi
 
-	if [ "$SETUP_TOMCAT" == "YES" ]; then
-		echo ""
-		echo " * Setup Tocmat"
-		echo ""
-		${ECLIPSE} ${OPTIONS} \
-		  -application org.eclipse.equinox.p2.director \
-		  -repository https://sourceforge.net/projects/tomcatplugin/files/updatesite/ \
-		  ${P2OPTIONS} -destination ${installationpath}/eclipse/ \
-		  -installIU net.sf.eclipse.tomcat.feature.feature.group
-		TOMCAT_RESULT=$?
-	fi
-
-	if [ "$SETUP_PTP" == "YES" ]; then
-		echo ""
-		echo " * Setup Parallel Tools"
-		echo ""
-		
-		${ECLIPSE} ${OPTIONS} \
-		  -application org.eclipse.equinox.p2.director \
-		  -repository http://download.eclipse.org/releases/${ECLIPSE_VERSION} \
-		  ${P2OPTIONS} -destination ${installationpath}/eclipse/ \
-		  -installIU org.eclipse.cdt.bupc.feature.group \
-		  -installIU org.eclipse.cdt.core.parser.upc.feature.feature.group \
-		  -installIU org.eclipse.cdt.core.parser.upc.sdk.feature.group \
-		  -installIU org.eclipse.ptp.rdt.sync.cdt.feature.group \
-		  -installIU org.eclipse.cdt.core.parser.upc.source.feature.group \
-		  -installIU org.eclipse.tm.terminal.connector.remote.feature.feature.group
-		PTP_PRE_RESULT=$?
-		  
-		${ECLIPSE} ${OPTIONS} \
-		  -application org.eclipse.equinox.p2.director \
-		  -repository http://download.eclipse.org/tools/ptp/updates/neon/ \
-		  ${P2OPTIONS} -destination ${installationpath}/eclipse/ \
-		  -installIU org.eclipse.ptp.feature.group \
-		  -installIU org.eclipse.ptp.sdk.feature.group \
-		  -installIU org.eclipse.ptp.rm.jaxb.contrib.feature.group \
-		  -installIU org.eclipse.ptp.etfw.feedback.perfsuite.feature.group \
-		  -installIU org.eclipse.ptp.etfw.tau.feature.group \
-		  -installIU org.eclipse.ptp.etfw.tau.fortran.feature.group \
-		  -installIU org.eclipse.ptp.fortran.feature.group \
-		  -installIU org.eclipse.ptp.gem.feature.group \
-		  -installIU org.eclipse.ptp.pldt.fortran.feature.group \
-		  -installIU org.eclipse.ptp.pldt.upc.feature.group \
-		  -installIU org.eclipse.ptp.sci.feature.group \
-		  -installIU org.eclipse.ptp.debug.sdm.feature.group
-		PTP_RESULT=$?
-	fi
-
-	if [ "$SETUP_PHOTRAN" == "YES" ]; then
-		echo ""
-		echo " * Setup Photran (from PTP)"
-		echo ""
-		${ECLIPSE} ${OPTIONS} \
-		  -application org.eclipse.equinox.p2.director \
-		  -repository http://download.eclipse.org/tools/ptp/updates/neon/ \
-		  ${P2OPTIONS} -destination ${installationpath}/eclipse/ \
-		  -installIU org.eclipse.photran.feature.group \
-		  -installIU org.eclipse.photran.xlf.feature.group \
-		  -installIU org.eclipse.photran.intel.feature.group
-		  #-installIU org.eclipse.ptp.rdt.sync.fortran.feature.group
-		PHOTRAN_RESULT=$?
-	fi
-
-	if [ "$SETUP_WTP" == "YES" ]; then
-		echo ""
-		echo " * Setup WTP"
-		echo ""
-		${ECLIPSE} ${OPTIONS} \
-		  -application org.eclipse.equinox.p2.director \
-		  -repository http://download.eclipse.org/webtools/repository/neon/ \
-		  ${P2OPTIONS} -destination ${installationpath}/eclipse/ \
-		  -installIU org.eclipse.jst.ws.cxf.feature.feature.group \
-		  -installIU org.eclipse.jpt.common.eclipselink.feature.feature.group \
-		  -installIU org.eclipse.jpt.dbws.eclipselink.feature.feature.group \
-		  -installIU org.eclipse.jpt.jaxb.eclipselink.feature.feature.group \
-		  -installIU org.eclipse.jpt.jpa.eclipselink.feature.feature.group \
-		  -installIU org.eclipse.jst.ws.jaxws.dom.feature.feature.group \
-		  -installIU org.eclipse.jst.ws.jaxws.feature.feature.group \
-		  -installIU org.eclipse.jsf.feature.feature.group \
-		  -installIU org.eclipse.jst.jsf.apache.trinidad.tagsupport.feature.feature.group \
-		  -installIU org.eclipse.jst.webpageeditor.feature.feature.group \
-		  -installIU org.eclipse.jst.server_adapters.feature.feature.group \
-		  -installIU org.eclipse.jst.server_adapters.ext.feature.feature.group \
-		  -installIU org.eclipse.jst.server_ui.feature.feature.group \
-		  -installIU org.eclipse.wst.server_adapters.feature.feature.group
-		WTP_RESULT=$?
-	fi
-
-	if [ "$SETUP_JAVAFX" == "YES" ]; then
-		echo ""
-		echo " * Setup JavaFX"
-		echo ""
-		${ECLIPSE} ${OPTIONS} \
-		  -application org.eclipse.equinox.p2.director \
-		  -repository http://download.eclipse.org/efxclipse/updates-released/2.4.0/site \
-		  ${P2OPTIONS} -destination ${installationpath}/eclipse/ \
-		  -installIU org.eclipse.fx.ide.feature.feature.group
-		JAVAFX_RESULT=$?
-	fi
-
-	if [ "$SETUP_EASE" == "YES" ]; then
-		echo ""
-		echo " * Setup EASE"
-		echo ""
-		${ECLIPSE} ${OPTIONS} \
-		  -application org.eclipse.equinox.p2.director \
-		  -repository http://download.eclipse.org/ease/update/release \
-		  ${P2OPTIONS} -destination ${installationpath}/eclipse/ \
-		  -installIU org.eclipse.ease.modules.charting.feature.feature.group \
-		  -installIU org.eclipse.ease.modules.team.git.feature.feature.group \
-		  -installIU org.eclipse.ease.lang.javascript.feature.feature.group \
-		  -installIU org.eclipse.ease.lang.jvm.feature.feature.group \
-		  -installIU org.eclipse.ease.python.jython.feature.feature.group \
-		  -installIU org.eclipse.ease.modules.modeling.feature.feature.group \
-		  -installIU org.eclipse.ease.modules.feature.feature.group \
-		  -installIU org.eclipse.ease.lang.python.feature.feature.group \
-		  -installIU org.eclipse.ease.lang.python.py4j.feature.feature.group \
-		  -installIU org.eclipse.ease.modules.unittest.feature.feature.group \
-		  -installIU org.eclipse.ease.lang.groovy.feature.feature.group \
-		  -installIU org.eclipse.ease.lang.ruby.feature.feature.group
-		EASE_RESULT=$?
-	fi
-}
 
 echo ""
 echo "####"
@@ -828,7 +869,7 @@ echo "####"
 ##################################
 ##	Config Eclipse workspace
 ##################################
-{
+
 #Config Xtend compiler
 cat > ${installationpath}/workspace/.metadata/.plugins/org.eclipse.core.runtime/.settings/org.eclipse.xtend.core.Xtend.prefs << EOF
 eclipse.preferences.version=1
@@ -973,7 +1014,6 @@ cat > ${installationpath}/workspace/.metadata/.plugins/org.eclipse.core.runtime/
 eclipse.preferences.version=1
 included_file_location=${installationpath}/workspace/eu.alma.matlab/src-gen/tom\:${installationpath}/workspace/eu.alma.matlab.frontend/src-tom\:${installationpath}/workspace/fr.irisa.cairn.gecos.model/src-gen/tom\:${installationpath}/workspace/fr.irisa.cairn.gecos.model.scop/src-gen/tom\:${installationpath}/workspace/org.polymodel.algebra/src-gen/tom\:${installationpath}/workspace/org.polymodel.polyhedralIR/src-gen/tom\:${installationpath}/workspace/org.polymodel.scop/src-gen/tom\:${installationpath}/workspace/org.polymodel.scop.dtiler/src-tom\:
 EOF
-}
 
 CLEANUP_SCRIPT=${installationpath}/cleanup.sh
 cat > ${CLEANUP_SCRIPT} << 'EOF'
