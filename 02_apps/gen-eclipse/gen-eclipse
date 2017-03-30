@@ -342,6 +342,12 @@ function setup_eclipse_plugins {
 	done
 	echo "${ECHOPREFIX}    Launching ..."
 	echo ""
+	echo "${P2APP} \
+		-repository ${REPOS} \
+		-destination ${DESTFOLDER} \
+		${P2OPTIONS} \
+		${FEATURES}" | xargs
+	echo ""
 	
 		#-metadataRepository ${REPOS}
 		#-artifactRepository ${REPOS}
@@ -350,6 +356,7 @@ function setup_eclipse_plugins {
 		-destination ${DESTFOLDER} \
 		${P2OPTIONS} \
 		${FEATURES}
+		
 	
 	SETUP_RESULT=$?
 	echo ""
