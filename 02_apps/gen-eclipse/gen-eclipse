@@ -378,7 +378,7 @@ function finish {
 setup_eclipse_plugins \
 	"ALL" \
 	${ECLIPSE_PLUGINS_INSTALL_PATH} \
-	http://download.eclipse.org/eclipse/updates/4.6,http://eclipse-color-theme.github.io/update/,http://download.eclipse.org/releases/${ECLIPSE_VERSION},http://repo1.maven.org/maven2/.m2e/connectors/m2eclipse-tycho/0.8.0/N/0.8.0.201409231215/,http://download.eclipse.org/buildship/updates/e46/releases/1.0,http://community.polarion.com/projects/subversive/download/eclipse/6.0/neon-site/,http://anb0s.github.io/EasyShell,http://update.eclemma.org/,http://jautodoc.sourceforge.net/update/,http://andrei.gmxhome.de/eclipse/,http://findbugs.cs.umd.edu/eclipse/,http://download.eclipse.org/efxclipse/updates-released/2.4.0/site,http://eclipse-cs.sf.net/update,https://dl.bintray.com/pmd/pmd-eclipse-plugin/updates/,http://ifedorenko.github.com/m2e-extras/ \
+	http://download.eclipse.org/eclipse/updates/4.6,http://eclipse-color-theme.github.io/update/,http://download.eclipse.org/releases/${ECLIPSE_VERSION},http://repo1.maven.org/maven2/.m2e/connectors/m2eclipse-tycho/0.9.0/N/LATEST/,http://download.eclipse.org/buildship/updates/e46/releases/1.0,http://community.polarion.com/projects/subversive/download/eclipse/6.0/neon-site/,http://anb0s.github.io/EasyShell,http://update.eclemma.org/,http://jautodoc.sourceforge.net/update/,http://andrei.gmxhome.de/eclipse/,http://findbugs.cs.umd.edu/eclipse/,http://download.eclipse.org/efxclipse/updates-released/2.4.0/site,http://eclipse-cs.sf.net/update,https://dl.bintray.com/pmd/pmd-eclipse-plugin/updates/,http://ifedorenko.github.com/m2e-extras/ \
 	org.eclipse.releng.tools.feature.group \
 	com.github.eclipsecolortheme.feature.feature.group \
 	org.eclipse.cdt.feature.group \
