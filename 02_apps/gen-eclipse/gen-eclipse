@@ -394,9 +394,6 @@ setup_eclipse_plugins \
 	org.eclipse.wst.xsl.feature.feature.group \
 	org.eclipse.wst.xml_ui.feature.feature.group \
 	org.eclipse.wst.web_ui.feature.feature.group \
-	org.eclipse.m2e.feature.feature.group \
-	org.sonatype.m2e.mavenarchiver.feature.feature.group \
-	org.eclipse.m2e.wtp.feature.feature.group \
 	org.eclipse.jpt.jaxb.feature.feature.group \
 	org.eclipse.tm.terminal.feature.feature.group \
 	org.eclipse.stardust.modeling.wst-feature.feature.group \
@@ -424,10 +421,30 @@ setup_eclipse_plugins \
 	net.sf.eclipsecs.feature.group \
 	net.sourceforge.pmd.eclipse.feature.group \
 	org.eclipse.gef.sdk.feature.group \
-	org.eclipse.graphiti.sdk.plus.feature.feature.group \
+	org.eclipse.graphiti.sdk.plus.feature.feature.group
+
+setup_eclipse_plugins \
+	"PREESM Deps" \
+	${ECLIPSE_PLUGINS_INSTALL_PATH} \
+	http://koub.org/files/complete/complete/ \
+	org.ietr.externaldeps.aio.deps.feature.group \
+	org.ietr.graphiti.feature.source.feature.group \
+	org.ietr.graphiti.feature.feature.group \
+	org.ietr.dftools.feature.source.feature.group \
+	org.ietr.dftools.feature.feature.group
+	
+finish
+exit
+
+setup_eclipse_plugins \
+	"M2E extras" \
+	${ECLIPSE_PLUGINS_INSTALL_PATH} \
+	http://ifedorenko.github.com/m2e-extras/,http://m2e-code-quality.github.io/m2e-code-quality/site/latest/ \
+	org.eclipse.m2e.feature.feature.group \
+	org.sonatype.m2e.mavenarchiver.feature.feature.group \
+	org.eclipse.m2e.wtp.feature.feature.group \
 	com.ifedorenko.m2e.mavendev.feature.feature.group \
 	com.basistech.m2e.code.quality.checkstyle.feature.feature.group
-
 
 finish	
 exit
