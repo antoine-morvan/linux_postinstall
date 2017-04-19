@@ -433,6 +433,10 @@ setup_eclipse_plugins \
 	com.ifedorenko.m2e.mavendev.feature.feature.group \
 	com.basistech.m2e.code.quality.checkstyle.feature.feature.group
 
+finish
+exit
+
+
 setup_eclipse_plugins \
 	"PREESM Deps" \
 	${ECLIPSE_PLUGINS_INSTALL_PATH} \
@@ -443,9 +447,6 @@ setup_eclipse_plugins \
 	org.ietr.dftools.feature.source.feature.group \
 	org.ietr.dftools.feature.feature.group
 	
-finish
-exit
-
 finish	
 exit
 #
