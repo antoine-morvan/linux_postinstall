@@ -426,7 +426,7 @@ setup_eclipse_plugins \
 setup_eclipse_plugins \
 	"M2E extras" \
 	${ECLIPSE_PLUGINS_INSTALL_PATH} \
-	http://ifedorenko.github.com/m2e-extras/,http://m2e-code-quality.github.io/m2e-code-quality/site/latest/ \
+	http://download.eclipse.org/eclipse/updates/4.6,http://download.eclipse.org/releases/${ECLIPSE_VERSION},http://ifedorenko.github.com/m2e-extras/,http://m2e-code-quality.github.io/m2e-code-quality/site/latest/ \
 	org.eclipse.m2e.feature.feature.group \
 	org.sonatype.m2e.mavenarchiver.feature.feature.group \
 	org.eclipse.m2e.wtp.feature.feature.group \
