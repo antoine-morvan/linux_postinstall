@@ -424,6 +424,16 @@ setup_eclipse_plugins \
 	org.eclipse.graphiti.sdk.plus.feature.feature.group
 
 setup_eclipse_plugins \
+	"M2E extras" \
+	${ECLIPSE_PLUGINS_INSTALL_PATH} \
+	http://ifedorenko.github.com/m2e-extras/,http://m2e-code-quality.github.io/m2e-code-quality/site/latest/ \
+	org.eclipse.m2e.feature.feature.group \
+	org.sonatype.m2e.mavenarchiver.feature.feature.group \
+	org.eclipse.m2e.wtp.feature.feature.group \
+	com.ifedorenko.m2e.mavendev.feature.feature.group \
+	com.basistech.m2e.code.quality.checkstyle.feature.feature.group
+
+setup_eclipse_plugins \
 	"PREESM Deps" \
 	${ECLIPSE_PLUGINS_INSTALL_PATH} \
 	http://koub.org/files/complete/complete/ \
@@ -435,16 +445,6 @@ setup_eclipse_plugins \
 	
 finish
 exit
-
-setup_eclipse_plugins \
-	"M2E extras" \
-	${ECLIPSE_PLUGINS_INSTALL_PATH} \
-	http://ifedorenko.github.com/m2e-extras/,http://m2e-code-quality.github.io/m2e-code-quality/site/latest/ \
-	org.eclipse.m2e.feature.feature.group \
-	org.sonatype.m2e.mavenarchiver.feature.feature.group \
-	org.eclipse.m2e.wtp.feature.feature.group \
-	com.ifedorenko.m2e.mavendev.feature.feature.group \
-	com.basistech.m2e.code.quality.checkstyle.feature.feature.group
 
 finish	
 exit
