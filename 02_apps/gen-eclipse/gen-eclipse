@@ -419,7 +419,6 @@ setup_eclipse_plugins \
 	edu.umd.cs.findbugs.plugin.eclipse.feature.group \
 	org.eclipse.fx.ide.feature.feature.group \
 	net.sf.eclipsecs.feature.group \
-	net.sourceforge.pmd.eclipse.feature.group \
 	org.eclipse.gef.sdk.feature.group \
 	org.eclipse.graphiti.sdk.plus.feature.feature.group
 
