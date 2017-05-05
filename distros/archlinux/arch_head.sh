@@ -11,7 +11,7 @@ source /arch_func.sh
 ##########################
 
 PACKS="xorg xorg-server xorg-xinit xorg-utils xorg-server-utils xorg-twm xorg-xclock xdg-user-dirs xterm gksu rxvt-unicode urxvt-url-select lightdm lightdm-gtk-greeter terminator pulseaudio pavucontrol paprefs mate-themes wicd wicd-gtk xfce4 xfce4-goodies xfce4-artwork xfce4-session xfce4-settings xfwm4 xfwm4-themes xfconf xscreensaver-arch-logo thunar numlockx pinta gvfs-smb ruby imagemagick librsvg iptraf-ng arandr elementary-icon-theme gtk-engines xarchiver-gtk2 gnome-keyring seahorse gtk-engine-murrine python-setuptools"
-PACKS+=" tlp bash-completion lsb-release smartmontools graphviz thunderbird system-config-printer vlc pidgin gparted filezilla keepassx xfburn veracrypt faac boost glu mesa-demos dbus jdk8-openjdk icoutils wxpython zenity"
+PACKS+=" tlp bash-completion lsb-release smartmontools graphviz thunderbird system-config-printer vlc pidgin gparted filezilla keepassx xfburn veracrypt faac boost glu mesa-demos dbus jdk8-openjdk icoutils wxpython zenity handbrake"
 
 if [ "$TESTSYSTEM" != "YES" ]; then
 	EXTRA=" hexchat ario audacity avidemux-cli deluge"
