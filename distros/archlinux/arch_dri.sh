@@ -77,7 +77,7 @@ fi
 FOUND_INTELGRAPHICS=`lspci | grep -i VGA | grep -i intel | wc -l`
 if [ "$FOUND_INTELGRAPHICS" != "0" ]; then
 	echo "Found Intel Graphic devices"
-	install_packs "libva-intel-driver libvdpau-va-gl mesa-vdpau libva-vdpau-driver"
+	install_packs "xf86-video-intel libva-intel-driver libvdpau-va-gl mesa-vdpau libva-vdpau-driver"
 	mkdir -p /etc/X11/xorg.conf.d/
 	cat > /etc/X11/xorg.conf.d/20-intel.conf << EOF
 Section "Device"

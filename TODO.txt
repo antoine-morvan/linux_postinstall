@@ -3,6 +3,7 @@ FUCKING BACKUP
 
 ##### reporté ds le script, à valider
 
+drivers video intel
 
 ##### fait, à reporter dans le script de postinstall
 
