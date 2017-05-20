@@ -298,6 +298,7 @@ pause "samba & vim configured;"
 
 #if [ "$TESTSYSTEM" != "YES" ]; then
 	dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/jenkins/arch.sh
+	dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/sonarqube/arch.sh
 #fi
 
 pause "about to setup drivers..."
@@ -375,6 +376,7 @@ echo " ###################"
 echo ""
 read -p "Hostname : " HOSTNAME
 echo "$HOSTNAME" > /etc/hostname
+hostnamectl set-hostname $HOSTNAME
 echo ""
 echo " ###################"
 echo " # Root Password   #"
