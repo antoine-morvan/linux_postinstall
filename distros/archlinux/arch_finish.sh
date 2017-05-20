@@ -294,7 +294,13 @@ chmod +x /usr/local/bin/gitstorecredential-10h
 cat /etc/systemd/logind.conf | sed -e 's/#HandleLidSwitch=suspend/HandleLidSwitch=lock/g' > tmp
 mv tmp /etc/systemd/logind.conf
 
-pause "samba & vim configured; about to setup drivers..."
+pause "samba & vim configured;"
+
+#if [ "$TESTSYSTEM" != "YES" ]; then
+	dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/jenkins/arch.sh
+#fi
+
+pause "about to setup drivers..."
 
 dl_and_execute ${SETUP_SCRIPT_LOCATION}/distros/archlinux/arch_dri.sh
 
