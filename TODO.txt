@@ -16,8 +16,9 @@ ajouter la directive suivante dans mpd.conf : audio_output_format "44100:16:2"
 ajouter eclipse sdk dans l'install eclipse
 
 Fix deadbeef setup for ubuntu
+	deadbeef@ubuntu : bug filebrowser ?
 config apt ubuntu (activer tous les dépots, désactiver les maj auto)
-deadbeef@ubuntu : bug filebrowser ?
+
 autossh + http://proxychains.sourceforge.net/
 vsync @ intel IGP
 systeme de backup => backintime
