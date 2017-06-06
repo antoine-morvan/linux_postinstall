@@ -17,6 +17,6 @@ JENKINS_PORT=9080
 cat ${CONFFILE} | sed -e "s/\(JENKINS_PORT=--httpPort=\).*/\1${JENKINS_PORT}/g" > tmp
 mv tmp ${CONFFILE}
 
-systemctl enable jenkins.service	
+#systemctl enable jenkins.service
 
 exit
