@@ -296,10 +296,10 @@ mv tmp /etc/systemd/logind.conf
 
 pause "samba & vim configured;"
 
-#if [ "$TESTSYSTEM" != "YES" ]; then
+if [ "$TESTSYSTEM" != "YES" ]; then
 	dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/jenkins/arch.sh
 	dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/sonarqube/arch.sh
-#fi
+fi
 
 pause "about to setup drivers..."
 

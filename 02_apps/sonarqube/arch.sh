@@ -12,7 +12,7 @@ install_packs "$PKGS"
 install_packs_aur "$AURPKGS"
 
 CONFFILE=/etc/sonarqube/sonar.properties
-SONAR_PORT=9000
+SONAR_PORT=9081
 
 
 cat ${CONFFILE} | sed -e "s/#\(sonar\.web\.port=).*/\1${SONAR_PORT}/g" > tmp
