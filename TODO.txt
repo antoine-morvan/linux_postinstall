@@ -15,6 +15,7 @@ ajouter la directive suivante dans mpd.conf : audio_output_format "44100:16:2"
 
 ajouter eclipse sdk dans l'install eclipse
  + https://marketplace.eclipse.org/content/markdown-text-editor
+ + sonarlint
 
 Fix deadbeef setup for ubuntu
 	deadbeef@ubuntu : bug filebrowser ?
