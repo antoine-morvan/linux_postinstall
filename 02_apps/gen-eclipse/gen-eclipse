@@ -413,7 +413,7 @@ setup_eclipse_plugins \
 	org.polarion.eclipse.team.svn.connector.feature.group \
 	org.polarion.eclipse.team.svn.connector.svnkit18.feature.group \
 	de.anbos.eclipse.easyshell.feature.feature.group \
-	com.mountainminds.eclemma.feature.feature.group \
+	org.eclipse.eclemma.feature.feature.group \
 	net.sf.jautodoc.feature.feature.group \
 	AnyEditTools.feature.group \
 	edu.umd.cs.findbugs.plugin.eclipse.feature.group \
