@@ -298,6 +298,57 @@ eclipse.preferences.version=1
 EOF
 
 	echo "${ECHOPREFIX} Basic config done"
+
+	echo "${ECHOPREFIX} Generate cleanup script"
+	CLEANUP_SCRIPT=${installationpath}/cleanup.sh
+	cat > ${CLEANUP_SCRIPT} << 'EOF'
+#!/bin/bash
+
+SCRIPT_DIR=`dirname $0`
+SCRIPT_DIR=`(cd ${SCRIPT_DIR} && echo $PWD)`
+SCRIPT_NAME=`basename $0`
+
+ECLIPSE_PATH=${SCRIPT_DIR}/eclipse
+ECLIPSE_BIN=${ECLIPSE_PATH}/eclipse
+
+WORKSPACE_PATH=${SCRIPT_DIR}/workspace/
+
+PID=`ps -df | grep -v grep | grep /home/koubi/IDE/eclipse/eclipse | xargs | cut -d" " -f 2`
+
+if [ "$PID" != "" ]; then
+	echo ""
+	echo " ** Eclipse is found running (pid = $PID). Killing it."
+	echo ""
+	kill -9 $PID
+fi
+
+
+rm -f ${WORKSPACE_PATH}/.metadata/.lock
+rm -f ${WORKSPACE_PATH}/.metadata/.log
+rm -f ${WORKSPACE_PATH}/.metadata/.plugins/org.eclipse.core.resources/.span
+
+if [ -d ${WORKSPACE_PATH}/.metadata/.plugins/org.eclipse.core.resources ]; then
+	mv ${WORKSPACE_PATH}/.metadata/.plugins/org.eclipse.core.resources ${SCRIPT_DIR}/resources_bk
+
+	echo ""
+	echo " ** Eclipse will start. Close all tabs then close eclipse"
+	echo ""
+	read -p "[Press Enter] ..."
+
+	${ECLIPSE_BIN}
+
+	rm -rf ${WORKSPACE_PATH}/.metadata/.plugins/org.eclipse.core.resources
+	mv ${SCRIPT_DIR}/resources_bk ${WORKSPACE_PATH}/.metadata/.plugins/org.eclipse.core.resources
+fi
+
+echo ""
+echo " ** Cleanup done."
+echo ""
+
+exit 0
+
+EOF
+	chmod +x ${CLEANUP_SCRIPT}
 }
 ##################################
 ##	Setup Eclipse plug-ins
@@ -421,9 +472,9 @@ setup_eclipse_plugins \
 	net.sf.eclipsecs.feature.group \
 	org.eclipse.gef.sdk.feature.group \
 	org.eclipse.graphiti.sdk.plus.feature.feature.group \
-  org.sonarlint.eclipse.feature.feature.group \
-  org.eclipse.sdk.ide \
-  org.eclipse.platform.sdk
+	org.sonarlint.eclipse.feature.feature.group \
+	org.eclipse.sdk.ide \
+	org.eclipse.platform.sdk
 
 
 finish
@@ -1032,119 +1083,6 @@ eclipse.preferences.version=1
 included_file_location=${installationpath}/workspace/eu.alma.matlab/src-gen/tom\:${installationpath}/workspace/eu.alma.matlab.frontend/src-tom\:${installationpath}/workspace/fr.irisa.cairn.gecos.model/src-gen/tom\:${installationpath}/workspace/fr.irisa.cairn.gecos.model.scop/src-gen/tom\:${installationpath}/workspace/org.polymodel.algebra/src-gen/tom\:${installationpath}/workspace/org.polymodel.polyhedralIR/src-gen/tom\:${installationpath}/workspace/org.polymodel.scop/src-gen/tom\:${installationpath}/workspace/org.polymodel.scop.dtiler/src-tom\:
 EOF
 
-CLEANUP_SCRIPT=${installationpath}/cleanup.sh
-cat > ${CLEANUP_SCRIPT} << 'EOF'
-#!/bin/bash
-
-SCRIPT_DIR=`dirname $0` 
-SCRIPT_DIR=`(cd ${SCRIPT_DIR} && echo $PWD)`
-SCRIPT_NAME=`basename $0`
-
-ECLIPSE_PATH=${SCRIPT_DIR}/eclipse
-ECLIPSE_BIN=${ECLIPSE_PATH}/eclipse
-
-WORKSPACE_PATH=${SCRIPT_DIR}/workspace/
-
-PID=`ps -df | grep -v grep | grep /home/koubi/IDE/eclipse/eclipse | xargs | cut -d" " -f 2`
-
-if [ "$PID" != "" ]; then 
-	echo ""
-	echo " ** Eclipse is found running (pid = $PID). Killing it."
-	echo ""
-	kill -9 $PID
-fi
-
-
-rm -f ${WORKSPACE_PATH}/.metadata/.lock
-rm -f ${WORKSPACE_PATH}/.metadata/.log
-rm -f ${WORKSPACE_PATH}/.metadata/.plugins/org.eclipse.core.resources/.span
-
-if [ -d ${WORKSPACE_PATH}/.metadata/.plugins/org.eclipse.core.resources ]; then
-	mv ${WORKSPACE_PATH}/.metadata/.plugins/org.eclipse.core.resources ${SCRIPT_DIR}/resources_bk
-	
-	echo ""
-	echo " ** Eclipse will start. Close all tabs then close eclipse"
-	echo ""
-	read -p "[Press Enter] ..."
-
-	${ECLIPSE_BIN}
-
-	rm -rf ${WORKSPACE_PATH}/.metadata/.plugins/org.eclipse.core.resources
-	mv ${SCRIPT_DIR}/resources_bk ${WORKSPACE_PATH}/.metadata/.plugins/org.eclipse.core.resources
-fi
-
-echo ""
-echo " ** Cleanup done."
-echo ""
-
-exit 0
-
-EOF
-chmod +x ${CLEANUP_SCRIPT}
-
-echo "####"
-echo "#### done "
-echo "####"
-
-[ ! -z $JAVAFX_RESULT ] && echo "JavaFX : $JAVAFX_RESULT"
-[ ! -z $WTP_RESULT ] && echo "Web Tools : $WTP_RESULT"
-[ ! -z $PHOTRAN_RESULT ] && echo "Fortran : $PHOTRAN_RESULT"
-[ ! -z $PTP_RESULT ] && echo "Parallel Tools : $PTP_RESULT"
-[ ! -z $PTP_PRE_RESULT ] && echo "Parallel Tools (prereq) : $PTP_PRE_RESULT"
-[ ! -z $TOMCAT_RESULT ] && echo "Tomcat : $TOMCAT_RESULT"
-[ ! -z $FINDBUGS_RESULT ] && echo "Findbugs : $FINDBUGS_RESULT"
-[ ! -z $ANYEDITTOOLS_RESULT ] && echo "Any Edit Tools : $ANYEDITTOOLS_RESULT"
-[ ! -z $JAUTODOC_RESULT ] && echo "JAutoDoc : $JAUTODOC_RESULT"
-[ ! -z $ECLEMMAJCC_RESULT ] && echo "Code Coverage : $ECLEMMAJCC_RESULT"
-[ ! -z $GRECLIPSE_RESULT ] && echo "GreClipse : $GRECLIPSE_RESULT"
-[ ! -z $GECOS_UI_RESULT ] && echo "Gecos UI : $GECOS_UI_RESULT"
-[ ! -z $GECOS_SCRIPT_RESULT ] && echo "Gecos Script : $GECOS_SCRIPT_RESULT"
-[ ! -z $JNIMAP_RESULT ] && echo "JNIMap : $JNIMAP_RESULT"
-[ ! -z $CUP_LEX_RESULT ] && echo "Cup/Lex : $CUP_LEX_RESULT"
-[ ! -z $TEXCLIPSE_RESULT ] && echo "TexClipse : $TEXCLIPSE_RESULT"
-[ ! -z $EASYSHELL_RESULT ] && echo "EasyShell : $EASYSHELL_RESULT"
-[ ! -z $SUBVERSIVE_RESULT ] && echo "SubVersive : $SUBVERSIVE_RESULT"
-[ ! -z $SVN_RESULT ] && echo "SVN : $SVN_RESULT"
-[ ! -z $GRADLE_RESULT ] && echo "Gradle : $GRADLE_RESULT"
-[ ! -z $TMF_RESULT ] && echo "TMF : $TMF_RESULT"
-[ ! -z $BASE_RESULT ] && echo "Base Setup : $BASE_RESULT"
-[ ! -z $COLORTHEME_RESULT ] && echo "Color Themes : $COLORTHEME_RESULT"
-[ ! -z $EASE_RESULT ] && echo "EASE : $EASE_RESULT"
-[ ! -z $DLTK_RESULT ] && echo "DLTK : $DLTK_RESULT"
-[ ! -z $TYCHO_RESULT ] && echo "Tycho : $TYCHO_RESULT"
-[ ! -z $RELENG_RESULT ] && echo "Releng Tools : $RELENG_RESULT"
-
 
 
 exit
-##################################
-##	END.
-##################################
-
-#archive:
-	  
-	echo ""
-	echo " * Setup TMF"
-	echo ""
-	${ECLIPSE} ${OPTIONS} \
-	  -application org.eclipse.equinox.p2.director \
-	  -repository http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases/ \
-	  ${P2OPTIONS} -destination ${installationpath}/eclipse/ \
-	  -installIU org.eclipse.xtext.sdk.feature.group \
-	  -installIU org.eclipse.xtext.xbase.source.feature.group \
-	  -installIU org.eclipse.xtext.xbase.feature.group \
-	  -installIU org.eclipse.xtext.xbase.lib.source.feature.group \
-	  -installIU org.eclipse.xtext.xbase.lib.feature.group \
-	  -installIU org.eclipse.xtext.examples.source.feature.group \
-	  -installIU org.eclipse.xtext.examples.feature.group \
-	  -installIU org.eclipse.xtext.ui.source.feature.group \
-	  -installIU org.eclipse.xtext.ui.feature.group \
-	  -installIU org.eclipse.xtext.xtext.ui.source.feature.group \
-	  -installIU org.eclipse.xtext.xtext.ui.feature.group \
-	  -installIU org.eclipse.xtext.docs.feature.group \
-	  -installIU org.eclipse.xtext.runtime.source.feature.group \
-	  -installIU org.eclipse.xtext.runtime.feature.group \
-	  -installIU org.eclipse.xtend.sdk.feature.group \
-	  -installIU org.eclipse.emf.mwe2.runtime.sdk.feature.group \
-	  -installIU org.eclipse.emf.mwe2.runtime.sdk.source.feature.group \
-	  -installIU org.eclipse.emf.ecore.xcore.feature.group
