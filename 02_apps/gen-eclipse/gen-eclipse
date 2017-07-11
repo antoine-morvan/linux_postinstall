@@ -350,26 +350,152 @@ exit 0
 EOF
 	chmod +x ${CLEANUP_SCRIPT}
 }
+
+##################################
+##	Config Eclipse workspace
+##################################
+# Called upon finish
+function config {
+	echo "${ECHOPREFIX}"
+	echo "${ECHOPREFIX} CONFIGURATION "
+	echo "${ECHOPREFIX}"
+
+	#Config Xtend compiler
+	echo "${ECHOPREFIX}   o Config XTend"
+	cat > ${installationpath}/workspace/.metadata/.plugins/org.eclipse.core.runtime/.settings/org.eclipse.xtend.core.Xtend.prefs << EOF
+eclipse.preferences.version=1
+outlet.DEFAULT_OUTPUT.cleanupDerived=false
+outlet.DEFAULT_OUTPUT.derived=false
+EOF
+
+	if [ "$DARKTHEME" == "YES" ]; then
+		echo "${ECHOPREFIX}   o Config DarkTheme"
+		cat > ${installationpath}/workspace/.metadata/.plugins/org.eclipse.core.runtime/.settings/org.eclipse.e4.ui.css.swt.theme.prefs << EOF
+themeid=org.eclipse.e4.ui.css.theme.high-contrast
+EOF
+
+		#config theme dark
+		cat > ${installationpath}/workspace/.metadata/.plugins/org.eclipse.core.runtime/.settings/org.eclipse.e4.ui.css.swt.theme << EOF
+	themeid=org.eclipse.e4.ui.css.theme.high-contrast
+EOF
+
+		#config tm terminal
+		cat > ${installationpath}/workspace/.metadata/.plugins/org.eclipse.core.runtime/.settings/org.eclipse.tm.terminal.control.prefs << EOF
+TerminalPrefInvertColors=true
+EOF
+	fi
+
+	if [ "$SETUP_SVN" == "YES" ]; then
+		#Config SVN Console output
+		echo "${ECHOPREFIX}   o Config SVN"
+		cat > ${installationpath}/workspace/.metadata/.plugins/org.eclipse.core.runtime/.settings/org.eclipse.team.svn.ui.prefs << "EOF"
+eclipse.preferences.version=1
+preference.console.autoshow=1
+preference.console.limitEnabled=false
+EOF
+
+		#Force SVN Decorators in worksapce
+		cat > ${installationpath}/workspace/.metadata/.plugins/org.eclipse.core.runtime/.settings/org.eclipse.ui.workbench.prefs << "EOF"
+eclipse.preferences.version=1
+ENABLED_DECORATORS=org.eclipse.team.svn.ui.decorator.SVNLightweightDecorator\:true,
+EOF
+	fi
+
+	#skip wizard tab on startup
+	echo "${ECHOPREFIX}   o Disable wizard tab"
+	mkdir -p ${installationpath}/workspace/.metadata/.plugins/org.eclipse.ui.intro/
+	cat > ${installationpath}/workspace/.metadata/.plugins/org.eclipse.ui.intro/introstate << "EOF"
+<?xml version="1.0" encoding="UTF-8"?>
+<state reopen="false"/>
+EOF
+
+	if [ "$SETUP_EASYSHELL" == "YES" ]; then
+		#Config Easyshell terminal & explorer
+		echo "${ECHOPREFIX}   o Config EasyShell"
+		cat > ${installationpath}/workspace/.metadata/.plugins/org.eclipse.core.runtime/.settings/com.tetrade.eclipse.plugins.easyshell.prefs << EOF
+IdStr=cmdUnknown
+eclipse.preferences.version=1
+listPreference=-1
+targetRunPreference=cd {1} && run ./''{3}''
+EOF
+		TERMS="terminator xfce4-terminal gnome-terminal konsole urxvtc"
+		for term in ${TERMS}; do
+			if [ ! -z `which ${term}` -a -x `which ${term}` ];
+			then
+				case ${term} in
+					terminator)
+						echo "${ECHOPREFIX}     - Terminator"
+						echo "targetPreference=terminator --working-directory\\={1}" >> ${installationpath}/workspace/.metadata/.plugins/org.eclipse.core.runtime/.settings/com.tetrade.eclipse.plugins.easyshell.prefs
+						;;
+					xfce4-terminal)
+						echo "${ECHOPREFIX}     - XFCE"
+						echo "targetPreference=xfce4-terminal --default-working-directory\\={1}" >> ${installationpath}/workspace/.metadata/.plugins/org.eclipse.core.runtime/.settings/com.tetrade.eclipse.plugins.easyshell.prefs
+						;;
+					gnome-terminal)
+						echo "${ECHOPREFIX}     - Gnome"
+						echo "targetPreference=gnome-terminal --working-directory\\={1}" >> ${installationpath}/workspace/.metadata/.plugins/org.eclipse.core.runtime/.settings/com.tetrade.eclipse.plugins.easyshell.prefs
+						;;
+					konsole)
+						echo "${ECHOPREFIX}     - Konsole"
+						echo "targetPreference=konsole --workdir {1}" >> ${installationpath}/workspace/.metadata/.plugins/org.eclipse.core.runtime/.settings/com.tetrade.eclipse.plugins.easyshell.prefs
+						;;
+					urxvtc)
+						echo "${ECHOPREFIX}     - urxvtc"
+						echo "targetPreference=urxvtc -cd  {1}" >> ${installationpath}/workspace/.metadata/.plugins/org.eclipse.core.runtime/.settings/com.tetrade.eclipse.plugins.easyshell.prefs
+						;;
+					*)
+						echo "unknown terminal ${term}"
+						;;
+				esac
+				break
+			fi
+		done
+		NAVS="thunar nautilus konqueror firefox"
+		for nav in ${NAVS}; do
+			if [ ! -z `which ${nav}` -a -x `which ${nav}` ];
+			then
+				case ${nav} in
+					thunar)
+						echo "${ECHOPREFIX}     - Thunar"
+						echo "targetExplorePreference=thunar {2}" >> ${installationpath}/workspace/.metadata/.plugins/org.eclipse.core.runtime/.settings/com.tetrade.eclipse.plugins.easyshell.prefs
+						;;
+					nautilus)
+						echo "${ECHOPREFIX}     - Nautilus"
+						echo "targetExplorePreference=nautilus {2}" >> ${installationpath}/workspace/.metadata/.plugins/org.eclipse.core.runtime/.settings/com.tetrade.eclipse.plugins.easyshell.prefs
+						;;
+					konqueror)
+						echo "${ECHOPREFIX}     - Konqueror"
+						echo "targetExplorePreference=konqueror file:\"{2}\"" >> ${installationpath}/workspace/.metadata/.plugins/org.eclipse.core.runtime/.settings/com.tetrade.eclipse.plugins.easyshell.prefs
+						;;
+					firefox)
+						echo "${ECHOPREFIX}     - Firefox"
+						echo "targetExplorePreference=firefox file:\"{2}\"" >> ${installationpath}/workspace/.metadata/.plugins/org.eclipse.core.runtime/.settings/com.tetrade.eclipse.plugins.easyshell.prefs
+						;;
+					*)
+						echo "unknown file explorer ${nav}"
+						;;
+				esac
+				break
+			fi
+		done
+	fi
+	echo "${ECHOPREFIX}"
+	echo "${ECHOPREFIX} CONFIGURATION Done. "
+	echo "${ECHOPREFIX}"
+}
+
 ##################################
 ##	Setup Eclipse plug-ins
 ##################################
-#-data ${WORKSPACE_PATH}
+
 ECLIPSE_PLUGINS_INSTALL_PATH=${installationpath}/${ECLIPSE_INIT_FOLDER}
 ECLIPSE_OPTIONS="-nosplash -consolelog -clean -purgeHistory"
 P2OPTIONS="-followReferences"
 ECLIPSE="${installationpath}/${ECLIPSE_BIN_FOLDER}/eclipse${ECLIPSE_BIN_EXTENSTION} ${ECLIPSE_OPTIONS}"
 P2APP="${ECLIPSE} -application org.eclipse.equinox.p2.director"
 
-echo "${ECHOPREFIX} Testing eclipse p2 director application ..."
-${P2APP} -h > /dev/null
-RES=$?
-if [ "$RES" != "0" ]; then
-	echo "Something went wrong (could not execute p2 director application)."
-	exit 1
-fi
-echo ""
-
 SETUP_RESULT_TMPFILE=`mktemp setup_result_tmpfile_XXXXXXXXXXXXXX.txt`
+rm -f $SETUP_RESULT_TMPFILE
 function setup_eclipse_plugins {
 	TITLE=$1
 	echo "${ECHOPREFIX}   * Installing '$TITLE' plugins"
@@ -415,9 +541,9 @@ function setup_eclipse_plugins {
 	echo "${ECHOPREFIX}    $TITLE Setup done : $SETUP_RESULT"
 	echo "${ECHOPREFIX}"
 }
-rm -f $SETUP_RESULT_TMPFILE
 
 function finish {
+	config
 	echo "${ECHOPREFIX}"
 	echo "${ECHOPREFIX} Install results : "
 	cat $SETUP_RESULT_TMPFILE
@@ -479,26 +605,6 @@ setup_eclipse_plugins \
 
 finish
 exit
-
-setup_eclipse_plugins \
-	"M2E extras" \
-	${ECLIPSE_PLUGINS_INSTALL_PATH} \
-	http://download.eclipse.org/eclipse/updates/4.6,http://download.eclipse.org/releases/${ECLIPSE_VERSION},http://ifedorenko.github.com/m2e-extras/,http://m2e-code-quality.github.io/m2e-code-quality/site/latest/ \
-	org.eclipse.m2e.feature.feature.group \
-	org.sonatype.m2e.mavenarchiver.feature.feature.group \
-	org.eclipse.m2e.wtp.feature.feature.group \
-	com.ifedorenko.m2e.mavendev.feature.feature.group \
-	com.basistech.m2e.code.quality.checkstyle.feature.feature.group
-
-setup_eclipse_plugins \
-	"PREESM Deps" \
-	${ECLIPSE_PLUGINS_INSTALL_PATH} \
-	http://koub.org/files/complete/complete/ \
-	org.ietr.externaldeps.aio.deps.feature.group \
-	org.ietr.graphiti.feature.source.feature.group \
-	org.ietr.graphiti.feature.feature.group \
-	org.ietr.dftools.feature.source.feature.group \
-	org.ietr.dftools.feature.feature.group
 	
 finish	
 exit
@@ -927,161 +1033,6 @@ if [ "$SETUP_EASE" == "YES" ]; then
 	EASE_RESULT=$?
 fi
 
-
-echo ""
-echo "####"
-echo "#### CONFIGURATION "
-echo "####"
-
-
-##################################
-##	Config Eclipse workspace
-##################################
-
-#Config Xtend compiler
-cat > ${installationpath}/workspace/.metadata/.plugins/org.eclipse.core.runtime/.settings/org.eclipse.xtend.core.Xtend.prefs << EOF
-eclipse.preferences.version=1
-outlet.DEFAULT_OUTPUT.cleanupDerived=false
-outlet.DEFAULT_OUTPUT.derived=false
-EOF
-
-if [ "$DARKTHEME" == "YES" ]; then
-	cat > ${installationpath}/workspace/.metadata/.plugins/org.eclipse.core.runtime/.settings/org.eclipse.e4.ui.css.swt.theme.prefs << EOF
-themeid=org.eclipse.e4.ui.css.theme.high-contrast
-EOF
-
-	#config theme dark
-	cat > ${installationpath}/workspace/.metadata/.plugins/org.eclipse.core.runtime/.settings/org.eclipse.e4.ui.css.swt.theme << EOF
-	themeid=org.eclipse.e4.ui.css.theme.high-contrast
-EOF
-
-	#config tm terminal
-	cat > ${installationpath}/workspace/.metadata/.plugins/org.eclipse.core.runtime/.settings/org.eclipse.tm.terminal.control.prefs << EOF
-TerminalPrefInvertColors=true
-EOF
-fi
-
-if [ "$SETUP_SVN" == "YES" ]; then
-#Config SVN Console output
-cat > ${installationpath}/workspace/.metadata/.plugins/org.eclipse.core.runtime/.settings/org.eclipse.team.svn.ui.prefs << "EOF"
-eclipse.preferences.version=1
-preference.console.autoshow=1
-preference.console.limitEnabled=false
-EOF
-
-#Force SVN Decorators in worksapce
-cat > ${installationpath}/workspace/.metadata/.plugins/org.eclipse.core.runtime/.settings/org.eclipse.ui.workbench.prefs << "EOF"
-eclipse.preferences.version=1
-ENABLED_DECORATORS=org.eclipse.team.svn.ui.decorator.SVNLightweightDecorator\:true,
-EOF
-fi
-
-#Open SVG/HTML files with internet browser by default
-INTERNET_BROWSER=none
-if [ "`which iceweasel | wc -l`" == "1" ]; then
-	INTERNET_BROWSER=iceweasel
-else
-	if [ "`which firefox | wc -l`" == "1" ]; then
-		INTERNET_BROWSER=firefox
-	fi
-fi
-if [ "${INTERNET_BROWSER}" != "none" ]; then
-	cat >> ${installationpath}/workspace/.metadata/.plugins/org.eclipse.core.runtime/.settings/org.eclipse.ui.workbench.prefs << EOF
-editors=<?xml version\="1.0" encoding\="UTF-8"?>\n<editors>\n<descriptor file\="${INTERNET_BROWSER}" id\="${INTERNET_BROWSER}" internal\="false" label\="${INTERNET_BROWSER}" openMode\="4" open_in_place\="false" program_name\="${INTERNET_BROWSER}"/>\n</editors>
-resourcetypes=<?xml version\="1.0" encoding\="UTF-8"?>\n<editors version\="3.1">\n<info extension\="svg" name\="*">\n<editor id\="${INTERNET_BROWSER}"/>\n<defaultEditor id\="${INTERNET_BROWSER}"/>\n</info>\n<info extension\="htm" name\="*">\n<editor id\="${INTERNET_BROWSER}"/>\n<defaultEditor id\="${INTERNET_BROWSER}"/>\n</info>\n<info extension\="html" name\="*">\n<editor id\="${INTERNET_BROWSER}"/>\n<defaultEditor id\="${INTERNET_BROWSER}"/>\n</info>\n</editors>
-EOF
-fi
-
-#skip wizard tab on startup
-mkdir -p ${installationpath}/workspace/.metadata/.plugins/org.eclipse.ui.intro/
-cat > ${installationpath}/workspace/.metadata/.plugins/org.eclipse.ui.intro/introstate << "EOF"
-<?xml version="1.0" encoding="UTF-8"?>
-<state reopen="false"/>
-EOF
-
-#Config skip workspace selection
-mkdir -p ${installationpath}/eclipse/configuration/.settings/
-cat > ${installationpath}/eclipse/configuration/.settings/org.eclipse.ui.ide.prefs << "EOF"
-SHOW_WORKSPACE_SELECTION_DIALOG=false
-eclipse.preferences.version=1
-EOF
-
-#Always exit without prompt
-cat > ${installationpath}/workspace/.metadata/.plugins/org.eclipse.core.runtime/.settings/org.eclipse.ui.ide.prefs << "EOF"
-EXIT_PROMPT_ON_CLOSE_LAST_WINDOW=false
-REFRESH_WORKSPACE_ON_STARTUP=true
-eclipse.preferences.version=1
-EOF
-
-
-if [ "$SETUP_EASYSHELL" == "YES" ]; then
-#Config Easyshell terminal & explorer
-cat > ${installationpath}/workspace/.metadata/.plugins/org.eclipse.core.runtime/.settings/com.tetrade.eclipse.plugins.easyshell.prefs << EOF
-IdStr=cmdUnknown
-eclipse.preferences.version=1
-listPreference=-1
-targetRunPreference=cd {1} && run ./''{3}''
-EOF
-TERMS="terminator xfce4-terminal gnome-terminal konsole urxvtc"
-for term in ${TERMS}; do
-	if [ ! -z `which ${term}` -a -x `which ${term}` ];
-	then
-		case ${term} in
-			terminator)
-				echo "targetPreference=terminator --working-directory\\={1}" >> ${installationpath}/workspace/.metadata/.plugins/org.eclipse.core.runtime/.settings/com.tetrade.eclipse.plugins.easyshell.prefs
-				;;
-			xfce4-terminal)
-				echo "targetPreference=xfce4-terminal --default-working-directory\\={1}" >> ${installationpath}/workspace/.metadata/.plugins/org.eclipse.core.runtime/.settings/com.tetrade.eclipse.plugins.easyshell.prefs
-				;;
-			gnome-terminal)
-				echo "targetPreference=gnome-terminal --working-directory\\={1}" >> ${installationpath}/workspace/.metadata/.plugins/org.eclipse.core.runtime/.settings/com.tetrade.eclipse.plugins.easyshell.prefs
-				;;
-			konsole)
-				echo "targetPreference=konsole --workdir {1}" >> ${installationpath}/workspace/.metadata/.plugins/org.eclipse.core.runtime/.settings/com.tetrade.eclipse.plugins.easyshell.prefs
-				;;
-			urxvtc)
-				echo "targetPreference=urxvtc -cd  {1}" >> ${installationpath}/workspace/.metadata/.plugins/org.eclipse.core.runtime/.settings/com.tetrade.eclipse.plugins.easyshell.prefs
-				;;
-			*)
-				echo "unknown terminal ${term}"
-				;;
-		esac
-		break
-	fi
-done
-NAVS="thunar nautilus konqueror firefox"
-for nav in ${NAVS}; do
-	if [ ! -z `which ${nav}` -a -x `which ${nav}` ];
-	then
-		case ${nav} in
-			thunar)
-				echo "targetExplorePreference=thunar {2}" >> ${installationpath}/workspace/.metadata/.plugins/org.eclipse.core.runtime/.settings/com.tetrade.eclipse.plugins.easyshell.prefs
-				;;
-			nautilus)
-				echo "targetExplorePreference=nautilus {2}" >> ${installationpath}/workspace/.metadata/.plugins/org.eclipse.core.runtime/.settings/com.tetrade.eclipse.plugins.easyshell.prefs
-				;;
-			konqueror)
-				echo "targetExplorePreference=konqueror file:\"{2}\"" >> ${installationpath}/workspace/.metadata/.plugins/org.eclipse.core.runtime/.settings/com.tetrade.eclipse.plugins.easyshell.prefs
-				;;
-			firefox)
-				echo "targetExplorePreference=firefox file:\"{2}\"" >> ${installationpath}/workspace/.metadata/.plugins/org.eclipse.core.runtime/.settings/com.tetrade.eclipse.plugins.easyshell.prefs
-				;;
-			*)
-				echo "unknown file explorer ${nav}"
-				;;
-		esac
-		break
-	fi
-done
-fi
-
-
-# DEPRECATED
-#config Tom/Gom
-cat > ${installationpath}/workspace/.metadata/.plugins/org.eclipse.core.runtime/.settings/fr.loria.eclipse.tom.prefs << EOF 
-eclipse.preferences.version=1
-included_file_location=${installationpath}/workspace/eu.alma.matlab/src-gen/tom\:${installationpath}/workspace/eu.alma.matlab.frontend/src-tom\:${installationpath}/workspace/fr.irisa.cairn.gecos.model/src-gen/tom\:${installationpath}/workspace/fr.irisa.cairn.gecos.model.scop/src-gen/tom\:${installationpath}/workspace/org.polymodel.algebra/src-gen/tom\:${installationpath}/workspace/org.polymodel.polyhedralIR/src-gen/tom\:${installationpath}/workspace/org.polymodel.scop/src-gen/tom\:${installationpath}/workspace/org.polymodel.scop.dtiler/src-tom\:
-EOF
 
 
 
