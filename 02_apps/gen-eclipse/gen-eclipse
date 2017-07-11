@@ -259,7 +259,18 @@ SETUP_GECOS_UI=NO
 ##	Config Eclipse
 ##################################
 WORKSPACE_PATH=${installationpath}/workspace
-{
+
+##################################
+##	Config Eclipse workspace
+##################################
+# Called upon finish
+function config {
+	echo "${ECHOPREFIX}"
+	echo "${ECHOPREFIX} CONFIGURATION "
+	echo "${ECHOPREFIX}"
+
+	mkdir -p ${WORKSPACE_PATH}/.metadata/.plugins/org.eclipse.core.runtime/.settings/
+	
 	TMPCONFFILE=$(mktemp tmp_XXXXXXX_eclipse.ini)
 	mkdir -p ${HOMEDIR}/.eclipse
 	#set master password
@@ -275,6 +286,8 @@ WORKSPACE_PATH=${installationpath}/workspace
 
 	#initialize configuration
 	TMPCONFFILE=$(mktemp tmp_XXXXXXX_config.ini)
+	echo "${ECHOPREFIX} init config (${installationpath}/${ECLIPSE_INIT_FOLDER}/configuration/config.ini)"
+	echo "$TMPCONFFILE"
 	cat ${installationpath}/${ECLIPSE_INIT_FOLDER}/configuration/config.ini | grep -v "osgi.instance.area.default" > $TMPCONFFILE
 	cat $TMPCONFFILE > ${installationpath}/${ECLIPSE_INIT_FOLDER}/configuration/config.ini
 	cat >> ${installationpath}/${ECLIPSE_INIT_FOLDER}/configuration/config.ini << EOF
@@ -289,7 +302,6 @@ SHOW_WORKSPACE_SELECTION_DIALOG=false
 eclipse.preferences.version=1
 EOF
 
-	mkdir -p ${WORKSPACE_PATH}/.metadata/.plugins/org.eclipse.core.runtime/.settings/
 	#Always exit without prompt
 	cat > ${WORKSPACE_PATH}/.metadata/.plugins/org.eclipse.core.runtime/.settings/org.eclipse.ui.ide.prefs << "EOF"
 EXIT_PROMPT_ON_CLOSE_LAST_WINDOW=false
@@ -349,16 +361,6 @@ exit 0
 
 EOF
 	chmod +x ${CLEANUP_SCRIPT}
-}
-
-##################################
-##	Config Eclipse workspace
-##################################
-# Called upon finish
-function config {
-	echo "${ECHOPREFIX}"
-	echo "${ECHOPREFIX} CONFIGURATION "
-	echo "${ECHOPREFIX}"
 
 	#Config Xtend compiler
 	echo "${ECHOPREFIX}   o Config XTend"
@@ -605,9 +607,7 @@ setup_eclipse_plugins \
 
 finish
 exit
-	
-finish	
-exit
+
 #
 
 setup_eclipse_plugins \
