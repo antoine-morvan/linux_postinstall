@@ -13,7 +13,9 @@ ajouter la directive suivante dans mpd.conf : audio_output_format "44100:16:2"
 
 ##### à trouver une solution
 
+
 ajouter eclipse sdk dans l'install eclipse
+ + visual vm (binary + IDE plugin https://visualvm.github.io/idesupport.html)
  + https://marketplace.eclipse.org/content/markdown-text-editor
 
 purple-facebook @ ubuntu : http://www.webupd8.org/2015/08/use-facebook-chat-in-pidgin-with-purple.html
