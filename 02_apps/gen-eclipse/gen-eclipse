@@ -14,6 +14,77 @@ echo "${ECHOPREFIX} starting setup ..."
 #
 ####################################################################
 
+##################################
+##	Eclipse configuration
+##################################
+
+ECLIPSE_VERSION=oxygen
+ECLIPSE_VERSION_MAJOR=4
+ECLIPSE_VERSION_MIDDLE=7
+ECLIPSE_VERSION_MINOR=R
+ECLIPSE_PRE=${ECLIPSE_VERSION_MINOR}
+
+# MIRROR List :
+#http://ftp.fau.de/eclipse/
+#http://mirror.ibcp.fr/pub/eclipse/
+#http://mirror.ibcp.fr/pub/eclipse/
+#http://ftp.halifax.rwth-aachen.de/eclipse/
+#http://eclipse.mirror.wearetriple.com/
+#http://artfiles.org/eclipse.org/
+#http://mirror.switch.ch/eclipse/
+
+MIRRORURL="http://ftp.fau.de/eclipse/"
+
+DARKTHEME=NO
+
+#useful plugins
+SETUP_SVN=YES 	# SVN Client
+SETUP_EASYSHELL=YES		# External Terminal
+SETUP_ANYEDITTOOLS=YES  # UI enhancement
+SETUP_FINDBUGS=YES		# More error/warnings
+
+SETUP_GRADLE=YES		# Web Tool Plugins
+SETUP_ECLEMMAJCC=YES	# Java Code Coverage
+SETUP_JAUTODOC=YES		# Java AutoDoc
+
+SETUP_WTP=YES			# Web Tool Plugins
+SETUP_JAVAFX=YES		# JavaFX Design Tools
+SETUP_PHOTRAN=YES		# Fortran support (from PTP)
+SETUP_DLTK=YES			# Dynamic Languages Toolkit
+
+#specific plugins (deprecated)
+SETUP_TEXCLIPSE=YES 	# latex support in eclipse
+
+#causing annoying behavior
+SETUP_EASE=NO			# Eclipse Advanced Scripting Environment
+
+#failing ..
+SETUP_PTP=NO			# Parallel Tools
+SETUP_CUP_LEX=NO   		#cup & lex (similar to yacc & lex, but in java)
+SETUP_TOMCAT=NO			# Tomcat plugin
+SETUP_GRECLIPSE=NO 		#groovy for eclipse
+
+#CAIRN plugins (deprecated)
+SETUP_TOM=NO
+SETUP_JNIMAP=NO
+SETUP_GECOS_SCRIPT=NO
+SETUP_GECOS_UI=NO
+
+##################################
+##	Setup functions
+##################################
+
+function check_and_set_eclipse_mirror {
+	#ECLIPSE_URL_PATH="technology/epp/downloads/release/${ECLIPSE_VERSION}/${ECLIPSE_VERSION_MINOR}/"
+	#ECLIPSE_ARCHIVE_NAME="eclipse-rcp-${ECLIPSE_VERSION}-${ECLIPSE_VERSION_MINOR}-${ECLIPSE_PLATFORM}${ECLIPSE_ARCHSUFF}.${ARCHIVE_EXTENSION}"
+	#URL="${MIRRORURL}${ECLIPSE_URL_PATH}${ECLIPSE_ARCHIVE_NAME}"
+  
+  
+	ECLIPSE_URL_PATH="eclipse/downloads/drops/${ECLIPSE_VERSION}/${ECLIPSE_VERSION_MINOR}-4.7-201706120950/"
+	ECLIPSE_ARCHIVE_NAME="eclipse-platform-${ECLIPSE_VERSION}-${ECLIPSE_VERSION_MINOR}-${ECLIPSE_PLATFORM}${ECLIPSE_ARCHSUFF}.${ARCHIVE_EXTENSION}"
+  URL="http://ftp-stud.fht-esslingen.de/pub/Mirrors/eclipse/eclipse/downloads/drops4/R-4.7-201706120950/eclipse-platform-4.7-linux-gtk-x86_64.tar.gz"
+}
+
 function check_java_version {
 	JAVA8=0
 	JAVA9=0
@@ -152,61 +223,6 @@ function check_and_set_download_tool {
 		fi
 	fi
 }
-
-function check_and_set_eclipse_mirror {
-	# MIRROR List :
-	#http://ftp.fau.de/eclipse/
-	#http://mirror.ibcp.fr/pub/eclipse/
-	#http://mirror.ibcp.fr/pub/eclipse/
-	#http://ftp.halifax.rwth-aachen.de/eclipse/
-	#http://eclipse.mirror.wearetriple.com/
-	#http://artfiles.org/eclipse.org/
-	#http://mirror.switch.ch/eclipse/
-	
-	MIRRORURL="http://ftp.fau.de/eclipse/"
-	ECLIPSE_URL_PATH="technology/epp/downloads/release/${ECLIPSE_VERSION}/${ECLIPSE_VERSION_MINOR}/"
-	ECLIPSE_ARCHIVE_NAME="eclipse-java-${ECLIPSE_VERSION}-${ECLIPSE_VERSION_MINOR}-${ECLIPSE_PLATFORM}${ECLIPSE_ARCHSUFF}.${ARCHIVE_EXTENSION}"
-	URL="${MIRRORURL}${ECLIPSE_URL_PATH}${ECLIPSE_ARCHIVE_NAME}"
-}
-
-ECLIPSE_VERSION=neon
-ECLIPSE_VERSION_MINOR=3
-ECLIPSE_PRE=${ECLIPSE_VERSION_MINOR}
-
-DARKTHEME=NO
-
-#useful plugins
-SETUP_SVN=YES 	# SVN Client
-SETUP_EASYSHELL=YES		# External Terminal
-SETUP_ANYEDITTOOLS=YES  # UI enhancement
-SETUP_FINDBUGS=YES		# More error/warnings
-
-SETUP_GRADLE=YES		# Web Tool Plugins
-SETUP_ECLEMMAJCC=YES	# Java Code Coverage
-SETUP_JAUTODOC=YES		# Java AutoDoc
-
-SETUP_WTP=YES			# Web Tool Plugins
-SETUP_JAVAFX=YES		# JavaFX Design Tools
-SETUP_PHOTRAN=YES		# Fortran support (from PTP)
-SETUP_DLTK=YES			# Dynamic Languages Toolkit
-
-#specific plugins (deprecated)
-SETUP_TEXCLIPSE=YES 	# latex support in eclipse
-
-#causing annoying behavior
-SETUP_EASE=NO			# Eclipse Advanced Scripting Environment
-
-#failing ..
-SETUP_PTP=NO			# Parallel Tools
-SETUP_CUP_LEX=NO   		#cup & lex (similar to yacc & lex, but in java)
-SETUP_TOMCAT=NO			# Tomcat plugin
-SETUP_GRECLIPSE=NO 		#groovy for eclipse
-
-#CAIRN plugins (deprecated)
-SETUP_TOM=NO
-SETUP_JNIMAP=NO
-SETUP_GECOS_SCRIPT=NO
-SETUP_GECOS_UI=NO
 
 ##################################
 ##	Check script configuration
@@ -557,7 +573,7 @@ function finish {
 setup_eclipse_plugins \
 	"ALL" \
 	${ECLIPSE_PLUGINS_INSTALL_PATH} \
-	http://download.eclipse.org/eclipse/updates/4.6,http://eclipse-color-theme.github.io/update/,http://download.eclipse.org/releases/${ECLIPSE_VERSION},http://repo1.maven.org/maven2/.m2e/connectors/m2eclipse-tycho/0.9.0/N/LATEST/,http://download.eclipse.org/buildship/updates/e46/releases/1.0,http://community.polarion.com/projects/subversive/download/eclipse/6.0/neon-site/,http://anb0s.github.io/EasyShell,http://update.eclemma.org/,http://jautodoc.sourceforge.net/update/,http://andrei.gmxhome.de/eclipse/,http://findbugs.cs.umd.edu/eclipse/,http://download.eclipse.org/efxclipse/updates-released/2.4.0/site,http://eclipse-cs.sf.net/update,http://eclipse.sonarlint.org/,http://download.eclipse.org/modeling/tmf/xtext/updates/releases/ \
+	http://download.eclipse.org/eclipse/updates/${ECLIPSE_VERSION_MAJOR}.${ECLIPSE_VERSION_MIDDLE},http://eclipse-color-theme.github.io/update/,http://download.eclipse.org/releases/${ECLIPSE_VERSION},http://repo1.maven.org/maven2/.m2e/connectors/m2eclipse-tycho/0.9.0/N/LATEST/,http://download.eclipse.org/buildship/updates/e${ECLIPSE_VERSION_MAJOR}${ECLIPSE_VERSION_MIDDLE}/releases/,http://community.polarion.com/projects/subversive/download/eclipse/6.0/neon-site/,http://anb0s.github.io/EasyShell,http://update.eclemma.org/,http://jautodoc.sourceforge.net/update/,http://andrei.gmxhome.de/eclipse/,http://findbugs.cs.umd.edu/eclipse/,http://download.eclipse.org/efxclipse/updates-released/2.4.0/site,http://eclipse-cs.sf.net/update,http://eclipse.sonarlint.org/,http://download.eclipse.org/modeling/tmf/xtext/updates/releases/ \
 	org.eclipse.releng.tools.feature.group \
 	com.github.eclipsecolortheme.feature.feature.group \
 	org.eclipse.cdt.feature.group \
@@ -575,7 +591,6 @@ setup_eclipse_plugins \
 	org.eclipse.wst.web_ui.feature.feature.group \
 	org.eclipse.jpt.jaxb.feature.feature.group \
 	org.eclipse.tm.terminal.feature.feature.group \
-	org.eclipse.stardust.modeling.wst-feature.feature.group \
 	org.eclipse.linuxtools.changelog.feature.group \
 	org.eclipse.egit.feature.group \
 	org.eclipse.egit.gitflow.feature.feature.group \
@@ -705,7 +720,7 @@ echo " * Setup Releng Tools"
 echo ""
 ${ECLIPSE} ${OPTIONS} \
   -application org.eclipse.equinox.p2.director \
-  -repository http://download.eclipse.org/eclipse/updates/4.6 \
+  -repository http://download.eclipse.org/eclipse/updates/${ECLIPSE_VERSION_MAJOR}.${ECLIPSE_VERSION_MIDDLE} \
   ${P2OPTIONS} -destination ${installationpath}/eclipse/ \
   -installIU org.eclipse.releng.tools.feature.group
 RELENG_RESULT=$?
@@ -758,7 +773,7 @@ if [ "$SETUP_SVN" == "YES" ]; then
 	echo ""
 	${ECLIPSE} ${OPTIONS} \
 	  -application org.eclipse.equinox.p2.director \
-	  -repository http://community.polarion.com/projects/subversive/download/eclipse/6.0/neon-site/ \
+	  -repository http://community.polarion.com/projects/subversive/download/eclipse/6.0/${ECLIPSE_VERSION}-site/ \
 	  ${P2OPTIONS} -destination ${installationpath}/eclipse/ \
 	  -installIU org.polarion.eclipse.team.svn.connector.feature.group \
 	  -installIU org.polarion.eclipse.team.svn.connector.svnkit18.feature.group
@@ -946,7 +961,7 @@ if [ "$SETUP_PTP" == "YES" ]; then
 	  
 	${ECLIPSE} ${OPTIONS} \
 	  -application org.eclipse.equinox.p2.director \
-	  -repository http://download.eclipse.org/tools/ptp/updates/neon/ \
+	  -repository http://download.eclipse.org/tools/ptp/updates/${ECLIPSE_VERSION}/ \
 	  ${P2OPTIONS} -destination ${installationpath}/eclipse/ \
 	  -installIU org.eclipse.ptp.feature.group \
 	  -installIU org.eclipse.ptp.sdk.feature.group \
@@ -969,7 +984,7 @@ if [ "$SETUP_PHOTRAN" == "YES" ]; then
 	echo ""
 	${ECLIPSE} ${OPTIONS} \
 	  -application org.eclipse.equinox.p2.director \
-	  -repository http://download.eclipse.org/tools/ptp/updates/neon/ \
+	  -repository http://download.eclipse.org/tools/ptp/updates/${ECLIPSE_VERSION}/ \
 	  ${P2OPTIONS} -destination ${installationpath}/eclipse/ \
 	  -installIU org.eclipse.photran.feature.group \
 	  -installIU org.eclipse.photran.xlf.feature.group \
@@ -984,7 +999,7 @@ if [ "$SETUP_WTP" == "YES" ]; then
 	echo ""
 	${ECLIPSE} ${OPTIONS} \
 	  -application org.eclipse.equinox.p2.director \
-	  -repository http://download.eclipse.org/webtools/repository/neon/ \
+	  -repository http://download.eclipse.org/webtools/repository/${ECLIPSE_VERSION}/ \
 	  ${P2OPTIONS} -destination ${installationpath}/eclipse/ \
 	  -installIU org.eclipse.jst.ws.cxf.feature.feature.group \
 	  -installIU org.eclipse.jpt.common.eclipselink.feature.feature.group \
