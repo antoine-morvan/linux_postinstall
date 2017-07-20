@@ -18,12 +18,6 @@ echo "${ECHOPREFIX} starting setup ..."
 ##	Eclipse configuration
 ##################################
 
-ECLIPSE_VERSION=oxygen
-ECLIPSE_VERSION_MAJOR=4
-ECLIPSE_VERSION_MIDDLE=7
-ECLIPSE_VERSION_MINOR=R
-ECLIPSE_PRE=${ECLIPSE_VERSION_MINOR}
-
 # MIRROR List :
 #http://ftp.fau.de/eclipse/
 #http://mirror.ibcp.fr/pub/eclipse/
@@ -34,6 +28,15 @@ ECLIPSE_PRE=${ECLIPSE_VERSION_MINOR}
 #http://mirror.switch.ch/eclipse/
 
 MIRRORURL="http://ftp.fau.de/eclipse/"
+
+ECLIPSE_VERSION=oxygen
+ECLIPSE_VERSION_MAJOR=4
+ECLIPSE_VERSION_MIDDLE=7
+ECLIPSE_VERSION_MINOR=R
+# to find the timestamp check ${MIRRORURL}/eclipse/downloads/drops${ECLIPSE_VERSION_MAJOR}/
+ECLIPSE_TIMESTAMP=201706120950
+ECLIPSE_PRE=${ECLIPSE_VERSION_MINOR}
+
 
 DARKTHEME=NO
 
@@ -75,14 +78,9 @@ SETUP_GECOS_UI=NO
 ##################################
 
 function check_and_set_eclipse_mirror {
-	#ECLIPSE_URL_PATH="technology/epp/downloads/release/${ECLIPSE_VERSION}/${ECLIPSE_VERSION_MINOR}/"
-	#ECLIPSE_ARCHIVE_NAME="eclipse-rcp-${ECLIPSE_VERSION}-${ECLIPSE_VERSION_MINOR}-${ECLIPSE_PLATFORM}${ECLIPSE_ARCHSUFF}.${ARCHIVE_EXTENSION}"
-	#URL="${MIRRORURL}${ECLIPSE_URL_PATH}${ECLIPSE_ARCHIVE_NAME}"
-  
-  
-	ECLIPSE_URL_PATH="eclipse/downloads/drops/${ECLIPSE_VERSION}/${ECLIPSE_VERSION_MINOR}-4.7-201706120950/"
-	ECLIPSE_ARCHIVE_NAME="eclipse-platform-${ECLIPSE_VERSION}-${ECLIPSE_VERSION_MINOR}-${ECLIPSE_PLATFORM}${ECLIPSE_ARCHSUFF}.${ARCHIVE_EXTENSION}"
-  URL="http://ftp-stud.fht-esslingen.de/pub/Mirrors/eclipse/eclipse/downloads/drops4/R-4.7-201706120950/eclipse-platform-4.7-linux-gtk-x86_64.tar.gz"
+	ECLIPSE_URL_PATH="eclipse/downloads/drops${ECLIPSE_VERSION_MAJOR}/${ECLIPSE_PRE}-${ECLIPSE_VERSION_MAJOR}.${ECLIPSE_VERSION_MIDDLE}-${ECLIPSE_TIMESTAMP}/"
+	ECLIPSE_ARCHIVE_NAME="eclipse-platform-${ECLIPSE_VERSION_MAJOR}.${ECLIPSE_VERSION_MIDDLE}-${ECLIPSE_PLATFORM}${ECLIPSE_ARCHSUFF}.${ARCHIVE_EXTENSION}"
+  URL="${MIRRORURL}${ECLIPSE_URL_PATH}${ECLIPSE_ARCHIVE_NAME}"
 }
 
 function check_java_version {
