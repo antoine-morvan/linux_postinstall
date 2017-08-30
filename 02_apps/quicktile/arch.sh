@@ -19,7 +19,7 @@ install_packs_aur "$AURPKGS"
 # add special script to link XDG config dir to /etc/quicktile
 cat > /usr/local/bin/quicktile_startup.sh << EOF
 #!/bin/bash
-export XDG_CONFIG_HOME=/etc/quicktile/
+export XDG_CONFIG_HOME=${HOME}/.config/quicktile/
 /usr/bin/quicktile --daemonize
 EOF
 chmod +x /usr/local/bin/quicktile_startup.sh
@@ -28,12 +28,8 @@ mkdir -p /etc/xdg/autostart/
 retry "wget -q -O /etc/xdg/autostart/quicktile.desktop ${SETUP_SCRIPT_LOCATION}/02_apps/quicktile/quicktile.desktop"
 chmod +x /etc/xdg/autostart/quicktile.desktop
 
-
-exit
-
-mkdir -p /etc/quicktile/
-retry "wget -q -O /etc/quicktile/quicktile.cfg ${SETUP_SCRIPT_LOCATION}/02_apps/quicktile/quicktile.cfg"
-
+mkdir -p /etc/skel/.config/quicktile/
+retry "wget -q -O /etc/skel/.config/quicktile/quicktile.cfg ${SETUP_SCRIPT_LOCATION}/02_apps/quicktile/quicktile.cfg"
 
 exit
 

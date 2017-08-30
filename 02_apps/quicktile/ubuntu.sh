@@ -7,9 +7,6 @@ export SETUP_SCRIPT_LOCATION=http://koub.org/files/linux/
 source ubuntu_func.sh
 
 #setup application
-mkdir -p /etc/xdg/autostart/
-mkdir -p /etc/quicktile/
-
 apt-get -y install python python-gtk2 python-xlib python-dbus python-wnck git
 
 git clone https://github.com/ssokolow/quicktile.git quicktile
@@ -20,14 +17,17 @@ chmod 755 /usr/local/bin/quicktile.py
 # add special script to link XDG config dir to /etc/quicktile
 cat > /usr/local/bin/quicktile_startup.sh << EOF
 #!/bin/bash
-export XDG_CONFIG_HOME=/etc/quicktile/
+export XDG_CONFIG_HOME=${HOME}/.config/quicktile/
 /usr/local/bin/quicktile.py --daemonize
 EOF
 chmod +x /usr/local/bin/quicktile_startup.sh
 
-retry "wget -q -O /etc/quicktile/quicktile.cfg ${SETUP_SCRIPT_LOCATION}/02_apps/quicktile/quicktile.cfg"
+mkdir -p /etc/xdg/autostart/
 retry "wget -q -O /etc/xdg/autostart/quicktile.desktop ${SETUP_SCRIPT_LOCATION}/02_apps/quicktile/quicktile.desktop"
 chmod +x /etc/xdg/autostart/quicktile.desktop
+
+mkdir -p /etc/skel/.config/quicktile/
+retry "wget -q -O /etc/skel/.config/quicktile/quicktile.cfg ${SETUP_SCRIPT_LOCATION}/02_apps/quicktile/quicktile.cfg"
 
 #cleaning
 rm -rf ./quicktile/
