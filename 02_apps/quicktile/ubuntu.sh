@@ -17,7 +17,7 @@ chmod 755 /usr/local/bin/quicktile.py
 # add special script to link XDG config dir to /etc/quicktile
 cat > /usr/local/bin/quicktile_startup.sh << EOF
 #!/bin/bash
-export XDG_CONFIG_HOME=${HOME}/.config/quicktile/
+export XDG_CONFIG_HOME=\${HOME}/.config/quicktile/
 /usr/local/bin/quicktile.py --daemonize
 EOF
 chmod +x /usr/local/bin/quicktile_startup.sh
