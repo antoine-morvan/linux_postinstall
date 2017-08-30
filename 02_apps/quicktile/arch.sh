@@ -25,11 +25,15 @@ EOF
 chmod +x /usr/local/bin/quicktile_startup.sh
 
 mkdir -p /etc/xdg/autostart/
-mkdir -p /etc/quicktile/
-
-retry "wget -q -O /etc/quicktile/quicktile.cfg ${SETUP_SCRIPT_LOCATION}/02_apps/quicktile/quicktile.cfg"
 retry "wget -q -O /etc/xdg/autostart/quicktile.desktop ${SETUP_SCRIPT_LOCATION}/02_apps/quicktile/quicktile.desktop"
 chmod +x /etc/xdg/autostart/quicktile.desktop
+
+
+exit
+
+mkdir -p /etc/quicktile/
+retry "wget -q -O /etc/quicktile/quicktile.cfg ${SETUP_SCRIPT_LOCATION}/02_apps/quicktile/quicktile.cfg"
+
 
 exit
 
