@@ -621,14 +621,14 @@ setup_eclipse_plugins \
 	org.eclipse.sdk.ide \
 	org.eclipse.platform.sdk
 
+finish
+exit
 
 setup_eclipse_plugins \
 	"graphiti Dev Feature" \
 	${ECLIPSE_PLUGINS_INSTALL_PATH} \
 	http://preesm.sourceforge.net/eclipse/update-site/ \
 	org.ietr.graphiti.dev.feature.feature.group
-finish
-exit
 
 #
 
