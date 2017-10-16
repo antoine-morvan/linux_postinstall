@@ -602,6 +602,7 @@ setup_eclipse_plugins \
 	org.eclipse.xtend.sdk.feature.group \
 	org.eclipse.xtext.sdk.feature.group \
 	org.eclipse.team.svn.feature.group \
+	org.eclipse.m2e.feature.feature.group \
 	org.sonatype.tycho.m2e.feature.feature.group \
 	org.eclipse.dltk.itcl.feature.group \
 	org.eclipse.dltk.ruby.feature.group \
