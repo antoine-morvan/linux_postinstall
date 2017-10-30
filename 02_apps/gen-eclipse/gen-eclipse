@@ -299,7 +299,10 @@ function config {
 	if [ "$ECLIPSE_PLATFORM" == "linux-gtk" ]; then
 		echo -e "--launcher.GTK_version\n2" >> ${TMPCONFFILE}
 	fi
-	cat ${installationpath}/${ECLIPSE_INIT_FOLDER}/eclipse.ini >> ${TMPCONFFILE}
+	cat ${installationpath}/${ECLIPSE_INIT_FOLDER}/eclipse.ini | \
+		sed -r 's/-Xms(.*)m/-Xms1024m/g' | \
+		sed -r 's/-Xmx(.*)m/-Xmx4096m/g' \
+			>> ${TMPCONFFILE}
 	cat ${TMPCONFFILE} > ${installationpath}/${ECLIPSE_INIT_FOLDER}/eclipse.ini
 	rm ${TMPCONFFILE}
 
