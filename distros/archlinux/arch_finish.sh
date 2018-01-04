@@ -319,7 +319,9 @@ fi
 echo "[detect sensors]"
 echo "**********************"
 echo ""
-sensors-detect --auto
+#skip since it needs to run with systemd PID = 1 (that is not in chroot)
+#sensors-detect --auto
+echo "skipped"
 echo ""
 echo "**********************"
 echo "[detect sensors done]"
