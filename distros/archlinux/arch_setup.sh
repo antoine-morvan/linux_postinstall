@@ -276,7 +276,11 @@ mkdir -p $MOUNTPOINT/boot
 echo " - mount $BOOTPARTITION $MOUNTPOINT/boot"
 mount $BOOTPARTITION $MOUNTPOINT/boot
 
-if [ "$UEFIPARTITION" != "" ]; then
+#reformat
+if [ -z ${UEFIPARTITION+x} ]; then
+  echo "no EFI, skip mount"
+else
+  echo "EFI partition found, mount it"
   mkdir -p $MOUNTPOINT/boot/efi
   mount $UEFIPARTITION $MOUNTPOINT/boot/efi
 fi
