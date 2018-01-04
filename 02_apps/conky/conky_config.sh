@@ -1,30 +1,25 @@
 #!/bin/bash -eu
 
-# if script is run during post install script, load script location
-if [ -e /setup.dat ]; then	
-	#BG=`cat /setup.dat | sed '1q;d'`
-	SETUP_SCRIPT_LOCATION=`cat /setup.dat | sed '2q;d'`
-	#TESTSYSTEM=`cat /setup.dat | sed '3q;d'`
-	#INSTALLHEAD=`cat /setup.dat | sed '4q;d'`
-else 
-	SETUP_SCRIPT_LOCATION=http://koub.org/files/linux/
-fi
+echo "[CONKY] setup conky"
+
+export SETUP_SCRIPT_LOCATION=http://home.koub.org/files/linux/
 
 CONFFILE=/etc/conky/koubi_conky.conf
 CONFDIR=`dirname $CONFFILE`
+export LOGCNT=0
 
 # retry the given command until it succeed.
 # $1 : a command as string
 function retry {
 	[ "$LOGCNT" == "" ] && export LOGCNT=0
-	let LOGCNT++
+	LOGCNT=$((LOGCNT+1)
 	LOGFILE="retry_mainlog_$LOGCNT.log"
 	MSG="Error executing '$1', logging in '$LOGFILE'. Retrying in 5s."
 	$1 >> $LOGFILE 2>> $LOGFILE
 	while [ "$?" != "0" ]; do
 		echo $MSG
 		sleep 5
-		let LOGCNT++
+		LOGCNT=$((LOGCNT+1)
 		LOGFILE="retry_mainlog_$LOGCNT.log"
 		MSG="Error executing '$1', logging in '$LOGFILE'. Retrying in 5s."
 		$1 >> $LOGFILE 2>> $LOGFILE
@@ -35,6 +30,8 @@ mkdir -p $CONFDIR
 retry "wget $SETUP_SCRIPT_LOCATION/02_apps/conky/koubi_conky.conf -O $CONFFILE"
 #retry "wget http://home.koub.org/files/linux/02_apps/conky/conky.conf -O $CONFFILE"
 
+echo "[CONKY] * Config file downloaded"
+
 #PARTS=`mount | grep -v /sys | grep -v /proc | grep -v /run | grep -v tmpfs | grep -v cdrom | grep ^/`
 PARTS=`cat /etc/fstab | grep -v "^#" | grep -v cdrom | grep -v swap | grep -v "//" | grep -v "[ \t]bind" | cut -d" " -f 2 | grep -v "^$"`
 [ "$PARTS" == "" ] && PARTS=`cat /etc/fstab | grep -v "^#" | grep -v cdrom | grep -v swap | grep -v "//" | grep -v "[ \t]bind" | cut -f 2 | grep -v "^$"`
@@ -44,6 +41,8 @@ PRINTCONKY=
 #####################
 #######	LVM #########
 #####################
+
+echo "[CONKY] * Config LVM"
 
 LVS=`lvscan | cut -d"'" -f2`
 VGS=`vgs | tail -n +2 | colrm 1 2 | cut -d" " -f 1`
@@ -80,9 +79,13 @@ if [ "$LVS" != "" ]; then
 fi
 PARTS=`echo $NEWPARTS | xargs -n1 | sort -u | xargs`
 
+echo "[CONKY] * Config LVM done"
+
 ##############################
 #######	 PARTITIONS  #########
 ##############################
+
+echo "[CONKY] * Config Partitions"
 
 for DISK in $DISKS; do
 	PRINTCONKY+="\${color grey}File systems on \$color/dev/$DISK \${color grey}: \$color(\${color orange}I/O : \${diskio /dev/$DISK}/s\$color)\n"
@@ -111,9 +114,13 @@ done
 PRINTCONKY=${PRINTCONKY%??}
 sed -i -e "s#%%HDD%%#$PRINTCONKY#g" $CONFFILE
 
+echo "[CONKY] * Config Partitions done"
+
 ############################
 #######	PROCESSORS #########
 ############################
+
+echo "[CONKY] * Config Processors"
 
 NBPROC=`cat /proc/cpuinfo | grep processor | wc -l`
 CPUS=" "
@@ -133,9 +140,13 @@ else
 fi
 sed -i -e "s#%%CPU%%#$CPUS#g" $CONFFILE
 
+echo "[CONKY] * Config Processors done"
+
 ###########################
 #######	 NETWORK  #########
 ###########################
+
+echo "[CONKY] * Config Network"
 
 NETDEVS=`ls /sys/class/net | grep -v "^lo$"`
 NET=" "
@@ -148,7 +159,9 @@ for NETDEV in $NETDEVS; do
 	NET+="\${color red}NETWORK ${NETDEV^^} (DOWN) \${hr 2}\$color\${endif}"
 done
 
-
 sed -i -e "s#%%NET%%#$NET#g" $CONFFILE
+
+echo "[CONKY] * Config Network done."
+echo "[CONKY] end."
 
 exit 
