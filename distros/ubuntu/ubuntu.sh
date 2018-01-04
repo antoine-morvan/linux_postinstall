@@ -13,6 +13,7 @@
 #test if local server is present
 export SETUP_SCRIPT_LOCATION=http://home.koub.org/files/linux/
 export ENABLE_PAUSE=NO
+export LOGCNT=0
 
 apt-get update
 apt-get -y install wget
