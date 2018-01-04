@@ -201,20 +201,26 @@ echo "umount done"
 RAMSIZE=`free -h | grep Mem | xargs | cut -d" " -f2 | sed 's/,/./g'`
 
 # delete lvm physical volume if present on used partitions
-pvs $BOOTPARTITION
-if [ "$?" == "0" ]; then
-  BOOTPARTLVMGROUP=`pvs $BOOTPARTITION -o vg_name | tail -n -1 | head -n 1 | xargs`
-  lvremove $BOOTPARTLVMGROUP -q -y
-  vgremove $BOOTPARTLVMGROUP
-  pvremove $BOOTPARTITION
-fi
-pvs $MAINPARTITION
-if [ "$?" == "0" ]; then
-  MAINPARTLVMGROUP=`pvs $MAINPARTITION -o vg_name | tail -n -1 | head -n 1 | xargs`
-  lvremove $MAINPARTLVMGROUP -q -y
-  vgremove $MAINPARTLVMGROUP
-  pvremove $MAINPARTLVMGROUP
-fi
+
+function try_lvm_delete {
+  echo "try delete LVM: $1"
+  ISMOUNT=`pvs -o pv_name | grep $1 | wc -l`
+  if [ "$ISMOUNT" -ge 1 ]; then
+    echo " >> delete lv"
+    PARTLVMGROUP=`pvs $1 -o vg_name | tail -n -1 | head -n 1 | xargs`
+    lvremove $PARTLVMGROUP -q -y
+    echo " >> delete vg"
+    vgremove $PARTLVMGROUP
+    echo " >> delete pv"
+    pvremove $1
+    echo " >> done"
+  else
+    echo " >> abort"
+  fi
+}
+
+try_lvm_delete $BOOTPARTITION
+try_lvm_delete $MAINPARTITION
 
 echo "lvm delete done"
 
