@@ -71,15 +71,20 @@ if [ "$LVS" != "" ]; then
 				MDMPCMD=`ls -l $MOUNTLINE | grep ">"`
         echo "[CONKY]         * before if 1"
 				if [ "$MDMPCMD" != "" ]; then
+          echo "[CONKY]         * in if 1"
 					MDMP=`echo $MDMPCMD | cut -d">" -f 2`
           echo "[CONKY]          * before if 2"
 					if [ "$MDMP" == "$DMP" ]; then
+            echo "[CONKY]           * in if 2"
 						I=$((I+1))
 						PRINTCONKY+="   $PART  \$alignr\$color\${fs_free $PART}\${color grey}/\$color\${fs_size $PART} \${color}\${fs_bar 7,150 $PART}\n"
 					fi
+          echo "[CONKY]          * after if 2"
 				else 
+          echo "[CONKY]         * in else 1"
 					NEWPARTS+=" $PART"
 				fi
+        echo "[CONKY]         * after if 1"
 			done
 		done <<< "$LVS"
 		
