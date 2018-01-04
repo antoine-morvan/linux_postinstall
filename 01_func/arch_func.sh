@@ -3,11 +3,15 @@
 # retry the given command until it succeed.
 # $1 : a command as string
 function retry {
+  echo "retry $1"
 	[ "$LOGCNT" == "" ] && export LOGCNT=0
+  echo " >> inc logcount"
 	let LOGCNT++
 	LOGFILE="retry_mainlog_$LOGCNT.log"
 	MSG="Error executing '$1', logging in '$LOGFILE'. Retrying in 5s."
+  echo " >> exec"
 	$1 >> $LOGFILE 2>> $LOGFILE
+  echo " >> while ..."
 	while [ "$?" != "0" ]; do
 		echo $MSG
 		sleep 5
@@ -73,7 +77,7 @@ function dl_and_execute {
 	SCRIPT_LOCATION=$1
 	SCRIPT_FILE=`mktemp --suffix=.sh`
 	pause "dl and execute $1"
-	retry "wget -q -O ${SCRIPT_FILE} ${SCRIPT_LOCATION}"
+	retry "wget --no-cache -q -O ${SCRIPT_FILE} ${SCRIPT_LOCATION}"
 	chmod +x ${SCRIPT_FILE}
 	${SCRIPT_FILE}
 	rm ${SCRIPT_FILE}
