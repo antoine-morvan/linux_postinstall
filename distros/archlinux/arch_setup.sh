@@ -180,16 +180,21 @@ pause "pacman configured"
 #######################################
 ########  SETUP FILE SYSTEM   #########
 #######################################
+
+function try_umount {
+  NBMOUNT=`mount | grep $1 | wc -l`
+  if [ "$NBMOUNT" -ge 1 ]; then
+    umount $1
+  fi
+}
+
 #umount all
 echo "doing unmount 1"
-mount | grep -q $MOUNTPOINT/boot/efi
-[ $? -eq 0 ] && umount $MOUNTPOINT/boot/efi
+try_umount  $MOUNTPOINT/boot/efi
 echo "doing unmount 2"
-mount | grep -q $MOUNTPOINT/boot
-[ $? -eq 0 ] && umount $MOUNTPOINT/boot
+try_umount $MOUNTPOINT/boot
 echo "doing unmount 3"
-mount | grep -q $MOUNTPOINT
-[ $? -eq 0 ] && umount $MOUNTPOINT
+try_umount $MOUNTPOINT
 
 echo "umount done"
 
