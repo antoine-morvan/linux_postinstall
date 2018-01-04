@@ -226,6 +226,9 @@ echo "lvm delete done"
 
 #reformat
 if [ -z ${UEFIPARTITION+x} ]; then
+  echo "no EFI, skip format"
+else
+  echo "EFI partition found, format"
   mkfs.vfat -F32 $UEFIPARTITION
 fi
 echo "mkfs.ext4 $BOOTPARTITION -L boot"
