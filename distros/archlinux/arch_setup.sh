@@ -181,9 +181,12 @@ pause "pacman configured"
 ########  SETUP FILE SYSTEM   #########
 #######################################
 #umount all
-umount $MOUNTPOINT/boot/efi
-umount $MOUNTPOINT/boot
-umount $MOUNTPOINT
+mount | grep -q $MOUNTPOINT/boot/efi
+[ $? -eq 0 ] && umount $MOUNTPOINT/boot/efi
+mount | grep -q $MOUNTPOINT/boot
+[ $? -eq 0 ] && umount $MOUNTPOINT/boot
+mount | grep -q $MOUNTPOINT
+[ $? -eq 0 ] && umount $MOUNTPOINT
 
 RAMSIZE=`free -h | grep Mem | xargs | cut -d" " -f2 | sed 's/,/./g'`
 
