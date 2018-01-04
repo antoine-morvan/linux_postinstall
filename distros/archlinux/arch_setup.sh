@@ -324,13 +324,13 @@ if [ "$CRYPT" == "YES" ]; then
   sed -i "s#GRUB_CMDLINE_LINUX=\"#GRUB_CMDLINE_LINUX=\"cryptdevice=$CRYPTPARTITION:$CRYPT_DEVMAPPERNAME root=$ROOTPARTITION #g " $MOUNTPOINT/etc/default/grub
 fi
 
-
 cp setup.dat arch_func.sh $MOUNTPOINT/
 TO_REMOVE+=" $MOUNTPOINT/setup.dat $MOUNTPOINT/arch_func.sh $MOUNTPOINT/retry_mainlog_*.log"
 
 pause "system preconfigured; about to run arch_finish.sh..."	
 #execute scrit after chrooting in the new system
 # The following script is executed after chrooting in the new system.
+export LOGCNT=0
 retry "wget $SETUP_SCRIPT_LOCATION/distros/archlinux/arch_finish.sh -O $MOUNTPOINT/arch_finish.sh"
 TO_REMOVE+=" $MOUNTPOINT/arch_finish.sh"
 chmod +x $MOUNTPOINT/arch_finish.sh
