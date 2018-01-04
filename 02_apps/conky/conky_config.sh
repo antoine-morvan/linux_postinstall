@@ -65,15 +65,17 @@ if [ "$LVS" != "" ]; then
     echo "[CONKY]     * before while 2"
 		while read -r LV; do
 			DMP=`ls -l $LV | cut -d">" -f 2`
+      echo "[CONKY]       * before for"
 			for PART in $PARTS; do
 				MOUNTLINE=`mount | grep " $PART " | cut -d" " -f 1`
 				MDMPCMD=`ls -l $MOUNTLINE | grep ">"`
+        echo "[CONKY]         * before for"
 				if [ "$MDMPCMD" != "" ]; then
 					MDMP=`echo $MDMPCMD | cut -d">" -f 2`
+         echo "[CONKY]          * before for"
 					if [ "$MDMP" == "$DMP" ]; then
 						I=$((I+1))
 						PRINTCONKY+="   $PART  \$alignr\$color\${fs_free $PART}\${color grey}/\$color\${fs_size $PART} \${color}\${fs_bar 7,150 $PART}\n"
-					
 					fi
 				else 
 					NEWPARTS+=" $PART"
