@@ -335,8 +335,12 @@ retry "wget --no-cache $SETUP_SCRIPT_LOCATION/distros/archlinux/arch_finish.sh -
 echo "wget done"
 TO_REMOVE+=" $MOUNTPOINT/arch_finish.sh"
 chmod +x $MOUNTPOINT/arch_finish.sh
-  
-arch-chroot $MOUNTPOINT ./arch_finish.sh $BOOTDRIVE $UEFIPARTITION
+
+if [ -z ${UEFIPARTITION+x} ]; then
+  arch-chroot $MOUNTPOINT ./arch_finish.sh $BOOTDRIVE
+else
+  arch-chroot $MOUNTPOINT ./arch_finish.sh $BOOTDRIVE $UEFIPARTITION
+fi
 
 pause "system setup; removing logs, unmounting devices..."
 rm -v $TO_REMOVE
