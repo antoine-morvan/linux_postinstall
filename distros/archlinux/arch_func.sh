@@ -77,7 +77,7 @@ function dl_and_execute {
 	SCRIPT_LOCATION=$1
 	SCRIPT_FILE=`mktemp --suffix=.sh`
 	pause "dl and execute $1"
-	retry "wget -q -O ${SCRIPT_FILE} ${SCRIPT_LOCATION}"
+	retry "wget --no-cache -q -O ${SCRIPT_FILE} ${SCRIPT_LOCATION}"
 	chmod +x ${SCRIPT_FILE}
 	${SCRIPT_FILE}
 	rm ${SCRIPT_FILE}
