@@ -122,7 +122,7 @@ if [ "$CRYPT" == "YES" ]; then
 fi
 
 #utility functions
-[ ! -e arch_func.sh ] &&  wget -q ${SETUP_SCRIPT_LOCATION}/01_func/arch_func.sh -O arch_func.sh
+wget --no-cache -q "${SETUP_SCRIPT_LOCATION}/01_func/arch_func.sh" -O arch_func.sh
 source arch_func.sh
 
 TO_REMOVE+=" arch_func.sh"
