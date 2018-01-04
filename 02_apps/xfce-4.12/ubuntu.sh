@@ -253,7 +253,6 @@ retry "wget -q -O ${FILE} ${SETUP_SCRIPT_LOCATION}/02_apps/xfce-4.12/xscreensave
 ##########################
 
 cat >> /etc/lightdm/lightdm-gtk-greeter.conf << EOF
-#background=$BG
 theme-name=Numix-DarkBlue
 xft-antialias=true
 xft-dpi=80
