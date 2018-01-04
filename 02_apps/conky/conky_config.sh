@@ -55,7 +55,7 @@ PRINTCONKY=""
 NEWPARTS=""
 if [ "$LVS" != "" ]; then
 	while read -r VG; do
-		PRINTCONKY+="\${color grey}LVM Group ${color}$VG\${color grey} :\$color\n"
+		PRINTCONKY+="\${color grey}LVM Group \${color}$VG\${color grey} :\$color\n"
 		I=0
 		while read -r LV; do
 			DMP=`ls -l $LV | cut -d">" -f 2`
