@@ -316,8 +316,13 @@ if [ "$INSTALLHEAD" == "YES" ]; then
 fi
 
 #detect sensors
-echo "detect sensors"
+echo "[detect sensors]"
+echo "**********************"
+echo ""
 sensors-detect --auto
+echo ""
+echo "**********************"
+echo "[detect sensors done]"
 
 #read -p "before dkms autoinstall"
 #dkms
