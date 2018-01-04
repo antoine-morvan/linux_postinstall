@@ -55,6 +55,8 @@ VGS=`vgs | tail -n +2 | colrm 1 2 | cut -d" " -f 1`
 PRINTCONKY=""
 NEWPARTS=""
 
+echo "$PARTS"
+
 echo "[CONKY] * before if"
 
 if [ "$LVS" != "" ]; then
