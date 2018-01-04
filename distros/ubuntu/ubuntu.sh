@@ -28,11 +28,13 @@ source ubuntu_func.sh
 
 #disable auto updates/upgrades
 sed -i -e 's#APT::Periodic::Update-Package-Lists "1";#APT::Periodic::Update-Package-Lists "0";#g' /etc/apt/apt.conf.d/10periodic
-sed -i -e 's#APT::Periodic::Update-Package-Lists "1";#APT::Periodic::Update-Package-Lists "0";#g' /etc/apt/apt.conf.d/20auto-upgrades
-cat >> /etc/apt/apt.conf.d/20auto-upgrades << EOF
+if [ -e /etc/apt/apt.conf.d/20auto-upgrades ]; then
+  sed -i -e 's#APT::Periodic::Update-Package-Lists "1";#APT::Periodic::Update-Package-Lists "0";#g' /etc/apt/apt.conf.d/20auto-upgrades
+  cat >> /etc/apt/apt.conf.d/20auto-upgrades << EOF
 APT::Periodic::Download-Upgradeable-Packages "0";
 APT::Periodic::AutocleanInterval "0";
 EOF
+fi
 
 #do a full upgrade
 upgrade
