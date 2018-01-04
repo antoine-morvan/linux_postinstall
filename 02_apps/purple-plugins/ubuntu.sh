@@ -7,7 +7,7 @@ export SETUP_SCRIPT_LOCATION=http://koub.org/files/linux/
 source ubuntu_func.sh
 
 
-mkdir -o /etc/apt/sources.list.d/
+mkdir -p /etc/apt/sources.list.d/
 echo "deb http://download.opensuse.org/repositories/home:/jgeboski/xUbuntu_16.04 ./" > /etc/apt/sources.list.d/jgeboski.list
 wget -O- https://jgeboski.github.io/obs.key | apt-key add -
 
