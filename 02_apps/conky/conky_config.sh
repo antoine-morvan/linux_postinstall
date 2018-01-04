@@ -12,14 +12,14 @@ export LOGCNT=0
 # $1 : a command as string
 function retry {
 	[ "$LOGCNT" == "" ] && export LOGCNT=0
-	LOGCNT=$((LOGCNT+1)
+	LOGCNT=$((LOGCNT+1))
 	LOGFILE="retry_mainlog_$LOGCNT.log"
 	MSG="Error executing '$1', logging in '$LOGFILE'. Retrying in 5s."
 	$1 >> $LOGFILE 2>> $LOGFILE
 	while [ "$?" != "0" ]; do
 		echo $MSG
 		sleep 5
-		LOGCNT=$((LOGCNT+1)
+		LOGCNT=$((LOGCNT+1))
 		LOGFILE="retry_mainlog_$LOGCNT.log"
 		MSG="Error executing '$1', logging in '$LOGFILE'. Retrying in 5s."
 		$1 >> $LOGFILE 2>> $LOGFILE
