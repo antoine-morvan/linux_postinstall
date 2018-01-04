@@ -20,6 +20,7 @@ if [ "$TESTSYSTEM" != "YES" ]; then
 	EXTRA+=" latex2rtf lyx texmaker pstotext texlive-most pandoc texstudio yed jdk7-openjdk"
 	EXTRA+=" go maven gradle java-openjfx java-openjfx-doc java-openjfx-src gitg xdot nextcloud nextcloud-client dropbox filelight gdmap qt5 youtube-dl cordova"
 	EXTRA+=" mcomix tigervnc unetbootin wireshark-gtk"
+  PACKS+=$EXTRA
 fi
 
 AURPACKS="pasystray-gtk2-standalone paman pavumeter qalculate-gtk-nognome xprintidle archlinux-artwork xfce4-multiload-ng-plugin-gtk2 gnome-keyring-query acpi_call-dkms evince2 elementary-xfce-icons numix-themes-darkblue xfce-theme-greybird"
@@ -28,10 +29,11 @@ AURPACKS="pasystray-gtk2-standalone paman pavumeter qalculate-gtk-nognome xprint
 if [ "$TESTSYSTEM" != "YES" ]; then
 	AUREXTRA="jabref pdftk-bin gitflow-avh gephi xvidcap gtk-theme-flatstudio"
 	AUREXTRA+=" jdk jdk7 jdk6 jdk5 jdk-devel javafx-scenebuilder"
+  AURPACKS+=$AUREXTRA
 fi
 
 PACKS="$PACKS"
-AURPACKS="$AURPACKS $AUREXTRA"
+AURPACKS="$AURPACKS"
 
 pause "about to install all packages"
 
