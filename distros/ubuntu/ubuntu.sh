@@ -92,12 +92,6 @@ apt-get -y install wireshark-gtk steam davfs2 wine
 
 
 ###
-### instantané 2
-###
-
-##########################
-#######	 LIGHTDM #########
-##########################
 
 dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/xfce-4.12/ubuntu.sh
 dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/terminator/ubuntu.sh
@@ -109,6 +103,8 @@ dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/truecrypt/ubuntu.sh
 dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/gen-eclipse/ubuntu.sh
 dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/purple-plugins/ubuntu.sh
 dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/deadbeef/ubuntu.sh
+
+dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/virtualbox/ubuntu.sh
 
 
 echo ""
