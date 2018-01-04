@@ -23,7 +23,7 @@ if [ "$TESTSYSTEM" != "YES" ]; then
   PACKS+=$EXTRA
 fi
 
-AURPACKS="pasystray-gtk2-standalone paman pavumeter qalculate-gtk-nognome xprintidle archlinux-artwork xfce4-multiload-ng-plugin-gtk2 gnome-keyring-query acpi_call-dkms evince2 elementary-xfce-icons numix-themes-darkblue xfce-theme-greybird"
+AURPACKS="pasystray-gtk2-standalone paman pavumeter qalculate-gtk-nognome xprintidle archlinux-artwork xfce4-multiload-ng-plugin-gtk2 gnome-keyring-query acpi_call-dkms evince2 elementary-xfce-icons-git numix-themes-darkblue xfce-theme-greybird"
 # arc-faenza-icon-theme"  
 
 if [ "$TESTSYSTEM" != "YES" ]; then
