@@ -86,8 +86,9 @@ if [ "$LVS" != "" ]; then
 				fi
         echo "[CONKY]         * after if 1"
 			done
+      echo "[CONKY]       * for is done"
 		done <<< "$LVS"
-		
+    echo "[CONKY]     * while 2 is done"
 	done <<< "$VGS"
   
   echo "[CONKY]   * before last if"
