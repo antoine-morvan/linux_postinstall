@@ -66,7 +66,7 @@ if [ "$LVS" != "" ]; then
 		while read -r LV; do
 			DMP=`ls -l $LV | cut -d">" -f 2`
       echo "[CONKY]       * before for"
-			for PART in $PARTS; do
+			for PART in "$PARTS"; do
 				MOUNTLINE=`mount | grep " $PART " | cut -d" " -f 1`
 				MDMPCMD=`ls -l $MOUNTLINE | grep ">"`
         echo "[CONKY]         * before if 1"
