@@ -53,10 +53,10 @@ ROOT_LOGICAL_VOLUME_NAME=lvroot
 #partition paths
 CRYPTPARTITION=$MAINPARTITION
 if [ "$CRYPT" == "YES" ]; then
-	echo "LVMPARTITION = cryptmapper"
+	echo "LVMPARTITION uses cryptmapper"
 	LVMPARTITION=/dev/mapper/$CRYPT_DEVMAPPERNAME
 else
-	echo "LVMPARTITION = main"
+	echo "LVMPARTITION is main partition"
 	LVMPARTITION=$MAINPARTITION
 fi
 SWAPPARTITION=/dev/mapper/$LVM_GROUPNAME-$SWAP_LOGICAL_VOLUME_NAME
