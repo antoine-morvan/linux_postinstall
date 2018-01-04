@@ -6,7 +6,7 @@ function retry {
   echo "retry $1"
 	[ "$LOGCNT" == "" ] && export LOGCNT=0
   echo " >> inc logcount"
-	let LOGCNT++
+	LOGCNT=$((LOGCNT+1))
 	LOGFILE="retry_mainlog_$LOGCNT.log"
 	MSG="Error executing '$1', logging in '$LOGFILE'. Retrying in 5s."
   echo " >> exec"
@@ -15,7 +15,7 @@ function retry {
 	while [ "$?" != "0" ]; do
 		echo $MSG
 		sleep 5
-		let LOGCNT++
+		LOGCNT=$((LOGCNT+1))
 		LOGFILE="retry_mainlog_$LOGCNT.log"
 		MSG="Error executing '$1', logging in '$LOGFILE'. Retrying in 5s."
 		$1 >> $LOGFILE 2>> $LOGFILE
