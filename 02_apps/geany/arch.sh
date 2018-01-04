@@ -8,7 +8,7 @@ source /arch_func.sh
 echo "   Geany"
 
 PKGS="geany geany-plugins"
-AURPKGS="geany-themes"
+AURPKGS="geany-themes-git"
 
 install_packs "$PKGS"
 install_packs_aur "$AURPKGS"
