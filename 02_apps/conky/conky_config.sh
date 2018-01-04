@@ -32,8 +32,6 @@ retry "wget $SETUP_SCRIPT_LOCATION/02_apps/conky/koubi_conky.conf -O $CONFFILE"
 
 echo "[CONKY] * Config file downloaded"
 
-read -p "pause conky..."
-
 #PARTS=`mount | grep -v /sys | grep -v /proc | grep -v /run | grep -v tmpfs | grep -v cdrom | grep ^/`
 PARTS=`cat /etc/fstab | grep -v "^#" | grep -v cdrom | grep -v swap | grep -v "//" | grep -v "[ \t]bind" | grep -v "^$" | cut -d" " -f 2`
 echo "[CONKY] * parts configured"
@@ -48,53 +46,34 @@ PRINTCONKY=""
 #####################
 
 echo "[CONKY] * Config LVM"
-echo "[CONKY] * Config LVM"
 
 LVS=`lvscan | cut -d"'" -f2`
 VGS=`vgs | tail -n +2 | colrm 1 2 | cut -d" " -f 1`
 PRINTCONKY=""
 NEWPARTS=""
 
-echo "$PARTS"
-
-echo "[CONKY] * before if"
-
 if [ "$LVS" != "" ]; then
-  echo "[CONKY]   * before while 1"
 	while read -r VG; do
 		PRINTCONKY+="\${color grey}LVM Group \${color}$VG\${color grey} :\$color\n"
 		I=0
-    echo "[CONKY]     * before while 2"
 		while read -r LV; do
 			DMP=`ls -l $LV | cut -d">" -f 2`
-      echo "[CONKY]       * before for"
 			for PART in $PARTS; do
-        echo "in for: PART = $PART"
 				MOUNTLINE=`mount | grep " $PART " | cut -d" " -f 1`
-				MDMPCMD=`ls -l $MOUNTLINE | grep ">"`
-        echo "[CONKY]         * before if 1"
+				[ -L $MOUNTLINE ] && MDMPCMD=`ls -l $MOUNTLINE | grep ">"` || MDMPCMD=""
 				if [ "$MDMPCMD" != "" ]; then
-          echo "[CONKY]         * in if 1"
 					MDMP=`echo $MDMPCMD | cut -d">" -f 2`
-          echo "[CONKY]          * before if 2"
 					if [ "$MDMP" == "$DMP" ]; then
-            echo "[CONKY]           * in if 2"
 						I=$((I+1))
 						PRINTCONKY+="   $PART  \$alignr\$color\${fs_free $PART}\${color grey}/\$color\${fs_size $PART} \${color}\${fs_bar 7,150 $PART}\n"
 					fi
-          echo "[CONKY]          * after if 2"
 				else 
-          echo "[CONKY]         * in else 1"
 					NEWPARTS+=" $PART"
 				fi
-        echo "[CONKY]         * after if 1"
 			done
-      echo "[CONKY]       * for is done"
 		done <<< "$LVS"
-    echo "[CONKY]     * while 2 is done"
 	done <<< "$VGS"
   
-  echo "[CONKY]   * before last if"
 	if [ "$I" == "0" ]; then
 		PRINTCONKY=${PRINTCONKY%??}
 		PRINTCONKY+=" none.\n"
@@ -115,18 +94,22 @@ for DISK in $DISKS; do
 	I=0
 	for PART in $PARTS; do
 		DEVICE=`mount | grep " $PART " | cut -d" " -f 1`
-		if [ "`echo $DEVICE | grep /dev/mapper/`" != "" ]; then
-			DEVICE=`cryptsetup status $(basename $DEVICE) | grep device | colrm 1 11`
-		fi
+		case "$DEVICE" in
+			*/dev/mapper/*)
+				DEVICE=`cryptsetup status $(basename $DEVICE) | grep device | colrm 1 11`
+				;;
+		esac
 		if [ "`echo $DEVICE | grep $DISK`" == "$DEVICE" ]; then
 			PRINTCONKY+="   $PART  \$alignr\$color\${fs_free $PART}\${color grey}/\$color\${fs_size $PART} \${color}\${fs_bar 7,150 $PART}\n"
-			let I++
+			I=$((I+1))
 		else
-			UUIDPART=`ls -l /dev/disk/by-uuid/ | grep "$(basename $DEVICE)" | grep $DISK`
-			if [ "$UUIDPART" != "" ]; then
-				PRINTCONKY+="   $PART  \$alignr\$color\${fs_free $PART}\${color grey}/\$color\${fs_size $PART} \${color}\${fs_bar 7,150 $PART}\n"
-				let I++
-			fi
+			UUIDPART=`ls -l /dev/disk/by-uuid/ | grep "$(basename $DEVICE)"`
+			case $UUIDPART in
+				*$DISK*)
+					PRINTCONKY+="   $PART  \$alignr\$color\${fs_free $PART}\${color grey}/\$color\${fs_size $PART} \${color}\${fs_bar 7,150 $PART}\n"
+					I=$((I+1))	
+					;;
+			esac
 		fi
 	done
 	if [ "$I" == "0" ]; then
