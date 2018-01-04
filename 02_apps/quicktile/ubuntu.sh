@@ -11,6 +11,17 @@ apt-get -y install python python-gtk2 python-xlib python-dbus python-wnck python
 
 git clone https://github.com/ssokolow/quicktile.git quicktile
 
+(cd quicktile && ./install.sh)
+
+#cleaning
+rm -rf ./quicktile/
+
+exit
+
+##
+## Old way
+##
+
 cp quicktile/quicktile.py /usr/local/bin/quicktile.py
 chmod 755 /usr/local/bin/quicktile.py
 
@@ -28,9 +39,4 @@ chmod +x /etc/xdg/autostart/quicktile.desktop
 
 mkdir -p /etc/skel/.config/quicktile/
 retry "wget -q -O /etc/skel/.config/quicktile/quicktile.cfg ${SETUP_SCRIPT_LOCATION}/02_apps/quicktile/quicktile.cfg"
-
-#cleaning
-rm -rf ./quicktile/
-
-exit
 
