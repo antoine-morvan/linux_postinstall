@@ -69,10 +69,10 @@ if [ "$LVS" != "" ]; then
 			for PART in $PARTS; do
 				MOUNTLINE=`mount | grep " $PART " | cut -d" " -f 1`
 				MDMPCMD=`ls -l $MOUNTLINE | grep ">"`
-        echo "[CONKY]         * before for"
+        echo "[CONKY]         * before if 1"
 				if [ "$MDMPCMD" != "" ]; then
 					MDMP=`echo $MDMPCMD | cut -d">" -f 2`
-         echo "[CONKY]          * before for"
+          echo "[CONKY]          * before if 2"
 					if [ "$MDMP" == "$DMP" ]; then
 						I=$((I+1))
 						PRINTCONKY+="   $PART  \$alignr\$color\${fs_free $PART}\${color grey}/\$color\${fs_size $PART} \${color}\${fs_bar 7,150 $PART}\n"
@@ -84,7 +84,8 @@ if [ "$LVS" != "" ]; then
 		done <<< "$LVS"
 		
 	done <<< "$VGS"
-
+  
+  echo "[CONKY]   * before last if"
 	if [ "$I" == "0" ]; then
 		PRINTCONKY=${PRINTCONKY%??}
 		PRINTCONKY+=" none.\n"
