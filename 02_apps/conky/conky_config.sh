@@ -48,11 +48,15 @@ PRINTCONKY=""
 #####################
 
 echo "[CONKY] * Config LVM"
+echo "[CONKY] * Config LVM"
 
 LVS=`lvscan | cut -d"'" -f2`
 VGS=`vgs | tail -n +2 | colrm 1 2 | cut -d" " -f 1`
 PRINTCONKY=""
 NEWPARTS=""
+
+echo "[CONKY] * before if"
+
 if [ "$LVS" != "" ]; then
 	while read -r VG; do
 		PRINTCONKY+="\${color grey}LVM Group \${color}$VG\${color grey} :\$color\n"
