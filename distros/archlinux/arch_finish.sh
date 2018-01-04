@@ -244,11 +244,6 @@ echo "archey" >> /etc/skel/.bashrc
 pause "mod blacklisted & alias configured"
 
 #samba (create guset user)
-useradd -r -M -s /bin/false -U guest
-echo  -e "guest\nguest\n" | passwd guest
-echo -e "guest\nguest\n" | smbpasswd -a guest -s
-mkdir -p /srv/smb/
-chmod 777 /srv/smb/
 cat > /etc/samba/smb.conf << "EOF"
 [global]
 	workgroup = DIABLAN
@@ -271,6 +266,11 @@ cat > /etc/samba/smb.conf << "EOF"
 #	hosts allow = 192.168.56.
 
 EOF
+useradd -r -M -s /bin/false -U guest
+echo  -e "guest\nguest\n" | passwd guest
+echo -e "guest\nguest\n" | smbpasswd -a guest -s
+mkdir -p /srv/smb/
+chmod 777 /srv/smb/
 
 #vim
 cp /usr/share/vim/vimfiles/archlinux.vim /etc/skel/.vimrc
