@@ -316,6 +316,7 @@ if [ "$INSTALLHEAD" == "YES" ]; then
 fi
 
 #detect sensors
+echo "detect sensors"
 sensors-detect --auto
 
 #read -p "before dkms autoinstall"
@@ -324,6 +325,7 @@ sensors-detect --auto
 #read -p "after dkms autoinstall"
 
 #config chkboot
+echo "config chkboot"
 echo "configuring chkboot"
 sed -i "s#BOOTDISK=/dev/sda#BOOTDISK=${BOOTDRIVE}#g" /etc/default/chkboot.conf
 sed -i "s#BOOTPART=/dev/sda1#BOOTPART=${BOOTPARTITION}#g" /etc/default/chkboot.conf
