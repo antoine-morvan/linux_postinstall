@@ -16,7 +16,7 @@
 
 ##############################################################
 #for debug
-export ENABLE_PAUSE=YES
+export ENABLE_PAUSE=NO
 
 
 # drive on which grub will be installed 
@@ -331,7 +331,8 @@ export LOGCNT=0
 pause "system preconfigured; about to run arch_finish.sh..."	
 #execute scrit after chrooting in the new system
 # The following script is executed after chrooting in the new system.
-retry "wget $SETUP_SCRIPT_LOCATION/distros/archlinux/arch_finish.sh -O $MOUNTPOINT/arch_finish.sh"
+retry "wget --no-cache $SETUP_SCRIPT_LOCATION/distros/archlinux/arch_finish.sh -O $MOUNTPOINT/arch_finish.sh"
+echo "wget done"
 TO_REMOVE+=" $MOUNTPOINT/arch_finish.sh"
 chmod +x $MOUNTPOINT/arch_finish.sh
   
