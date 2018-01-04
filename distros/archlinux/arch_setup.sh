@@ -181,10 +181,13 @@ pause "pacman configured"
 ########  SETUP FILE SYSTEM   #########
 #######################################
 #umount all
+echo "doing unmount 1"
 mount | grep -q $MOUNTPOINT/boot/efi
 [ $? -eq 0 ] && umount $MOUNTPOINT/boot/efi
+echo "doing unmount 2"
 mount | grep -q $MOUNTPOINT/boot
 [ $? -eq 0 ] && umount $MOUNTPOINT/boot
+echo "doing unmount 3"
 mount | grep -q $MOUNTPOINT
 [ $? -eq 0 ] && umount $MOUNTPOINT
 
