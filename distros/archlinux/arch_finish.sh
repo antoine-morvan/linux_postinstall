@@ -15,7 +15,11 @@ source /arch_func.sh
 ##########################
 
 BOOTDRIVE=$1
-UEFIPARTITION=$2
+if [ -z ${UEFIPARTITION+x} ]; then
+  UEFIPARTITION=""
+else
+  UEFIPARTITION=$2
+fi
 #{GRUB | SYSLINUX}
 BOOTLOADER=GRUB
 
