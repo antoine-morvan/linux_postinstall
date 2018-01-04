@@ -19,7 +19,7 @@ apt-get update
 apt-get -y install wget
 
 #utility functions
-[ ! -e ubuntu_func.sh ] &&  wget -q ${SETUP_SCRIPT_LOCATION}/01_func/ubuntu_func.sh -O ubuntu_func.sh
+[ ! -e ubuntu_func.sh ] &&  wget --no-cache -q ${SETUP_SCRIPT_LOCATION}/01_func/ubuntu_func.sh -O ubuntu_func.sh
 source ubuntu_func.sh
 
 #update source.list
