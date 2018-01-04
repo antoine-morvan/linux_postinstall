@@ -6,9 +6,8 @@ export SETUP_SCRIPT_LOCATION=http://koub.org/files/linux/
 [ ! -e ubuntu_func.sh ] &&  wget -q ${SETUP_SCRIPT_LOCATION}/01_func/ubuntu_func.sh -O ubuntu_func.sh
 source ubuntu_func.sh
 
-#add-apt-repository -y ppa:starws-box/deadbeef-player
-#upgrade
-#install_packs deadbeef
+#install dep
+apt-get -y install libpango1.0-0 libpangox-1.0-0
 
 VERSION=0.7.2-2
 
