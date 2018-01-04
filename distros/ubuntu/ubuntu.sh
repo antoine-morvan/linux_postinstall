@@ -12,6 +12,7 @@
 #configure proxy for installation...
 #test if local server is present
 export SETUP_SCRIPT_LOCATION=http://home.koub.org/files/linux/
+export ENABLE_PAUSE=NO
 
 apt-get update
 apt-get -y install wget
