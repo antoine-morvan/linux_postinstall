@@ -13,6 +13,10 @@ ajouter la directive suivante dans mpd.conf : audio_output_format "44100:16:2"
 
 ##### à trouver une solution
 
+arch:
+  - hostnamectl set-hostname $hostname
+  - sensors-detect --auto
+
 utiliser les depots vbox sur ubuntu:
   wget -q -O- http://download.virtualbox.org/virtualbox/debian/oracle_vbox_2016.asc | sudo apt-key add -
   echo "deb http://download.virtualbox.org/virtualbox/debian $(lsb_release -sc) contrib" | sudo tee /etc/apt/sources.list.d/virtualbox.l

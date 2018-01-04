@@ -389,7 +389,7 @@ echo " ###################"
 echo ""
 read -p "Hostname : " HOSTNAME
 echo "$HOSTNAME" > /etc/hostname
-hostnamectl set-hostname $HOSTNAME
+#hostnamectl set-hostname $HOSTNAME
 echo ""
 echo " ###################"
 echo " # Root Password   #"
