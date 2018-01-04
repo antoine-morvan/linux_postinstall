@@ -12,29 +12,16 @@ drivers video intel
 ajouter la directive suivante dans mpd.conf : audio_output_format "44100:16:2"
 
 ##### à trouver une solution
-
-ajouter la derniere version de skype pour ubuntu (deb [arch=amd64] https://repo.skype.com/deb stable main)
-utiliser les depots vbox sur ubuntu:
-  wget -q -O- http://download.virtualbox.org/virtualbox/debian/oracle_vbox_2016.asc | sudo apt-key add -
-  echo "deb http://download.virtualbox.org/virtualbox/debian $(lsb_release -sc) contrib" | sudo tee /etc/apt/sources.list.d/virtualbox.list
-
-
 arch:
   - hostnamectl set-hostname $hostname
   - sensors-detect --auto
-
+  -> pb sonar ?
 
 ajouter mkvtoolnix & mkvextract (ubuntu + arch)
 ajouter kotlin + xcore + marketplace dans eclipse
 ajouter eclipse sdk dans l'install eclipse
  + visual vm (binary + IDE plugin https://visualvm.github.io/idesupport.html)
  + https://marketplace.eclipse.org/content/markdown-text-editor
-
-purple-facebook @ ubuntu : http://www.webupd8.org/2015/08/use-facebook-chat-in-pidgin-with-purple.html
-
-Fix deadbeef setup for ubuntu
-	deadbeef@ubuntu : bug filebrowser ?
-config apt ubuntu (activer tous les dépots, désactiver les maj auto)
 
 autossh + http://proxychains.sourceforge.net/
 vsync @ intel IGP
@@ -52,6 +39,13 @@ check conky config (HDDs) avec une installation depuis USB et/ou gros partitiona
 
 ##### done & validated #####
 
+config apt ubuntu (activer tous les dépots, désactiver les maj auto)
+Fix deadbeef setup for ubuntu
+	deadbeef@ubuntu : bug filebrowser ?
+ajouter la derniere version de skype pour ubuntu (deb [arch=amd64] https://repo.skype.com/deb stable main)
+utiliser les depots vbox sur ubuntu:
+  wget -q -O- http://download.virtualbox.org/virtualbox/debian/oracle_vbox_2016.asc | sudo apt-key add -
+  echo "deb http://download.virtualbox.org/virtualbox/debian $(lsb_release -sc) contrib" | sudo tee /etc/apt/sources.list.d/virtualbox.list
 config skype (dark theme, pas de son de notif, fermer = systray, ...)
 verifier la maj du bug avec dvtm
 Fix keyboard layout : config déplacée dans xfce
