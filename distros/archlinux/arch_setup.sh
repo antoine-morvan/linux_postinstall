@@ -196,6 +196,9 @@ try_umount $MOUNTPOINT/boot
 echo "doing unmount 3"
 try_umount $MOUNTPOINT
 
+echo "disable all swap"
+swapoff -a
+
 echo "umount done"
 
 RAMSIZE=`free -h | grep Mem | xargs | cut -d" " -f2 | sed 's/,/./g'`
