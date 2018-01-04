@@ -30,7 +30,7 @@ if [ "$TESTSYSTEM" != "YES" ]; then
 	AUREXTRA+=" jdk jdk7 jdk6 jdk5 jdk-devel javafx-scenebuilder"
 fi
 
-PACKS="$PACKS $EXTRA"
+PACKS="$PACKS"
 AURPACKS="$AURPACKS $AUREXTRA"
 
 pause "about to install all packages"
