@@ -7,7 +7,7 @@ export SETUP_SCRIPT_LOCATION=http://koub.org/files/linux/
 source ubuntu_func.sh
 
 #setup application
-apt-get -y install python python-gtk2 python-xlib python-dbus python-wnck git
+apt-get -y install python python-gtk2 python-xlib python-dbus python-wnck python-setuptools git
 
 git clone https://github.com/ssokolow/quicktile.git quicktile
 
