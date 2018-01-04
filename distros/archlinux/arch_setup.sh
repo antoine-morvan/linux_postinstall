@@ -225,7 +225,7 @@ try_lvm_delete $MAINPARTITION
 echo "lvm delete done"
 
 #reformat
-if [ "$UEFIPARTITION" != "" ]; then
+if [ -z ${UEFIPARTITION+x} ]; then
   mkfs.vfat -F32 $UEFIPARTITION
 fi
 echo "mkfs.ext4 $BOOTPARTITION -L boot"
