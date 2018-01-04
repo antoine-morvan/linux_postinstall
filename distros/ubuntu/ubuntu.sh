@@ -11,15 +11,7 @@
 
 #configure proxy for installation...
 #test if local server is present
-ping -c 1 -i 0.2 gw.diablan 2> /dev/null
-PINGRESULT=$?
-if [ "$PINGRESULT" == "0" ]; then
-	#use local url
-	export SETUP_SCRIPT_LOCATION=http://gw.diablan/files/linux/
-else
-	#use remote url
-	export SETUP_SCRIPT_LOCATION=http://home.koub.org/files/linux/
-fi
+export SETUP_SCRIPT_LOCATION=http://home.koub.org/files/linux/
 
 apt-get update
 apt-get -y install wget
