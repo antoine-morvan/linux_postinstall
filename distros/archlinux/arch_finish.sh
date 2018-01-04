@@ -395,10 +395,12 @@ echo " ###################"
 echo " # Root Password   #"
 echo " ###################"
 echo ""
+set +e
 passwd
 while [ "$?" != "0" ]; do
 	passwd
 done;
+set -e
 echo ""
 echo " ###################"
 echo " # Create new User #"
@@ -407,10 +409,12 @@ echo ""
 read -p "User login : " USR
 echo ""
 useradd -d /home/$USR -G users -m $USR -s /bin/bash
+set +e
 passwd $USR
 while [ "$?" != "0" ]; do
 	passwd $USR
 done;
+set -e
 gpasswd -a $USR video
 groupadd sudo
 gpasswd -a $USR sudo

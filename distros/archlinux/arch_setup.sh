@@ -107,6 +107,7 @@ if [ "$CRYPT" == "YES" ]; then
   echo " # Cryptsetup password #"
   echo " #######################"
   echo ""
+  set +e
   read -s -p "Volume password : " LUKSPASSWD
   echo ""
   read -s -p "Volume password (confirm) : " LUKSPASSWD2
@@ -119,6 +120,7 @@ if [ "$CRYPT" == "YES" ]; then
     read -s -p "Volume password (confirm) : " LUKSPASSWD2
     echo ""
   done
+  set -e
 fi
 
 #utility functions
