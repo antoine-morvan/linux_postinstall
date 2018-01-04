@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -eu
 
 USER=`whoami`
 [ "$USER" == "root" ] && echo "Should not be run as root" && exit 1

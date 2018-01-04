@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -eu
 
 #configure script variables
 BG=`cat /setup.dat | sed '1q;d'`

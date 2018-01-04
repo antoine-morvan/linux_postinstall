@@ -1,4 +1,4 @@
-#! /bin/bash
+#! /bin/bash -eu
 ###TUNING###
 # Active la protection broadcast echo
 echo 1 > /proc/sys/net/ipv4/icmp_echo_ignore_broadcasts

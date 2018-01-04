@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -eu
 # from ubuntu 16.04.2 amd64 desktop 
 # run as sudo
 

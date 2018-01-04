@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -eu
 
 # if script is run during post install script, load script location
 if [ -e /setup.dat ]; then	

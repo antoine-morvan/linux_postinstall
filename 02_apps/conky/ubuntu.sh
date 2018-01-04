@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -eu
 
 #configure script variables
 [ `whoami` != root ] && echo "should run as root" && exit 1

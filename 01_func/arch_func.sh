@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -eu
 
 # retry the given command until it succeed.
 # $1 : a command as string

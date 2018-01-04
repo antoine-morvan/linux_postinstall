@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -eu
 
 #https://launchpad.net/~unit193/+archive/ubuntu/encryption
 

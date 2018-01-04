@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -eu
 BG=`cat /setup.dat | sed '1q;d'`
 SETUP_SCRIPT_LOCATION=`cat /setup.dat | sed '2q;d'`
 TESTSYSTEM=`cat /setup.dat | sed '3q;d'`
