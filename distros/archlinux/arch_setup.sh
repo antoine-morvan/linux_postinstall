@@ -16,7 +16,7 @@
 
 ##############################################################
 #for debug
-export ENABLE_PAUSE=NO
+export ENABLE_PAUSE=YES
 
 
 # drive on which grub will be installed 
@@ -34,8 +34,8 @@ MAINPARTITION=/dev/sda2
 SCREEN=WIDE_16_10
 
 # if set to YES, install only base packages
-TESTSYSTEM=NO
-INSTALLHEAD=YES
+TESTSYSTEM=YES
+INSTALLHEAD=NO
 CRYPT=NO
 
 ##############################################################
@@ -188,6 +188,8 @@ mount | grep -q $MOUNTPOINT/boot
 mount | grep -q $MOUNTPOINT
 [ $? -eq 0 ] && umount $MOUNTPOINT
 
+echo "umount done"
+
 RAMSIZE=`free -h | grep Mem | xargs | cut -d" " -f2 | sed 's/,/./g'`
 
 # delete lvm physical volume if present on used partitions
@@ -205,6 +207,8 @@ if [ "$?" == "0" ]; then
   vgremove $MAINPARTLVMGROUP
   pvremove $MAINPARTLVMGROUP
 fi
+
+echo "lvm delete done"
 
 #reformat
 if [ "$UEFIPARTITION" != "" ]; then
