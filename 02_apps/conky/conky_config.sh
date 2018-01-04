@@ -34,9 +34,12 @@ echo "[CONKY] * Config file downloaded"
 
 #PARTS=`mount | grep -v /sys | grep -v /proc | grep -v /run | grep -v tmpfs | grep -v cdrom | grep ^/`
 PARTS=`cat /etc/fstab | grep -v "^#" | grep -v cdrom | grep -v swap | grep -v "//" | grep -v "[ \t]bind" | cut -d" " -f 2 | grep -v "^$"`
+echo "[CONKY] * parts configured"
 [ "$PARTS" == "" ] && PARTS=`cat /etc/fstab | grep -v "^#" | grep -v cdrom | grep -v swap | grep -v "//" | grep -v "[ \t]bind" | cut -f 2 | grep -v "^$"`
+echo "[CONKY] * parts configured (v2)"
 DISKS=`fdisk -l 2> /dev/null | grep Dis | grep -v mapper | grep /dev | grep -v "/dev/loo" | cut -d" " -f 2 | colrm 9 | colrm 1 5 | sort`
-PRINTCONKY=
+echo "[CONKY] * disks configured"
+PRINTCONKY=""
 
 #####################
 #######	LVM #########
