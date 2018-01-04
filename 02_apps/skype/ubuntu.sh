@@ -8,11 +8,11 @@ source ubuntu_func.sh
 
 
 mkdir -p /etc/apt/sources.list.d/
-echo "deb http://download.virtualbox.org/virtualbox/debian $(lsb_release -sc) contrib" | tee /etc/apt/sources.list.d/virtualbox.list
-wget -q -O- http://download.virtualbox.org/virtualbox/debian/oracle_vbox_2016.asc | sudo apt-key add -
+echo "deb [arch=amd64] https://repo.skype.com/deb stable main" > /etc/apt/sources.list.d/skype.list
+wget -q -O - https://repo.skype.com/data/SKYPE-GPG-KEY | sudo apt-key add -
 
 upgrade
-install_packs virtualbox-5.2
+install_packs skypeforlinux
 
 exit
 
