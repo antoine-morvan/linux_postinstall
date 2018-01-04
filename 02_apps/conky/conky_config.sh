@@ -58,9 +58,11 @@ NEWPARTS=""
 echo "[CONKY] * before if"
 
 if [ "$LVS" != "" ]; then
+  echo "[CONKY]   * before while 1"
 	while read -r VG; do
 		PRINTCONKY+="\${color grey}LVM Group \${color}$VG\${color grey} :\$color\n"
 		I=0
+    echo "[CONKY]     * before while 2"
 		while read -r LV; do
 			DMP=`ls -l $LV | cut -d">" -f 2`
 			for PART in $PARTS; do
@@ -69,7 +71,7 @@ if [ "$LVS" != "" ]; then
 				if [ "$MDMPCMD" != "" ]; then
 					MDMP=`echo $MDMPCMD | cut -d">" -f 2`
 					if [ "$MDMP" == "$DMP" ]; then
-						let I++
+						I=$((I+1))
 						PRINTCONKY+="   $PART  \$alignr\$color\${fs_free $PART}\${color grey}/\$color\${fs_size $PART} \${color}\${fs_bar 7,150 $PART}\n"
 					
 					fi
