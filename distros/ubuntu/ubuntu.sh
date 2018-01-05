@@ -2,6 +2,8 @@
 # from ubuntu 16.04.2 amd64 desktop 
 # run as sudo
 
+FASTSETUP=YES
+
 ###
 ### instantané 1
 ###
@@ -84,13 +86,22 @@ chmod +x /usr/local/bin/gitstorecredential-10h
 apt-get -y remove unity-webapps-common
 
 #ttf-mscorefonts
+PACKS="htop geany bwm-ng qalculate-gtk filezilla vlc apt-file autotools-dev m4 libtool automake autoconf intltool wget bash net-tools zsh samba cifs-utils lshw libtool p7zip htop nethogs iotop parted emacs zip unzip curl fakeroot alsa-utils linux-tools-generic fuse cmake pkg-config python git screen nmap bzip2 sharutils rsync subversion ttf-dejavu tsocks exfat-utils sshfs ntp dtach tmux ntfs-3g subversion sdparm hdparm dnsutils traceroute lzip tree cups ghostscript dosfstools intltool netcat cabextract bwm-ng markdown cloc arj unar unace tig lhasa openvpn dvtm libomp5 byobu rar vim iptables pidgin xterm gksu rxvt-unicode lightdm lightdm-gtk-greeter terminator pulseaudio pavucontrol paprefs mate-themes wicd wicd-gtk xfce4 xfce4-goodies xfce4-artwork xfce4-session xfce4-settings xfwm4 xfwm4-themes xfconf thunar numlockx pinta ruby imagemagick iptraf-ng arandr elementary-icon-theme gnome-keyring seahorse python-setuptools tlp bash-completion lsb-release smartmontools graphviz gparted filezilla faac libboost-all-dev dbus icoutils zenity hexchat gitg xdot  filelight gdmap qt5-default youtube-dl mcomix unetbootin paman pavumeter xprintidle  pdftk   update-manager system-config-printer-common nscd "
+
+if [ "$FASTSETUP" != "YES" ]; then
+  EXTRAPACKS=" mercurial apache2 lynx php libapache2-mod-php ario audacity keepassx thunderbird ghc clang playonlinux xfburn deluge libreoffice gimp inkscape calibre acetoneiso latex2rtf lyx texmaker pstotext texlive-full pandoc texstudio golang maven gradle openjfx openjfx-source jabref wine handbrake owncloud-client"
+  PACKS+=$EXTRAPACKS
+fi
 
 #install various tools
-apt-get -y install htop geany bwm-ng qalculate-gtk filezilla vlc apt-file autotools-dev m4 libtool automake autoconf intltool wget bash net-tools zsh samba cifs-utils lshw libtool p7zip htop nethogs iotop parted emacs zip unzip curl fakeroot alsa-utils linux-tools-generic fuse cmake pkg-config python git screen nmap bzip2 sharutils rsync subversion ttf-dejavu tsocks exfat-utils sshfs ntp dtach tmux ntfs-3g subversion sdparm hdparm dnsutils traceroute lzip tree cups ghostscript mercurial dosfstools intltool netcat cabextract bwm-ng lynx apache2 php libapache2-mod-php markdown cloc arj unar unace tig lhasa openvpn ghc dvtm clang libomp5 byobu rar vim iptables playonlinux pidgin xterm gksu rxvt-unicode lightdm lightdm-gtk-greeter terminator pulseaudio pavucontrol paprefs mate-themes wicd wicd-gtk xfce4 xfce4-goodies xfce4-artwork xfce4-session xfce4-settings xfwm4 xfwm4-themes xfconf thunar numlockx pinta ruby imagemagick iptraf-ng arandr elementary-icon-theme gnome-keyring seahorse python-setuptools tlp bash-completion lsb-release smartmontools graphviz thunderbird vlc pidgin gparted filezilla keepassx xfburn faac libboost-all-dev dbus icoutils zenity hexchat ario audacity deluge libreoffice gimp inkscape thunderbird calibre acetoneiso latex2rtf lyx texmaker pstotext texlive-full pandoc texstudio golang maven gradle openjfx openjfx-source gitg xdot owncloud-client filelight gdmap qt5-default youtube-dl mcomix unetbootin paman pavumeter xprintidle jabref pdftk  wine update-manager system-config-printer-common nscd handbrake
+apt-get -y install $PACKS
 
 apt-file update
 
-apt-get -y install wireshark-gtk steam davfs2 wine
+#install packages that require user action (i.e. license) at the end
+if [ "$FASTSETUP" != "YES" ]; then
+  apt-get -y install wireshark-gtk steam davfs2 wine
+fi
 
 
 ###
@@ -104,10 +115,13 @@ dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/truecrypt/ubuntu.sh
 
 dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/gen-eclipse/ubuntu.sh
 dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/purple-plugins/ubuntu.sh
-dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/deadbeef/ubuntu.sh
 
-dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/virtualbox/ubuntu.sh
-dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/skype/ubuntu.sh
+
+if [ "$FASTSETUP" != "YES" ]; then
+  dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/deadbeef/ubuntu.sh
+  dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/virtualbox/ubuntu.sh
+  dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/skype/ubuntu.sh
+fi
 
 
 echo ""
