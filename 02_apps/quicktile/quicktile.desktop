@@ -4,6 +4,6 @@ Version=1.0
 Name=QuickTile
 GenericName=Window-Tiling Helper
 Type=Application
-Exec=/usr/local/bin/quicktile_startup.sh
+Exec=/usr/bin/quicktile --daemonize
 Categories=Utility;
 
