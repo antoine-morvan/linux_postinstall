@@ -3,30 +3,12 @@
 USER=`whoami`
 [ "$USER" == "root" ] && echo "Should not be run as root" && exit 1
 
-if [ "$1" == "" ];
-then
-	echo "Folder installation path: "
-	read installationpath
-else
-	installationpath="$1"
-fi
+[ $# -lt 1 ] && ARG1="" || ARG1=$1
 
 SOURCE_SCRIPT=http://home.koub.org/files/linux/02_apps/gen-eclipse/gen-eclipse
-
-#use remote url
-export MIRROR_URL=http://home.koub.org/files/
-
-ping -c 1 -i 0.2 gw.diablan 2> /dev/null
-PINGRESULT=$?
-if [ "$PINGRESULT" == "0" ]; then
-	#use local url
-	export MIRROR_URL=http://gw.diablan/files/
-	SOURCE_SCRIPT=http://gw.diablan/files/linux/02_apps/gen-eclipse/gen-eclipse
-fi
-
 
 TMPFILE=`mktemp`
 wget $SOURCE_SCRIPT -O $TMPFILE
 chmod +x $TMPFILE
-$TMPFILE $installationpath $MIRROR_URL
+$TMPFILE $ARG1
 rm $TMPFILE

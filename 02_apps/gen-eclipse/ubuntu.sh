@@ -10,7 +10,7 @@ upgrade
 install_packs openjdk-8-jdk openjdk-8-source
 
 mkdir -p /usr/local/bin/
-retry "wget -q -O /usr/local/bin/gen-eclipse ${SETUP_SCRIPT_LOCATION}/02_apps/gen-eclipse/gen-eclipse-caller"
+retry "wget --no-cache -q -O /usr/local/bin/gen-eclipse ${SETUP_SCRIPT_LOCATION}/02_apps/gen-eclipse/gen-eclipse-caller"
 chmod +x /usr/local/bin/gen-eclipse
 
 exit 0

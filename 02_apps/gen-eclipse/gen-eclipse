@@ -13,7 +13,7 @@ echo "${ECHOPREFIX} starting setup ..."
 # parameters, fix GTK2 startup, and install plugins. 
 #
 ####################################################################
-[ $# -ne 1 ] && ARG1="" || ARG1=$1
+[ $# -lt 1 ] && ARG1="" || ARG1=$1
 
 ##################################
 ##	Eclipse configuration
@@ -124,7 +124,7 @@ function check_homedir {
 }
 
 function check_and_set_installation_path {
-  [ $# -ne 1 ] && ARG1="" || ARG1=$1
+  [ $# -lt 1 ] && ARG1="" || ARG1=$1
 	installationpath="$ARG1"
 	[ "$ARG1" == "" ] && read -p "Folder installation path: " installationpath
 	if [ -d "${installationpath}" ]; then
