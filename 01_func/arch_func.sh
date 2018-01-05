@@ -57,11 +57,15 @@ function install_packs_aur {
 	[ "$PACKS" == "" ] && echo "Warning : package list is empty" && return
 	for package in $PACKS; do
 		pause "yaourt --noconfirm -S $package"
+    set +e
 		cd /tmp && su build -c "yaourt --noconfirm -S $package"
+    set -e
 		RES=$?
 		if [ "$RES" != "0" ]; then
 			sleep 2
+      set +e
 			cd /tmp && su build -c "yaourt --noconfirm -S $package"
+      set -e
 			RES=$?
 			if [ "$RES" != "0" ]; then
 				echo -e "\nAn error occured during installation of \"$package\"\n"
