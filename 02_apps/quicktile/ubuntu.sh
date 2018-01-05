@@ -16,6 +16,10 @@ git clone https://github.com/ssokolow/quicktile.git quicktile
 #cleaning
 rm -rf ./quicktile/
 
+#add default config
+mkdir -p /etc/skel/.config/quicktile/
+retry "wget -q -O /etc/skel/.config/quicktile/quicktile.cfg ${SETUP_SCRIPT_LOCATION}/02_apps/quicktile/quicktile.cfg"
+
 exit
 
 ##
