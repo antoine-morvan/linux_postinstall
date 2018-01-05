@@ -36,7 +36,7 @@ SCREEN=WIDE_16_10
 # if set to YES, install only base packages
 TESTSYSTEM=NO
 INSTALLHEAD=YES
-CRYPT=NO
+CRYPT=YES
 
 ##############################################################
 

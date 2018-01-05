@@ -12,12 +12,13 @@ drivers video intel
 ajouter la directive suivante dans mpd.conf : audio_output_format "44100:16:2"
 
 ##### à trouver une solution
+
 arch:
   - hostnamectl set-hostname $hostname
   - sensors-detect --auto
   -> pb sonar ?
 
-ajouter mkvtoolnix & mkvextract (ubuntu + arch)
+ajouter mkvtoolnix & mkvextract (ubuntu)
 ajouter kotlin + xcore + marketplace dans eclipse
 ajouter eclipse sdk dans l'install eclipse
  + visual vm (binary + IDE plugin https://visualvm.github.io/idesupport.html)

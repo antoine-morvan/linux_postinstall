@@ -12,14 +12,14 @@ source /arch_func.sh
 
 #xorg-utils xorg-server-utils
 PACKS="xorg xorg-server xorg-xinit xorg-util-macros xorg-twm xorg-xclock xdg-user-dirs xterm gksu rxvt-unicode urxvt-url-select lightdm lightdm-gtk-greeter terminator pulseaudio pavucontrol paprefs mate-themes wicd wicd-gtk xfce4 xfce4-goodies xfce4-artwork xfce4-session xfce4-settings xfwm4 xfwm4-themes xfconf xscreensaver-arch-logo thunar numlockx pinta gvfs-smb ruby imagemagick librsvg iptraf-ng arandr elementary-icon-theme gtk-engines xarchiver-gtk2 gnome-keyring seahorse gtk-engine-murrine python-setuptools"
-PACKS+=" tlp bash-completion lsb-release smartmontools graphviz thunderbird system-config-printer vlc pidgin gparted filezilla keepassx xfburn veracrypt faac boost glu mesa-demos dbus jdk8-openjdk icoutils wxpython zenity"
+PACKS+=" tlp bash-completion lsb-release smartmontools graphviz system-config-printer vlc pidgin gparted filezilla keepassx veracrypt faac boost glu mesa-demos dbus jdk8-openjdk icoutils wxpython zenity"
 
 if [ "$TESTSYSTEM" != "YES" ]; then
-	EXTRA=" hexchat ario audacity avidemux-cli deluge handbrake"
+	EXTRA=" hexchat ario audacity avidemux-cli deluge handbrake thunderbird xfburn"
 	EXTRA+=" libreoffice libreoffice-fresh-fr gimp inkscape thunderbird thunderbird-i18n-fr calibre acetoneiso2"
 	EXTRA+=" latex2rtf lyx texmaker pstotext texlive-most pandoc texstudio jdk7-openjdk"
 	EXTRA+=" go maven gradle java-openjfx java-openjfx-doc java-openjfx-src gitg xdot dropbox filelight gdmap qt5 youtube-dl cordova"
-	EXTRA+=" mcomix tigervnc unetbootin wireshark-gtk"
+	EXTRA+=" mcomix tigervnc unetbootin wireshark-gtk mkvtoolnix-gui"
   PACKS+=$EXTRA
 fi
 #nextcloud
@@ -28,7 +28,7 @@ AURPACKS="pasystray-gtk2-standalone paman pavumeter qalculate-gtk-nognome xprint
 
 if [ "$TESTSYSTEM" != "YES" ]; then
 	AUREXTRA=" jabref pdftk-bin gitflow-avh gephi xvidcap gtk-theme-flatstudio"
-	AUREXTRA+=" jdk jdk7 jdk6 jdk5 jdk-devel javafx-scenebuilder nextcloud-client yed"
+	AUREXTRA+=" jdk jdk7 jdk6 jdk5 jdk-devel javafx-scenebuilder nextcloud-client yed mkv-extractor-qt"
   AURPACKS+=$AUREXTRA
 fi
 
