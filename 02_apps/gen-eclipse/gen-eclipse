@@ -13,6 +13,7 @@ echo "${ECHOPREFIX} starting setup ..."
 # parameters, fix GTK2 startup, and install plugins. 
 #
 ####################################################################
+[ $# -ne 1 ] && ARG1="" || ARG1=$1
 
 ##################################
 ##	Eclipse configuration
@@ -112,21 +113,22 @@ EOF
 
 function check_user {	
 	USER=`whoami`
-	[ "$USER" == "root" ] && echo "Should not be run as root" && exit 1
+  [ "$USER" == "root" ] && echo "Should not be run as root" && exit 1 || true
+  return
 }
 
 function check_homedir {	
 	HOMEDIR=$HOME
-	[ ! -d ${HOMEDIR} ] && HOMEDIR=`cat /etc/passwd | grep "$USER" | cut -d":" -f 6`
-	[ ! -d ${HOMEDIR} ] && echo "Could not locate Home directory (${HOMEDIR})" && exit 1
+	[ ! -d ${HOMEDIR} ] && HOMEDIR=`cat /etc/passwd | grep "$USER" | cut -d":" -f 6` || true
+	[ ! -d ${HOMEDIR} ] && echo "Could not locate Home directory (${HOMEDIR})" && exit 1 || true
 }
 
 function check_and_set_installation_path {
-	installationpath="$1"
-	[ "$1" == "" ] && read -p "Folder installation path: " installationpath
-
-	if [ -d "${installationpath}" ]; then 
-		if [ -d "${installationpath}/eclipse" ]; then 
+  [ $# -ne 1 ] && ARG1="" || ARG1=$1
+	installationpath="$ARG1"
+	[ "$ARG1" == "" ] && read -p "Folder installation path: " installationpath
+	if [ -d "${installationpath}" ]; then
+		if [ -d "${installationpath}/eclipse" ]; then
 			echo "Error: eclipse folder already exist at the location specified"
 			exit 1
 		fi
@@ -140,7 +142,7 @@ function check_and_set_installation_path {
 
 	installationpath=`(cd ${installationpath} && echo $PWD)`
 	#test write permission
-	[ ! -w ${installationpath} ] && echo "Cannot write into ${installationpath}" && exit 1
+	[ ! -w ${installationpath} ] && echo "Cannot write into ${installationpath}" && exit 1 || true
 }
 
 function check_and_set_platform {
@@ -155,8 +157,9 @@ function check_and_set_platform {
 	ARCH=`uname -m`
 
 	ECLIPSE_ARCHSUFF=
-	[ "${ARCH}" == "x86_64" ] && ECLIPSE_ARCHSUFF=-x86_64
+	[ "${ARCH}" == "x86_64" ] && ECLIPSE_ARCHSUFF=-x86_64 || true
 
+  echo "${ECHOPREFIX}    * Set eclipse platform"
 	case $PLATFORM in
 		Linux)
 			ECLIPSE_PLATFORM=linux-gtk
@@ -187,8 +190,7 @@ function check_and_set_platform {
 			exit 1
 			;;
 	esac
-	
-	
+  echo "${ECHOPREFIX}    * Set archive extension"
 	case ${ARCHIVE_EXTENSION} in
 		tar.gz)
 			which tar 2>&1 > /dev/null
@@ -205,6 +207,8 @@ function check_and_set_platform {
 			exit 1
 			;;
 	esac
+  echo "${ECHOPREFIX}    * Platform set"
+  return
 }
 
 function check_and_set_download_tool {
@@ -230,14 +234,22 @@ function check_and_set_download_tool {
 ##################################
 ##	Check script configuration
 ##################################
+echo "${ECHOPREFIX} Check script configuration"
 {
+  echo "${ECHOPREFIX}  * Check user"
 	check_user
+  echo "${ECHOPREFIX}  * Check homedir"
 	check_homedir
+  echo "${ECHOPREFIX}  * Check java version"
 	check_java_version
 
-	check_and_set_installation_path $1
+  echo "${ECHOPREFIX}  * Check install path"
+	check_and_set_installation_path $ARG1
+  echo "${ECHOPREFIX}  * Check platform"
 	check_and_set_platform
+  echo "${ECHOPREFIX}  * Check download tool"
 	check_and_set_download_tool
+  echo "${ECHOPREFIX}  * Check mirror"
 	check_and_set_eclipse_mirror
 
 	echo "${ECHOPREFIX} "
@@ -250,7 +262,7 @@ function check_and_set_download_tool {
 ##################################
 ##	Setup Eclipse
 ##################################
-	
+echo "${ECHOPREFIX} Setup Eclipse"
 {
 	TMPFILE=$(mktemp tmp_XXXXXXX_${ECLIPSE_ARCHIVE_NAME})
 	echo "${ECHOPREFIX} ${DOWNLOADTOOL} ${DOWNLOADOPTION} ${TMPFILE} ${URL}"
@@ -549,16 +561,13 @@ function setup_eclipse_plugins {
 		${P2OPTIONS} \
 		${FEATURES}" | xargs
 	echo ""
-	
-		#-metadataRepository ${REPOS}
-		#-artifactRepository ${REPOS}
+  set +e
 	${P2APP} \
 		-repository ${REPOS} \
 		-destination ${DESTFOLDER} \
 		${P2OPTIONS} \
 		${FEATURES}
-		
-	
+  set -e
 	SETUP_RESULT=$?
 	echo ""
 	echo "${ECHOPREFIX}   - Setup $TITLE : $SETUP_RESULT" >> $SETUP_RESULT_TMPFILE
@@ -576,6 +585,7 @@ function finish {
 	exit
 }
 
+echo "${ECHOPREFIX}  * Call Setup function"
 setup_eclipse_plugins \
 	"ALL" \
 	${ECLIPSE_PLUGINS_INSTALL_PATH} \
@@ -626,7 +636,9 @@ setup_eclipse_plugins \
 	org.eclipse.sdk.ide \
 	org.eclipse.platform.sdk
 
+echo "${ECHOPREFIX}  * Setup function done"
 finish
+echo "${ECHOPREFIX} Done"
 exit
 
 setup_eclipse_plugins \
