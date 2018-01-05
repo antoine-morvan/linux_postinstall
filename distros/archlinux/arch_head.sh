@@ -27,7 +27,7 @@ AURPACKS="pasystray-gtk2-standalone paman pavumeter qalculate-gtk-nognome xprint
 # arc-faenza-icon-theme"  
 
 if [ "$TESTSYSTEM" != "YES" ]; then
-	AUREXTRA="jabref pdftk-bin gitflow-avh gephi xvidcap gtk-theme-flatstudio"
+	AUREXTRA=" jabref pdftk-bin gitflow-avh gephi xvidcap gtk-theme-flatstudio"
 	AUREXTRA+=" jdk jdk7 jdk6 jdk5 jdk-devel javafx-scenebuilder nextcloud-client yed"
   AURPACKS+=$AUREXTRA
 fi
