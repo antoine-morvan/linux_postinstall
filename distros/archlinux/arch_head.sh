@@ -19,7 +19,7 @@ if [ "$TESTSYSTEM" != "YES" ]; then
 	EXTRA+=" libreoffice libreoffice-fresh-fr gimp inkscape thunderbird thunderbird-i18n-fr calibre acetoneiso2"
 	EXTRA+=" latex2rtf lyx texmaker pstotext texlive-most pandoc texstudio jdk7-openjdk"
 	EXTRA+=" go maven gradle java-openjfx java-openjfx-doc java-openjfx-src gitg xdot dropbox filelight gdmap qt5 youtube-dl cordova"
-	EXTRA+=" mcomix tigervnc unetbootin wireshark-gtk mkvtoolnix-gui"
+	EXTRA+=" mcomix tigervnc wireshark-gtk mkvtoolnix-gui"
   PACKS+=$EXTRA
 fi
 #nextcloud
@@ -27,7 +27,7 @@ AURPACKS="pasystray-gtk2-standalone paman pavumeter qalculate-gtk-nognome xprint
 # arc-faenza-icon-theme"  
 
 if [ "$TESTSYSTEM" != "YES" ]; then
-	AUREXTRA=" jabref pdftk-bin gitflow-avh gephi xvidcap gtk-theme-flatstudio"
+	AUREXTRA=" jabref pdftk-bin gitflow-avh gephi xvidcap gtk-theme-flatstudio unetbootin"
 	AUREXTRA+=" jdk jdk7 jdk6 jdk5 jdk-devel javafx-scenebuilder nextcloud-client yed mkv-extractor-qt"
   AURPACKS+=$AUREXTRA
 fi
