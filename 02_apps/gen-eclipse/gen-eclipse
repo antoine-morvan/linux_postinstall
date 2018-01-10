@@ -33,12 +33,12 @@ MIRRORURL="http://ftp.fau.de/eclipse/"
 ECLIPSE_VERSION=oxygen
 ECLIPSE_VERSION_MAJOR=4
 ECLIPSE_VERSION_MIDDLE=7
-ECLIPSE_VERSION_MINOR=1a
+ECLIPSE_VERSION_MINOR=2
 # to find the timestamp check ${MIRRORURL}/eclipse/downloads/drops${ECLIPSE_VERSION_MAJOR}/
 # i.e. http://ftp.fau.de/eclipse//eclipse/downloads/drops4/
 #ECLIPSE_TIMESTAMP=201706120950
 #ECLIPSE_TIMESTAMP=201709061700
-ECLIPSE_TIMESTAMP=201710090410
+ECLIPSE_TIMESTAMP=201711300510
 ECLIPSE_PRE=${ECLIPSE_VERSION_MINOR}
 
 
@@ -567,8 +567,8 @@ function setup_eclipse_plugins {
 		-destination ${DESTFOLDER} \
 		${P2OPTIONS} \
 		${FEATURES}
-  set -e
 	SETUP_RESULT=$?
+  set -e
 	echo ""
 	echo "${ECHOPREFIX}   - Setup $TITLE : $SETUP_RESULT" >> $SETUP_RESULT_TMPFILE
 	echo "${ECHOPREFIX}    $TITLE Setup done : $SETUP_RESULT"
