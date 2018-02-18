@@ -44,31 +44,7 @@ fi
 FOUND_RADEON=`lspci | grep -i vga | grep -i ATI | grep -i radeon | wc -l`
 if [ "$FOUND_RADEON" != "0" ]; then
 	echo "Found AMD/ATI Radeon graphic device"
-	pause "ati start"
-######  install new repo
-	cat >> /etc/pacman.conf << "EOF"
-
-[catalyst]
-Server = http://catalyst.wirephire.com/repo/catalyst/$arch
-## Mirrors, if the primary server does not work or is too slow:
-#Server = http://70.239.162.206/catalyst-mirror/repo/catalyst/$arch
-#Server = http://mirror.rts-informatique.fr/archlinux-catalyst/repo/catalyst/$arch
-#Server = http://mirror.hactar.bz/Vi0L0/catalyst/$arch
-EOF
-	CATALYST_PGP_KEY_ID=653C3094
-	echo "BYE" | dirmngr
-	pacman-key -r $CATALYST_PGP_KEY_ID
-	pacman-key --lsign-key $CATALYST_PGP_KEY_ID
-######  setup drivers
-	pacman -Syu
-	yaourt -Rdd --noconfirm lib32-mesa-libgl
-	yaourt -Rdd --noconfirm mesa-libgl
-	install_packs "catalyst-hook catalyst-utils catalyst-libgl lib32-catalyst-utils lib32-catalyst-libgl"
-######  config system
-	aticonfig --initial --force
-	systemctl enable catalyst-hook
-	sed -i 's/GRUB_CMDLINE_LINUX=\"/GRUB_CMDLINE_LINUX=\" nomodeset /g' /etc/default/grub
-	#systemctl enable atieventsd
+	echo " >> skip since outdated"
 else
 	echo "AMD/ATI Radeon not found"
 fi
