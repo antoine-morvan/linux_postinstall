@@ -5,7 +5,7 @@ USER=`whoami`
 
 [ $# -lt 1 ] && ARG1="" || ARG1=$1
 
-SOURCE_SCRIPT=http://home.koub.org/files/linux/02_apps/gen-eclipse/gen-eclipse
+SOURCE_SCRIPT=http://koub.org/files/linux/02_apps/gen-eclipse/gen-eclipse
 
 TMPFILE=`mktemp`
 wget $SOURCE_SCRIPT -O $TMPFILE

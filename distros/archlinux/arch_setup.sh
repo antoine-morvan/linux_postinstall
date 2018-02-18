@@ -4,7 +4,7 @@
 ##############################################################
 # This script takes place just after booting the ArchLinux   #
 # install CD (netinst) :                                     #
-#   >> wget http://home.koub.org/arch.sh   					 #
+#   >> wget http://koub.org/arch.sh   					 #
 # If the script is downloaded, it means the network is       #
 # already configured...                                      #
 #   >> dhcpcd eth0                                           #
