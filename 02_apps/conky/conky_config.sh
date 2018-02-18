@@ -2,7 +2,7 @@
 
 echo "[CONKY] setup conky"
 
-export SETUP_SCRIPT_LOCATION=http://home.koub.org/files/linux/
+export SETUP_SCRIPT_LOCATION=http://koub.org/files/linux/
 
 CONFFILE=/etc/conky/koubi_conky.conf
 CONFDIR=`dirname $CONFFILE`
@@ -28,7 +28,7 @@ function retry {
 
 mkdir -p $CONFDIR
 retry "wget $SETUP_SCRIPT_LOCATION/02_apps/conky/koubi_conky.conf -O $CONFFILE"
-#retry "wget http://home.koub.org/files/linux/02_apps/conky/conky.conf -O $CONFFILE"
+#retry "wget http://koub.org/files/linux/02_apps/conky/conky.conf -O $CONFFILE"
 
 echo "[CONKY] * Config file downloaded"
 
