@@ -34,7 +34,7 @@ MAINPARTITION=/dev/sda2
 SCREEN=WIDE_16_10
 
 # if set to YES, install only base packages
-TESTSYSTEM=NO
+TESTSYSTEM=YES
 INSTALLHEAD=YES
 CRYPT=NO
 
@@ -64,7 +64,7 @@ ROOTPARTITION=/dev/mapper/$LVM_GROUPNAME-$ROOT_LOGICAL_VOLUME_NAME
 
 
 #configure proxy for installation...
-export SETUP_SCRIPT_LOCATION=http://home.koub.org/files/linux/
+export SETUP_SCRIPT_LOCATION=http://koub.org/files/linux/
 ##############################################################
 
 function print_doc {
