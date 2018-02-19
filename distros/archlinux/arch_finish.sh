@@ -163,39 +163,43 @@ retry "wget -q -O /usr/local/sbin/firewall-tuning.sh ${SETUP_SCRIPT_LOCATION}/di
 chmod +x /usr/local/sbin/firewall-tuning.sh
 
 #read -p "press enter ... (before enabling services)"
+
 echo dhcpcd
 systemctl enable dhcpcd
-#dkms service removed
-#echo dkms
-#systemctl enable dkms
 echo iptables
 systemctl enable iptables
 echo fireall
 systemctl enable firewall-tuning
 echo systemdtimesyncd
 systemctl enable systemd-timesyncd
-echo hddtemp
-systemctl enable hddtemp
-echo lmsensors
-systemctl enable lm_sensors
 echo sshd
 systemctl enable sshd
-echo cupsd
-systemctl enable org.cups.cupsd.service
-echo cupsbrowser
-systemctl enable cups-browsed.service
-echo ntpd
-systemctl enable ntpd
-echo ntpdate
-systemctl enable ntpdate
-echo samba
-systemctl enable samba
-echo smbd
-systemctl enable smbd
-echo chkboot
-systemctl enable chkboot
-echo cronie
-systemctl enable cronie
+
+
+  case $SETUP_MODE in
+    workstation)
+      echo hddtemp
+      systemctl enable hddtemp
+      echo lmsensors
+      systemctl enable lm_sensors
+      echo cupsd
+      systemctl enable org.cups.cupsd.service
+      echo cupsbrowser
+      systemctl enable cups-browsed.service
+      echo ntpd
+      systemctl enable ntpd
+      echo ntpdate
+      systemctl enable ntpdate
+      echo samba
+      systemctl enable samba
+      echo smbd
+      systemctl enable smbd
+      echo chkboot
+      systemctl enable chkboot
+      echo cronie
+      systemctl enable cronie
+      ;;
+  esac
 
 #read -p "press enter ..."
 pause "all services configured & enabled"
