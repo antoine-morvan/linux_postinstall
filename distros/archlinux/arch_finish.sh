@@ -83,7 +83,7 @@ if [ "$TESTSYSTEM" != "YES" ]; then
   PKGS+=" jre8-openjdk openvpn ghc dvtm clang openmp"
 fi
 
-AURPKGS="etherwake byobu archey-plus chkboot stapler"
+AURPKGS="etherwake byobu archey-plus chkboot stapler bash-completion "
 # backintime-cli"
 
 if [ "$TESTSYSTEM" != "YES" ]; then
@@ -305,10 +305,10 @@ mv tmp /etc/systemd/logind.conf
 
 pause "samba & vim configured;"
 
-if [ "$TESTSYSTEM" != "YES" ]; then
-	dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/jenkins/arch.sh
-	dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/sonarqube/arch.sh
-fi
+#if [ "$TESTSYSTEM" != "YES" ]; then
+# dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/jenkins/arch.sh
+# dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/sonarqube/arch.sh
+#fi
 
 pause "about to setup drivers..."
 
@@ -317,7 +317,7 @@ dl_and_execute ${SETUP_SCRIPT_LOCATION}/distros/archlinux/arch_dri.sh
 pause "drivers installed; about to install head..."
 
 if [ "$INSTALLHEAD" == "YES" ]; then
-	dl_and_execute ${SETUP_SCRIPT_LOCATION}/distros/archlinux/arch_head.sh
+	dl_and_execute ${SETUP_SCRIPT_LOCATION}/distros/archlinux/arch_head.sh $SETUP_MODE
 fi
 
 #detect sensors
