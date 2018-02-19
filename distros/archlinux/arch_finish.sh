@@ -74,16 +74,16 @@ pacman -S archlinux-keyring --noconfirm
 
 pause "keyring for boostraped system configured; about to install base packages..."
 
-PKGS="hddtemp dkms openssh vim hddtemp lm_sensors vim-plugins lshw acpi acpid p7zip memtest86+ htop nethogs iotop linux-tools nmap bzip2 sharutils rsync tsocks exfat-utils ntp ntfs-3g dnsutils traceroute lzip tree sdparm hdparm dosfstools rarian libzip gnu-netcat cabextract btrfs-progs bwm-ng unrar docker docker-compose screen"
+PKGS="hddtemp dkms openssh vim hddtemp lm_sensors vim-plugins lshw acpi acpid p7zip memtest86+ htop nethogs iotop linux-tools nmap bzip2 sharutils rsync tsocks exfat-utils ntp ntfs-3g dnsutils traceroute lzip tree sdparm hdparm dosfstools rarian libzip gnu-netcat cabextract btrfs-progs bwm-ng unrar docker docker-compose screen archey3"
 
-AURPKGS="etherwake byobu bash-completion"
+AURPKGS="etherwake byobu bash-completion archey-plus"
 
 case $SETUP_MODE in
   workstation)
     PKGS+=" samba cifs-utils base-devel libtool linux-headers linux-lts-headers parted emacs zip unzip curl fakeroot alsa-utils fuse cmake pkg-config python git svn ttf-dejavu sshfs davfs2 dtach tmux subversion libcups cups ghostscript nss-mdns mercurial dri2proto glproto xorg-util-macros resourceproto bigreqsproto xtrans xcmiscproto xf86driproto intltool cronie autofs jre8-openjdk"
-    AURPKGS+=" archey-plus chkboot stapler"
+    AURPKGS+=" chkboot stapler"
     if [ "$TESTSYSTEM" != "YES" ]; then
-      PKGS+=" pacgraph lynx perl-xml-parser archey3 alsi apache php php-apache markdown cloc arj unarj unace rpmextract tig lhasa openvpn ghc dvtm clang openmp"
+      PKGS+=" pacgraph lynx perl-xml-parser alsi apache php php-apache markdown cloc arj unarj unace rpmextract tig lhasa openvpn ghc dvtm clang openmp"
       AURPKGS+=" hstr-git maven-bash-completion-git perl-bash-completion kingbash-gb-git ms-sys"
     fi
     ;;
@@ -107,9 +107,16 @@ dl_and_execute ${SETUP_SCRIPT_LOCATION}/distros/archlinux/arch_dri.sh
 
 pause "drivers installed; about to install head..."
 
-if [ "$INSTALLHEAD" == "YES" ]; then
-	dl_and_execute ${SETUP_SCRIPT_LOCATION}/distros/archlinux/arch_head.sh $SETUP_MODE
-fi
+case $SETUP_MODE in
+  workstation)
+    if [ "$INSTALLHEAD" == "YES" ]; then
+      dl_and_execute ${SETUP_SCRIPT_LOCATION}/distros/archlinux/arch_head.sh $SETUP_MODE
+    fi
+    ;;
+  server)
+    echo "skip head in server mode"
+    ;;
+esac
 
 pause "head intalled. Start nbon head config..."
 
