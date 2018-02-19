@@ -80,7 +80,7 @@ AURPKGS="etherwake byobu bash-completion"
 
 case $SETUP_MODE in
   workstation)
-    PKGS+=" samba cifs-utils  base-devel libtool linux-headers linux-lts-headers parted emacs zip unzip curl fakeroot alsa-utils fuse cmake pkg-config python git svn ttf-dejavu sshfs davfs2 dtach tmux subversion libcups cups ghostscript nss-mdns mercurial dri2proto glproto xorg-util-macros resourceproto bigreqsproto xtrans xcmiscproto xf86driproto intltool cronie autofs jre8-openjdk"
+    PKGS+=" samba cifs-utils base-devel libtool linux-headers linux-lts-headers parted emacs zip unzip curl fakeroot alsa-utils fuse cmake pkg-config python git svn ttf-dejavu sshfs davfs2 dtach tmux subversion libcups cups ghostscript nss-mdns mercurial dri2proto glproto xorg-util-macros resourceproto bigreqsproto xtrans xcmiscproto xf86driproto intltool cronie autofs jre8-openjdk"
     AURPKGS+=" archey-plus chkboot stapler"
     if [ "$TESTSYSTEM" != "YES" ]; then
       PKGS+=" pacgraph lynx perl-xml-parser archey3 alsi apache php php-apache markdown cloc arj unarj unace rpmextract tig lhasa openvpn ghc dvtm clang openmp"
@@ -100,6 +100,18 @@ fi
 install_packs_aur "$AURPKGS"
 
 pause "aur packages installed"
+
+pause "about to setup drivers..."
+
+dl_and_execute ${SETUP_SCRIPT_LOCATION}/distros/archlinux/arch_dri.sh
+
+pause "drivers installed; about to install head..."
+
+if [ "$INSTALLHEAD" == "YES" ]; then
+	dl_and_execute ${SETUP_SCRIPT_LOCATION}/distros/archlinux/arch_head.sh $SETUP_MODE
+fi
+
+pause "head intalled. Start nbon head config..."
 
 [ -e /etc/localtime ] && rm /etc/localtime
 ln -s /usr/share/zoneinfo/Europe/Paris /etc/localtime
@@ -249,8 +261,30 @@ echo "archey" >> /etc/skel/.bashrc
 
 pause "mod blacklisted & alias configured"
 
-#samba (create guset user)
-cat > /etc/samba/smb.conf << "EOF"
+#vim
+cp /usr/share/vim/vimfiles/archlinux.vim /etc/skel/.vimrc
+cat >> /etc/skel/.vimrc << "EOF"
+syntax on
+colorscheme elflord
+set number
+set mouse=a
+filetype plugin indent on
+EOF
+
+cat >> /etc/skel/.profile << "EOF"
+export EDITOR=vim
+EOF
+chmod +x /etc/skel/.profile
+
+#acpi
+cat /etc/systemd/logind.conf | sed -e 's/#HandleLidSwitch=suspend/HandleLidSwitch=lock/g' > tmp
+mv tmp /etc/systemd/logind.conf
+
+
+case $SETUP_MODE in
+  workstation)
+    #samba (create guset user)
+    cat > /etc/samba/smb.conf << "EOF"
 [global]
 	workgroup = DIABLAN
 	server string = %h server
@@ -272,78 +306,26 @@ cat > /etc/samba/smb.conf << "EOF"
 #	hosts allow = 192.168.56.
 
 EOF
-useradd -r -M -s /bin/false -U guest
-echo  -e "guest\nguest\n" | passwd guest
-echo -e "guest\nguest\n" | smbpasswd -a guest -s
-mkdir -p /srv/smb/
-chmod 777 /srv/smb/
+    useradd -r -M -s /bin/false -U guest
+    echo  -e "guest\nguest\n" | passwd guest
+    echo -e "guest\nguest\n" | smbpasswd -a guest -s
+    mkdir -p /srv/smb/
+    chmod 777 /srv/smb/
 
-#vim
-cp /usr/share/vim/vimfiles/archlinux.vim /etc/skel/.vimrc
-cat >> /etc/skel/.vimrc << "EOF"
-syntax on
-colorscheme elflord
-set number
-set mouse=a
-filetype plugin indent on
-EOF
-
-cat >> /etc/skel/.profile << "EOF"
-export EDITOR=vim
-EOF
-chmod +x /etc/skel/.profile
-
-#git tool
-cat > /usr/local/bin/gitstorecredential-10h << "EOF"
+    #git tool
+    cat > /usr/local/bin/gitstorecredential-10h << "EOF"
 #!/bin/bash
 git config --global credential.helper 'cache --timeout=36000'
 EOF
-chmod +x /usr/local/bin/gitstorecredential-10h
+    chmod +x /usr/local/bin/gitstorecredential-10h
 
-#acpi
-cat /etc/systemd/logind.conf | sed -e 's/#HandleLidSwitch=suspend/HandleLidSwitch=lock/g' > tmp
-mv tmp /etc/systemd/logind.conf
-
-pause "samba & vim configured;"
-
-#if [ "$TESTSYSTEM" != "YES" ]; then
-# dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/jenkins/arch.sh
-# dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/sonarqube/arch.sh
-#fi
-
-pause "about to setup drivers..."
-
-dl_and_execute ${SETUP_SCRIPT_LOCATION}/distros/archlinux/arch_dri.sh
-
-pause "drivers installed; about to install head..."
-
-if [ "$INSTALLHEAD" == "YES" ]; then
-	dl_and_execute ${SETUP_SCRIPT_LOCATION}/distros/archlinux/arch_head.sh $SETUP_MODE
-fi
-
-#detect sensors
-echo "[detect sensors]"
-echo "**********************"
-echo ""
-#skip since it needs to run with systemd PID = 1 (that is not in chroot)
-#sensors-detect --auto
-echo "skipped"
-echo ""
-echo "**********************"
-echo "[detect sensors done]"
-
-#read -p "before dkms autoinstall"
-#dkms
-#dkms autoinstall --all
-#read -p "after dkms autoinstall"
-
-#config chkboot
-echo "config chkboot"
-echo "configuring chkboot"
-sed -i "s#BOOTDISK=/dev/sda#BOOTDISK=${BOOTDRIVE}#g" /etc/default/chkboot.conf
-sed -i "s#BOOTPART=/dev/sda1#BOOTPART=${BOOTPARTITION}#g" /etc/default/chkboot.conf
-/usr/bin/chkboot
-cat > /usr/local/bin/chkboot_custom_alerts << 'EOF'
+    #config chkboot
+    echo "config chkboot"
+    echo "configuring chkboot"
+    sed -i "s#BOOTDISK=/dev/sda#BOOTDISK=${BOOTDRIVE}#g" /etc/default/chkboot.conf
+    sed -i "s#BOOTPART=/dev/sda1#BOOTPART=${BOOTPARTITION}#g" /etc/default/chkboot.conf
+    /usr/bin/chkboot
+    cat > /usr/local/bin/chkboot_custom_alerts << 'EOF'
 #!/bin/bash
 
 # small script to check if files under /boot changed
@@ -383,7 +365,9 @@ fi
 exit 0
 
 EOF
-chmod +x /usr/local/bin/chkboot_custom_alerts
+    chmod +x /usr/local/bin/chkboot_custom_alerts
+    ;;
+esac
 
 
 pause "arch_head.sh done. Last configurations..."
