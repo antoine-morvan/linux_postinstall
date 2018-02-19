@@ -74,22 +74,20 @@ pacman -S archlinux-keyring --noconfirm
 
 pause "keyring for boostraped system configured; about to install base packages..."
 
-PKGS="hddtemp dkms openssh samba vim hddtemp cifs-utils"
-PKGS+=" lm_sensors vim-plugins lshw base-devel libtool linux-headers linux-lts-headers acpi acpid p7zip memtest86+ htop nethogs iotop parted emacs zip unzip curl fakeroot alsa-utils linux-tools fuse cmake pkg-config python git screen nmap bzip2 sharutils rsync svn ttf-dejavu tsocks exfat-utils sshfs davfs2 ntp dtach tmux ntfs-3g subversion sdparm hdparm dnsutils traceroute lzip tree libcups cups ghostscript nss-mdns mercurial dri2proto glproto xorg-util-macros resourceproto bigreqsproto xtrans xcmiscproto xf86driproto dosfstools rarian intltool libzip gnu-netcat cabextract btrfs-progs bwm-ng cronie autofs unrar docker docker-compose jre8-openjdk"
+PKGS="hddtemp dkms openssh vim hddtemp lm_sensors vim-plugins lshw acpi acpid p7zip memtest86+ htop nethogs iotop linux-tools nmap bzip2 sharutils rsync tsocks exfat-utils ntp ntfs-3g dnsutils traceroute lzip tree sdparm hdparm dosfstools rarian libzip gnu-netcat cabextract btrfs-progs bwm-ng unrar docker docker-compose screen"
 
+AURPKGS="etherwake byobu bash-completion"
 
-if [ "$TESTSYSTEM" != "YES" ]; then
-  PKGS+=" pacgraph lynx perl-xml-parser archey3 alsi apache php php-apache markdown cloc arj unarj unace rpmextract tig lhasa"
-  PKGS+=" openvpn ghc dvtm clang openmp"
-fi
-
-AURPKGS="etherwake byobu archey-plus chkboot stapler bash-completion "
-# backintime-cli"
-
-if [ "$TESTSYSTEM" != "YES" ]; then
-	#bash-complete-more-git
-	AURPKGS+=" hstr-git maven-bash-completion-git perl-bash-completion kingbash-gb-git ms-sys"
-fi
+case $SETUP_MODE in
+  workstation)
+    PKGS+=" samba cifs-utils  base-devel libtool linux-headers linux-lts-headers parted emacs zip unzip curl fakeroot alsa-utils fuse cmake pkg-config python git svn ttf-dejavu sshfs davfs2 dtach tmux subversion libcups cups ghostscript nss-mdns mercurial dri2proto glproto xorg-util-macros resourceproto bigreqsproto xtrans xcmiscproto xf86driproto intltool cronie autofs jre8-openjdk"
+    AURPKGS+=" archey-plus chkboot stapler"
+    if [ "$TESTSYSTEM" != "YES" ]; then
+      PKGS+=" pacgraph lynx perl-xml-parser archey3 alsi apache php php-apache markdown cloc arj unarj unace rpmextract tig lhasa openvpn ghc dvtm clang openmp"
+      AURPKGS+=" hstr-git maven-bash-completion-git perl-bash-completion kingbash-gb-git ms-sys"
+    fi
+    ;;
+esac
 
 install_packs "$PKGS"
 
