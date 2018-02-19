@@ -5,7 +5,7 @@ TESTSYSTEM=`cat /setup.dat | sed '3q;d'`
 INSTALLHEAD=`cat /setup.dat | sed '4q;d'`
 source /arch_func.sh
 
-SETUP_MODE=$2
+SETUP_MODE=$1
 
 ##########################
 #######	 SETUP	 #########
