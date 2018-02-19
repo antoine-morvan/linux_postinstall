@@ -84,10 +84,10 @@ dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/chrome/arch.sh
 if [ "$TESTSYSTEM" != "YES" ]; then
 	dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/firefox/arch.sh
 	dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/truecrypt/arch.sh
-	dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/virtualbox/arch.sh
 
   case $SETUP_MODE in
     workstation)
+      dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/virtualbox/arch.sh
       dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/steam/arch.sh
       dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/purple-plugins/arch.sh
       dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/skype/arch.sh
