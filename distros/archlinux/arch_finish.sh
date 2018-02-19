@@ -75,12 +75,12 @@ pacman -S archlinux-keyring --noconfirm
 pause "keyring for boostraped system configured; about to install base packages..."
 
 PKGS="hddtemp dkms openssh samba vim hddtemp cifs-utils"
-PKGS+=" lm_sensors vim-plugins lshw base-devel libtool linux-headers linux-lts-headers acpi acpid p7zip memtest86+ htop nethogs iotop parted emacs zip unzip curl fakeroot alsa-utils linux-tools fuse cmake pkg-config python git screen nmap bzip2 sharutils rsync svn ttf-dejavu tsocks exfat-utils sshfs davfs2 ntp dtach tmux ntfs-3g subversion sdparm hdparm dnsutils traceroute lzip tree libcups cups ghostscript nss-mdns mercurial dri2proto glproto xorg-util-macros resourceproto bigreqsproto xtrans xcmiscproto xf86driproto dosfstools rarian intltool libzip gnu-netcat cabextract btrfs-progs bwm-ng cronie autofs unrar docker docker-compose"
+PKGS+=" lm_sensors vim-plugins lshw base-devel libtool linux-headers linux-lts-headers acpi acpid p7zip memtest86+ htop nethogs iotop parted emacs zip unzip curl fakeroot alsa-utils linux-tools fuse cmake pkg-config python git screen nmap bzip2 sharutils rsync svn ttf-dejavu tsocks exfat-utils sshfs davfs2 ntp dtach tmux ntfs-3g subversion sdparm hdparm dnsutils traceroute lzip tree libcups cups ghostscript nss-mdns mercurial dri2proto glproto xorg-util-macros resourceproto bigreqsproto xtrans xcmiscproto xf86driproto dosfstools rarian intltool libzip gnu-netcat cabextract btrfs-progs bwm-ng cronie autofs unrar docker docker-compose jre8-openjdk"
 
 
 if [ "$TESTSYSTEM" != "YES" ]; then
   PKGS+=" pacgraph lynx perl-xml-parser archey3 alsi apache php php-apache markdown cloc arj unarj unace rpmextract tig lhasa"
-  PKGS+=" jre8-openjdk openvpn ghc dvtm clang openmp"
+  PKGS+=" openvpn ghc dvtm clang openmp"
 fi
 
 AURPKGS="etherwake byobu archey-plus chkboot stapler bash-completion "
