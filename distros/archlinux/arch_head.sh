@@ -246,7 +246,11 @@ EOF
 ########### JAVA #############
 ##############################
 
-archlinux-java set java-8-openjdk
+if [ "$TESTSYSTEM" != "YES" ]; then
+  archlinux-java set java-8-openjdk
+else
+  archlinux-java set java-8-openjdk/jre
+fi
 
 ##############################
 #######	 X startup   #########
