@@ -321,7 +321,7 @@ if [ "$TESTSYSTEM" != "YES" ]; then
     server)
       PKGS+=" zsh syslinux linux-lts"
       ;;
-    worksation)
+    workstation)
       PKGS+=" zsh syslinux linux-zen linux-lts"
       ;;
     esac
