@@ -23,7 +23,7 @@ if [ "$FOUND_VBOX" != "0" ]; then
 	mkdir -p /etc/modules-load.d/
 	mkdir -p /etc/modprode.d/
 	systemctl enable vboxservice
-	echo "options snd-intel8x0 ac97_clock=48000" >> /etc/modprode.d/vbox-snd-options
+	echo "options snd-intel8x0 ac97_clock=48000" >> /etc/modprobe.d/vbox-snd-options
 else
 	echo "VirtualBox not found"
 fi
