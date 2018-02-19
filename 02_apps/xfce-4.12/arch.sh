@@ -266,6 +266,7 @@ xft-dpi=80
 xft-hintstyle=hintfull
 xft-rgba=rgb
 show-indicators=~language;~session;~power
+indicators = ~host;~spacer;~clock;~spacer;~layout;~language;~session;~a11y;~power
 EOF
 
 ############################################
