@@ -317,7 +317,7 @@ pause "keyring configured"
 
 PKGS="base wget os-prober bash yaourt grub sudo gptfdisk efibootmgr lvm2 device-mapper btrfs-progs net-tools wireless_tools"
 if [ "$TESTSYSTEM" != "YES" ]; then
-  case $MODE)
+  case $MODE in
     server)
       PKGS+=" zsh syslinux linux-lts"
       ;;
