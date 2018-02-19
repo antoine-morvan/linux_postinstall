@@ -173,31 +173,30 @@ systemctl enable systemd-timesyncd
 echo sshd
 systemctl enable sshd
 
-
-  case $SETUP_MODE in
-    workstation)
-      echo hddtemp
-      systemctl enable hddtemp
-      echo lmsensors
-      systemctl enable lm_sensors
-      echo cupsd
-      systemctl enable org.cups.cupsd.service
-      echo cupsbrowser
-      systemctl enable cups-browsed.service
-      echo ntpd
-      systemctl enable ntpd
-      echo ntpdate
-      systemctl enable ntpdate
-      echo samba
-      systemctl enable samba
-      echo smbd
-      systemctl enable smbd
-      echo chkboot
-      systemctl enable chkboot
-      echo cronie
-      systemctl enable cronie
-      ;;
-  esac
+case $SETUP_MODE in
+  workstation)
+    echo hddtemp
+    systemctl enable hddtemp
+    echo lmsensors
+    systemctl enable lm_sensors
+    echo cupsd
+    systemctl enable org.cups.cupsd.service
+    echo cupsbrowser
+    systemctl enable cups-browsed.service
+    echo ntpd
+    systemctl enable ntpd
+    echo ntpdate
+    systemctl enable ntpdate
+    echo samba
+    systemctl enable samba
+    echo smbd
+    systemctl enable smbd
+    echo chkboot
+    systemctl enable chkboot
+    echo cronie
+    systemctl enable cronie
+    ;;
+esac
 
 #read -p "press enter ..."
 pause "all services configured & enabled"
