@@ -356,9 +356,9 @@ TO_REMOVE+=" $MOUNTPOINT/arch_finish.sh"
 chmod +x $MOUNTPOINT/arch_finish.sh
 
 if [ -z ${UEFIPARTITION+x} ]; then
-  arch-chroot $MOUNTPOINT ./arch_finish.sh $BOOTDRIVE $MODE
+  arch-chroot $MOUNTPOINT ./arch_finish.sh $BOOTDRIVE $SETUP_MODE
 else
-  arch-chroot $MOUNTPOINT ./arch_finish.sh $BOOTDRIVE $MODE $UEFIPARTITION
+  arch-chroot $MOUNTPOINT ./arch_finish.sh $BOOTDRIVE $SETUP_MODE $UEFIPARTITION
 fi
 
 pause "system setup; removing logs, unmounting devices..."

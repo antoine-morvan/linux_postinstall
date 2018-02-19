@@ -15,7 +15,7 @@ source /arch_func.sh
 ##########################
 
 BOOTDRIVE=$1
-MODE=$2
+SETUP_MODE=$2
 if [ -z ${UEFIPARTITION+x} ]; then
   UEFIPARTITION=""
 else
@@ -119,7 +119,7 @@ mkinitcpio -p linux
 
 if [ "$TESTSYSTEM" != "YES" ]; then
 	mkinitcpio -p linux-lts
-  case $MODE in
+  case $SETUP_MODE in
     workstation)
       mkinitcpio -p linux-zen
       ;;
