@@ -5,21 +5,33 @@ TESTSYSTEM=`cat /setup.dat | sed '3q;d'`
 INSTALLHEAD=`cat /setup.dat | sed '4q;d'`
 source /arch_func.sh
 
+SETUP_MODE=$2
 
 ##########################
 #######	 SETUP	 #########
 ##########################
 
 #xorg-utils xorg-server-utils
-PACKS="xorg xorg-server xorg-xinit xorg-util-macros xorg-twm xorg-xclock xdg-user-dirs xterm gksu rxvt-unicode urxvt-url-select lightdm lightdm-gtk-greeter lightdm-gtk-greeter-settings terminator pulseaudio pavucontrol paprefs mate-themes wicd wicd-gtk xfce4 xfce4-goodies xfce4-artwork xfce4-session xfce4-settings xfwm4 xfwm4-themes xfconf xscreensaver-arch-logo thunar numlockx pinta gvfs-smb ruby imagemagick librsvg iptraf-ng arandr elementary-icon-theme gtk-engines xarchiver-gtk2 gnome-keyring seahorse gtk-engine-murrine python-setuptools"
-PACKS+=" tlp bash-completion lsb-release smartmontools graphviz system-config-printer vlc pidgin gparted filezilla keepassx veracrypt faac boost glu mesa-demos dbus jdk8-openjdk icoutils wxpython zenity"
+PACKS="xorg xorg-server xorg-xinit xorg-util-macros xorg-twm xorg-xclock xdg-user-dirs xterm gksu rxvt-unicode urxvt-url-select lightdm lightdm-gtk-greeter lightdm-gtk-greeter-settings terminator pulseaudio pavucontrol paprefs mate-themes wicd wicd-gtk xfce4 xfce4-goodies xfce4-artwork xfce4-session xfce4-settings xfwm4 xfwm4-themes xfconf xscreensaver-arch-logo thunar numlockx pinta gvfs-smb ruby imagemagick librsvg iptraf-ng arandr elementary-icon-theme gtk-engines xarchiver-gtk2 gnome-keyring seahorse gtk-engine-murrine python-setuptools gparted filezilla keepassx veracrypt lsb-release smartmontools"
+
+case $SETUP_MODE in
+  workstation)
+    PACKS+=" tlp graphviz system-config-printer vlc pidgin faac boost glu mesa-demos dbus jdk8-openjdk icoutils wxpython zenity"
+    ;;
+esac
 
 if [ "$TESTSYSTEM" != "YES" ]; then
-	EXTRA=" hexchat ario audacity avidemux-cli deluge handbrake thunderbird xfburn"
-	EXTRA+=" libreoffice libreoffice-fresh-fr gimp inkscape thunderbird thunderbird-i18n-fr calibre acetoneiso2"
-	EXTRA+=" latex2rtf lyx texmaker texlive-most pandoc texstudio jdk7-openjdk"
-	EXTRA+=" go maven gradle java-openjfx java-openjfx-doc java-openjfx-src gitg xdot dropbox filelight gdmap qt5 youtube-dl cordova"
+	EXTRA=" hexchat ario deluge xfburn acetoneiso2"
+	EXTRA+=" latex2rtf lyx texmaker texlive-most pandoc texstudio "
+	EXTRA+=" maven gradle gitg xdot dropbox filelight gdmap qt5 youtube-dl "
 	EXTRA+=" mcomix tigervnc wireshark-gtk mkvtoolnix-gui"
+
+  case $SETUP_MODE in
+    workstation)
+      EXTRA+=" avidemux-cli audacity handbrake libreoffice libreoffice-fresh-fr gimp inkscape thunderbird thunderbird-i18n-fr calibre jdk7-openjdk jdk9-openjdk openjdk7-src openjdk8-src openjdk9-src go java-openjfx java-openjfx-doc java-openjfx-src cordova"
+      ;;
+  esac
+
   PACKS+=$EXTRA
 fi
 #nextcloud
@@ -27,8 +39,14 @@ AURPACKS="pasystray-gtk2-standalone paman pavumeter qalculate-gtk-nognome xprint
 # arc-faenza-icon-theme"  
 
 if [ "$TESTSYSTEM" != "YES" ]; then
-	AUREXTRA=" jabref pdftk-bin gitflow-avh gephi xvidcap gtk-theme-flatstudio unetbootin"
-	AUREXTRA+=" jdk jdk7 jdk6 jdk5 jdk-devel javafx-scenebuilder nextcloud-client yed mkv-extractor-qt"
+	AUREXTRA=" pdftk-bin gitflow-avh  unetbootin mkv-extractor-qt"
+
+  case $SETUP_MODE in
+    workstation)
+      AUREXTRA+=" gephi xvidcap gtk-theme-flatstudio jabref jdk jdk7 jdk6 jdk5 jdk-devel javafx-scenebuilder nextcloud-client yed"
+      ;;
+  esac
+
   AURPACKS+=$AUREXTRA
 fi
 
@@ -63,19 +81,23 @@ dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/conky/arch.sh
 dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/quicktile/arch.sh
 dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/chrome/arch.sh
 
-dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/gen-eclipse/arch.sh
-
 if [ "$TESTSYSTEM" != "YES" ]; then
-	dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/deadbeef/arch.sh
-	dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/wine/arch.sh
-	dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/steam/arch.sh
 	dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/firefox/arch.sh
-	dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/playonlinux/arch.sh
 	dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/truecrypt/arch.sh
 	dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/virtualbox/arch.sh
-	dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/purple-plugins/arch.sh
-	dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/skype/arch.sh
-	dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/hipchat/arch.sh
+
+  case $SETUP_MODE in
+    workstation)
+      dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/steam/arch.sh
+      dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/purple-plugins/arch.sh
+      dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/skype/arch.sh
+      dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/hipchat/arch.sh
+      dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/playonlinux/arch.sh
+      dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/wine/arch.sh
+      dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/deadbeef/arch.sh
+      dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/gen-eclipse/arch.sh
+      ;;
+  esac
 fi
 #dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/acroread/arch.sh #disabled because crashing too often ...
 
@@ -87,6 +109,7 @@ pause "apps installed; configuring ..."
 
 #fix python2 pkg 
 #(cd /tmp/ && wget https://bootstrap.pypa.io/ez_setup.py -O - | python2)
+
 #fix pulseaudio & skype mute
 sed -i "s/load-module module-role-cork/#load-module module-role-cork/g" /etc/pulse/default.pa
 sed -i "s/flat-volumes = no/flat-volumes = yes/g" /etc/pulse/daemon.conf
@@ -95,11 +118,15 @@ sed -i "s/flat-volumes = no/flat-volumes = yes/g" /etc/pulse/daemon.conf
 #######	 CONFIG  #########
 ##########################
 
-#DHCP conflicts with WICD
-systemctl disable dhcpcd
-systemctl enable wicd
-systemctl enable lightdm
-systemctl enable tlp
+case $SETUP_MODE in
+  workstation)
+    #DHCP conflicts with WICD
+    systemctl disable dhcpcd
+    systemctl enable wicd
+    systemctl enable lightdm
+    systemctl enable tlp
+    ;;
+esac
 
 #keyboard configuration is done in xfce settings
 #cp /usr/share/X11/xorg.conf.d/10-evdev.conf /etc/X11/xorg.conf.d/10-evdev.conf
