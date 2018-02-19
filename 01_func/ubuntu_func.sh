@@ -51,9 +51,9 @@ function install_packs {
 function dl_and_execute {
 	SCRIPT_LOCATION=$1
 	SCRIPT_FILE=`mktemp --suffix=.sh`
-	pause "dl and execute $1"
+	pause "dl and execute $1 with arguments ${@:2}"
 	retry "wget --no-cache -q -O ${SCRIPT_FILE} ${SCRIPT_LOCATION}"
 	chmod +x ${SCRIPT_FILE}
-	${SCRIPT_FILE}
+	${SCRIPT_FILE} ${@:2}
 	rm ${SCRIPT_FILE}
 }
