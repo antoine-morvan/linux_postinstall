@@ -11,7 +11,7 @@ source /arch_func.sh
 ##########################
 
 #xorg-utils xorg-server-utils
-PACKS="xorg xorg-server xorg-xinit xorg-util-macros xorg-twm xorg-xclock xdg-user-dirs xterm gksu rxvt-unicode urxvt-url-select lightdm lightdm-gtk-greeter terminator pulseaudio pavucontrol paprefs mate-themes wicd wicd-gtk xfce4 xfce4-goodies xfce4-artwork xfce4-session xfce4-settings xfwm4 xfwm4-themes xfconf xscreensaver-arch-logo thunar numlockx pinta gvfs-smb ruby imagemagick librsvg iptraf-ng arandr elementary-icon-theme gtk-engines xarchiver-gtk2 gnome-keyring seahorse gtk-engine-murrine python-setuptools"
+PACKS="xorg xorg-server xorg-xinit xorg-util-macros xorg-twm xorg-xclock xdg-user-dirs xterm gksu rxvt-unicode urxvt-url-select lightdm lightdm-gtk-greeter lightdm-gtk-greeter-settings terminator pulseaudio pavucontrol paprefs mate-themes wicd wicd-gtk xfce4 xfce4-goodies xfce4-artwork xfce4-session xfce4-settings xfwm4 xfwm4-themes xfconf xscreensaver-arch-logo thunar numlockx pinta gvfs-smb ruby imagemagick librsvg iptraf-ng arandr elementary-icon-theme gtk-engines xarchiver-gtk2 gnome-keyring seahorse gtk-engine-murrine python-setuptools"
 PACKS+=" tlp bash-completion lsb-release smartmontools graphviz system-config-printer vlc pidgin gparted filezilla keepassx veracrypt faac boost glu mesa-demos dbus jdk8-openjdk icoutils wxpython zenity"
 
 if [ "$TESTSYSTEM" != "YES" ]; then
@@ -106,6 +106,20 @@ systemctl enable tlp
 #sed -i 's/MatchIsKeyboard "on"/MatchIsKeyboard "on"\n\tOption "XkbLayout"\t"fr"\n\tOption "XkbVariant"\t"latin9" /g' /etc/X11/xorg.conf.d/10-evdev.conf
 
 retry "wget -q -O /etc/X11/xorg.conf.d/50-synaptics.conf ${SETUP_SCRIPT_LOCATION}/distros/archlinux/50-synaptics.conf"
+
+
+#############################
+#######	 X config   #########
+#############################
+
+cat >> /etc/X11/xorg.conf.d/10-keyboard-layout.conf << EOF
+Section "InputClass"
+        Identifier "system-keyboard"
+        MatchIsKeyboard "on"
+        Option "XkbLayout" "fr"
+        Option "XkbVariant" "latin9"
+EndSection
+EOF
 
 ##############################
 #######  PULSEAUDIO  #########
