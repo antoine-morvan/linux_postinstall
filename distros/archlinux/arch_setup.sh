@@ -92,12 +92,22 @@ function print_doc {
 	echo "    >> mkdir -p $MOUNTPOINT/boot && mount /dev/sda1 $MOUNTPOINT/boot"
 	echo "    >> mkdir -p $MOUNTPOINT/home && mount /dev/sdb1 $MOUNTPOINT/home"
 	echo "    >> swapon /dev/sda2"
-	echo "5. Call again the script with argument install : \"$0 install\""
+	echo "5. Call again the script with argument install : \"$0 workstation\""
+  echo "          or \"$0 server\""
 	echo ""
 }
 
 [ "$#" == "0" ] && print_doc && exit 1
-[ "$1" != "install" ] && print_doc && exit 1
+case $1 in
+  server|workstation)
+    echo "Mode is $1"
+    SETUP_MODE=$1
+    ;;
+  *)
+    print_doc
+    exit 1
+    ;;
+esac
 
 #prompts at begining
 if [ "$CRYPT" == "YES" ]; then
@@ -307,7 +317,14 @@ pause "keyring configured"
 
 PKGS="base wget os-prober bash yaourt grub sudo gptfdisk efibootmgr lvm2 device-mapper btrfs-progs net-tools wireless_tools"
 if [ "$TESTSYSTEM" != "YES" ]; then
-  PKGS+=" zsh syslinux linux-zen linux-lts"
+  case $MODE)
+    server)
+      PKGS+=" zsh syslinux linux-lts"
+      ;;
+    worksation)
+      PKGS+=" zsh syslinux linux-zen linux-lts"
+      ;;
+    esac
 fi
 
 pacstrap $MOUNTPOINT $PKGS
@@ -339,9 +356,9 @@ TO_REMOVE+=" $MOUNTPOINT/arch_finish.sh"
 chmod +x $MOUNTPOINT/arch_finish.sh
 
 if [ -z ${UEFIPARTITION+x} ]; then
-  arch-chroot $MOUNTPOINT ./arch_finish.sh $BOOTDRIVE
+  arch-chroot $MOUNTPOINT ./arch_finish.sh $BOOTDRIVE $MODE
 else
-  arch-chroot $MOUNTPOINT ./arch_finish.sh $BOOTDRIVE $UEFIPARTITION
+  arch-chroot $MOUNTPOINT ./arch_finish.sh $BOOTDRIVE $MODE $UEFIPARTITION
 fi
 
 pause "system setup; removing logs, unmounting devices..."
