@@ -414,10 +414,13 @@ while [ "$?" != "0" ]; do
 	passwd $USR
 done;
 set -e
+
+grep -q "^docker:" /etc/group || groupadd docker
+grep -q "^sudo:" /etc/group || groupadd sudo
+grep -q "^video:" /etc/group || groupadd video
+
 gpasswd -a $USR video
-groupadd sudo
 gpasswd -a $USR sudo
-groupadd docker
 gpasswd -a $USR docker
 
 cp -R `find /etc/skel -mindepth 1 -maxdepth 1` /root/
