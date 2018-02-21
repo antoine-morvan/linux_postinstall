@@ -40,7 +40,7 @@ apt autoremove -y
 apt clean
 
 ## install deps
-apt install -y bind9 isc-dhcp-server squid3 ipcalc bwm-ng iptraf nethogs byobu
+apt install -y bind9 isc-dhcp-server squid3 ipcalc bwm-ng iptraf nethogs byobu sudo
 
 echo ""
 echo "Apt done."
@@ -349,7 +349,13 @@ squid -z
 
 /etc/init.d/squid start
 
-exit 0
+## make general users part of sudo group
+l=$(grep "^UID_MIN" /etc/login.defs)
+l1=$(grep "^UID_MAX" /etc/login.defs)
+USERS=$(awk -F':' -v "min=${l##UID_MIN}" -v "max=${l1##UID_MAX}" '{ if ( $3 >= min && $3 <= max ) print $1}' /etc/passwd)
+for USR in $USERS; do
+  usermod -G sudo $USR
+done
 
 ## reboot
 
