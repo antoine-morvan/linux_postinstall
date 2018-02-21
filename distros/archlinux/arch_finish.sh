@@ -191,6 +191,8 @@ echo systemdtimesyncd
 systemctl enable systemd-timesyncd
 echo sshd
 systemctl enable sshd
+echo docker
+systemctl enable docker
 
 case $SETUP_MODE in
   workstation)
@@ -415,6 +417,8 @@ set -e
 gpasswd -a $USR video
 groupadd sudo
 gpasswd -a $USR sudo
+groupadd docker
+gpasswd -a $USR docker
 
 cp -R `find /etc/skel -mindepth 1 -maxdepth 1` /root/
 cp -R `find /etc/skel -mindepth 1 -maxdepth 1` /home/$USR/
