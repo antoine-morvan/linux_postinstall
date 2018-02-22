@@ -36,7 +36,7 @@ SCREEN=WIDE_16_10
 # if set to YES, install only base packages
 TESTSYSTEM=NO
 INSTALLHEAD=YES
-CRYPT=NO
+CRYPT=YES
 
 ##############################################################
 
@@ -112,7 +112,7 @@ esac
 #prompts at begining
 if [ "$CRYPT" == "YES" ]; then
   #crypt
-  cryptsetup luksClose $CRYPT_DEVMAPPERNAME
+  [ -e /dev/mapper/$CRYPT_DEVMAPPERNAME ] && cryptsetup luksClose $CRYPT_DEVMAPPERNAME
   echo " #######################"
   echo " # Cryptsetup password #"
   echo " #######################"
