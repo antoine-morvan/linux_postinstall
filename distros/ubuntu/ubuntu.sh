@@ -29,7 +29,9 @@ source ubuntu_func.sh
 	echo "deb http://archive.canonical.com/ubuntu xenial partner" >> /etc/apt/sources.list
 
 #disable auto updates/upgrades
-sed -i -e 's#APT::Periodic::Update-Package-Lists "1";#APT::Periodic::Update-Package-Lists "0";#g' /etc/apt/apt.conf.d/10periodic
+if [ -e /etc/apt/apt.conf.d/10periodic ]; then
+	sed -i -e 's#APT::Periodic::Update-Package-Lists "1";#APT::Periodic::Update-Package-Lists "0";#g' /etc/apt/apt.conf.d/10periodic
+fi
 if [ -e /etc/apt/apt.conf.d/20auto-upgrades ]; then
   sed -i -e 's#APT::Periodic::Update-Package-Lists "1";#APT::Periodic::Update-Package-Lists "0";#g' /etc/apt/apt.conf.d/20auto-upgrades
   cat >> /etc/apt/apt.conf.d/20auto-upgrades << EOF
