@@ -24,8 +24,8 @@ FIXEDADDRCOUNT=24
 # minimum size of the DHCP range
 MINGUESTIPS=10
 
-WEBCACHE_OBJMAXSIZE=4096 #MB
-WEBCACHE_SIZE=65536 #MB
+WEBCACHE_OBJMAXSIZE=8192 #MB
+WEBCACHE_SIZE=100000 #MB
 WEBCACHE_PATH="/var/cache/squid/"
 
 ###########################
@@ -319,7 +319,29 @@ acl apache rep_header Server ^Apache
 hosts_file /etc/hosts
 coredump_dir /var/spool/squid
 
-refresh_pattern ^ftp:           1440    20%     10080
+
+acl windowsupdate dstdomain windowsupdate.microsoft.com
+acl windowsupdate dstdomain .update.microsoft.com
+acl windowsupdate dstdomain download.windowsupdate.com
+acl windowsupdate dstdomain redir.metaservices.microsoft.com
+acl windowsupdate dstdomain images.metaservices.microsoft.com
+acl windowsupdate dstdomain c.microsoft.com
+acl windowsupdate dstdomain www.download.windowsupdate.com
+acl windowsupdate dstdomain wustat.windows.com
+acl windowsupdate dstdomain crl.microsoft.com
+acl windowsupdate dstdomain sls.microsoft.com
+acl windowsupdate dstdomain productactivation.one.microsoft.com
+acl windowsupdate dstdomain ntservicepack.microsoft.com
+
+
+refresh_pattern -i microsoft.com/.*\.(cab|exe|ms[i|u|f]|[ap]sf|wm[v|a]|dat|zip) 4320 80% 43200 reload-into-ims
+refresh_pattern -i windowsupdate.com/.*\.(cab|exe|ms[i|u|f]|[ap]sf|wm[v|a]|dat|zip) 4320 80% 43200 reload-into-ims
+refresh_pattern -i windows.com/.*\.(cab|exe|ms[i|u|f]|[ap]sf|wm[v|a]|dat|zip) 4320 80% 43200 reload-into-ims
+
+
+refresh_pattern \^ftp:           1440    20%     10080
+refresh_pattern \^gopher:        1440    0%      1440
+refresh_pattern -i (/cgi-bin/|\?) 0     0%      0
 refresh_pattern (Release|Packages(.gz)*)\$       0       20%     2880
 refresh_pattern \.pkg\.tar\.            0       20%     129600  reload-into-ims
 refresh_pattern \.tar(\.bz2|\.gz|\.xz)\$              0       20%     129600  reload-into-ims
@@ -327,12 +349,16 @@ refresh_pattern \.rpm\$          0       20%     129600  reload-into-ims
 refresh_pattern \.jar\$          0       20%     129600  reload-into-ims
 refresh_pattern \.zip\$          0       20%     129600  reload-into-ims
 refresh_pattern \.bin\$          0       20%     129600  reload-into-ims
+refresh_pattern \.exe\$          0       20%     129600  reload-into-ims
 refresh_pattern \.iso\$          0       20%     129600  reload-into-ims
 refresh_pattern (\.deb|\.udeb)\$ 0       20%     129600  reload-into-ims
 refresh_pattern Packages.gz\$            0       100%    129600  reload-into-ims
 refresh_pattern .                       0       0%      0
 
+range_offset_limit ${WEBCACHE_OBJMAXSIZE} MB windowsupdate
 maximum_object_size ${WEBCACHE_OBJMAXSIZE} MB
+quick_abort_min -1
+
 
 cache_dir aufs ${WEBCACHE_PATH} ${WEBCACHE_SIZE} 16 256
 
