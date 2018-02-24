@@ -333,15 +333,19 @@ acl windowsupdate dstdomain sls.microsoft.com
 acl windowsupdate dstdomain productactivation.one.microsoft.com
 acl windowsupdate dstdomain ntservicepack.microsoft.com
 
+refresh_pattern -i microsoft.com/.*\.(cab|exe|ms[i|u|f]|[ap]sf|wm[v|a]|dat|zip)     4320 80% 129600 reload-into-ims
+refresh_pattern -i windowsupdate.com/.*\.(cab|exe|ms[i|u|f]|[ap]sf|wm[v|a]|dat|zip) 4320 80% 129600 reload-into-ims
+refresh_pattern -i windows.com/.*\.(cab|exe|ms[i|u|f]|[ap]sf|wm[v|a]|dat|zip)       4320 80% 129600 reload-into-ims
 
-refresh_pattern -i microsoft.com/.*\.(cab|exe|ms[i|u|f]|[ap]sf|wm[v|a]|dat|zip) 4320 80% 43200 reload-into-ims
-refresh_pattern -i windowsupdate.com/.*\.(cab|exe|ms[i|u|f]|[ap]sf|wm[v|a]|dat|zip) 4320 80% 43200 reload-into-ims
-refresh_pattern -i windows.com/.*\.(cab|exe|ms[i|u|f]|[ap]sf|wm[v|a]|dat|zip) 4320 80% 43200 reload-into-ims
+refresh_pattern pkg\.tar\.xz$   0       20%     4320 refresh-ims
+refresh_pattern d?rpm$          0       20%     4320 refresh-ims
+refresh_pattern deb$            0       20%     4320 refresh-ims
+refresh_pattern udeb$           0       20%     4320 refresh-ims
+refresh_pattern Packages\.bz2$  0       20%     4320 refresh-ims
+refresh_pattern Sources\.bz2$   0       20%     4320 refresh-ims
+refresh_pattern Release\.gpg$   0       20%     4320 refresh-ims
+refresh_pattern Release$        0       20%     4320 refresh-ims
 
-
-refresh_pattern \^ftp:           1440    20%     10080
-refresh_pattern \^gopher:        1440    0%      1440
-refresh_pattern -i (/cgi-bin/|\?) 0     0%      0
 refresh_pattern (Release|Packages(.gz)*)\$       0       20%     2880
 refresh_pattern \.pkg\.tar\.            0       20%     129600  reload-into-ims
 refresh_pattern \.tar(\.bz2|\.gz|\.xz)\$              0       20%     129600  reload-into-ims
@@ -353,7 +357,12 @@ refresh_pattern \.exe\$          0       20%     129600  reload-into-ims
 refresh_pattern \.iso\$          0       20%     129600  reload-into-ims
 refresh_pattern (\.deb|\.udeb)\$ 0       20%     129600  reload-into-ims
 refresh_pattern Packages.gz\$            0       100%    129600  reload-into-ims
-refresh_pattern .                       0       0%      0
+
+refresh_pattern ^ftp:          1440    20%     10080
+refresh_pattern ^gopher:       1440    0%      1440
+refresh_pattern -i (/cgi-bin/|\?) 0    0%      0
+refresh_pattern .              0       20%     4320
+
 
 range_offset_limit ${WEBCACHE_OBJMAXSIZE} MB windowsupdate
 maximum_object_size ${WEBCACHE_OBJMAXSIZE} MB
