@@ -40,7 +40,7 @@ apt autoremove -y
 apt clean
 
 ## install deps
-apt install -y bind9 isc-dhcp-server squid3 ipcalc bwm-ng iptraf nethogs byobu sudo
+apt install -y bind9 isc-dhcp-server squid3 ipcalc bwm-ng iptraf nethogs byobu sudo htop
 
 echo ""
 echo "Apt done."
@@ -208,10 +208,14 @@ case "\$1" in
     #autorise le forward du LAN vers le LAN
     \$IPTABLES -A FORWARD -m state --state NEW -i \$ILAN -o \$ILAN -j ACCEPT
 
-    # normal transparent proxy
+    # normal transparent proxy for HTTP
     \$IPTABLES -t nat -A PREROUTING -p tcp -i \$ILAN --dport 80 -j REDIRECT --to-port 3127
     \$IPTABLES -t nat -A OUTPUT -p tcp --dport 80 -m owner --uid-owner proxy -j ACCEPT
     \$IPTABLES -t nat -A OUTPUT -p tcp --dport 80 -j REDIRECT --to-ports 3127
+	# normal transparent proxy for FTP
+    \$IPTABLES -t nat -A PREROUTING -p tcp -i \$ILAN --dport 21 -j REDIRECT --to-port 3127
+    \$IPTABLES -t nat -A OUTPUT -p tcp --dport 21 -m owner --uid-owner proxy -j ACCEPT
+    \$IPTABLES -t nat -A OUTPUT -p tcp --dport 21 -j REDIRECT --to-ports 3127
 
     # allow ping
     \$IPTABLES -A INPUT -p icmp --icmp-type echo-request -j ACCEPT
@@ -333,9 +337,9 @@ acl windowsupdate dstdomain sls.microsoft.com
 acl windowsupdate dstdomain productactivation.one.microsoft.com
 acl windowsupdate dstdomain ntservicepack.microsoft.com
 
-#refresh_pattern -i microsoft.com/.*\.(cab|exe|ms[i|u|f]|[ap]sf|wm[v|a]|dat|zip)     4320 80% 129600 reload-into-ims
-#refresh_pattern -i windowsupdate.com/.*\.(cab|exe|ms[i|u|f]|[ap]sf|wm[v|a]|dat|zip) 4320 80% 129600 reload-into-ims
-#refresh_pattern -i windows.com/.*\.(cab|exe|ms[i|u|f]|[ap]sf|wm[v|a]|dat|zip)       4320 80% 129600 reload-into-ims
+refresh_pattern -i microsoft.com/.*\.(cab|exe|ms[i|u|f]|[ap]sf|wm[v|a]|dat|zip)     4320 80% 129600 reload-into-ims
+refresh_pattern -i windowsupdate.com/.*\.(cab|exe|ms[i|u|f]|[ap]sf|wm[v|a]|dat|zip) 4320 80% 129600 reload-into-ims
+refresh_pattern -i windows.com/.*\.(cab|exe|ms[i|u|f]|[ap]sf|wm[v|a]|dat|zip)       4320 80% 129600 reload-into-ims
 
 # pictures
 refresh_pattern -i \.(gif|png|jpg|jpeg|ico)\$ 10080 90% 43200 override-expire ignore-no-cache ignore-no-store ignore-private
@@ -365,8 +369,8 @@ refresh_pattern -i (/cgi-bin/|\?) 0    0%      0
 refresh_pattern . 0 40% 40320
 
 
-range_offset_limit ${WEBCACHE_OBJMAXSIZE} MB windowsupdate
 maximum_object_size ${WEBCACHE_OBJMAXSIZE} MB
+range_offset_limit -1 windowsupdate
 quick_abort_min -1
 
 
