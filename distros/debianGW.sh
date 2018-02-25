@@ -323,7 +323,6 @@ acl apache rep_header Server ^Apache
 hosts_file /etc/hosts
 coredump_dir /var/spool/squid
 
-
 acl windowsupdate dstdomain windowsupdate.microsoft.com
 acl windowsupdate dstdomain .update.microsoft.com
 acl windowsupdate dstdomain download.windowsupdate.com
@@ -337,9 +336,8 @@ acl windowsupdate dstdomain sls.microsoft.com
 acl windowsupdate dstdomain productactivation.one.microsoft.com
 acl windowsupdate dstdomain ntservicepack.microsoft.com
 
-refresh_pattern -i microsoft.com/.*\.(cab|exe|ms[i|u|f]|[ap]sf|wm[v|a]|dat|zip)     4320 80% 129600 reload-into-ims
-refresh_pattern -i windowsupdate.com/.*\.(cab|exe|ms[i|u|f]|[ap]sf|wm[v|a]|dat|zip) 4320 80% 129600 reload-into-ims
-refresh_pattern -i windows.com/.*\.(cab|exe|ms[i|u|f]|[ap]sf|wm[v|a]|dat|zip)       4320 80% 129600 reload-into-ims
+# windows update files
+refresh_pattern -i \.(cab|exe|ms[i|u|f]|[ap]sf|wm[v|a]|dat|zip)       4320 80% 129600 reload-into-ims
 
 # pictures
 refresh_pattern -i \.(gif|png|jpg|jpeg|ico)\$ 10080 90% 43200 override-expire ignore-no-cache ignore-no-store ignore-private
@@ -372,7 +370,6 @@ refresh_pattern . 0 40% 40320
 maximum_object_size ${WEBCACHE_OBJMAXSIZE} MB
 range_offset_limit -1 windowsupdate
 quick_abort_min -1
-
 
 cache_dir aufs ${WEBCACHE_PATH} ${WEBCACHE_SIZE} 16 256
 
