@@ -25,8 +25,8 @@ FIXEDADDRCOUNT=24
 MINGUESTIPS=10
 
 WEBCACHE_OBJMAXSIZE=8192 #MB
-WEBCACHE_SIZE=100000 #MB
-WEBCACHE_PATH="/var/cache/squid/"
+WEBCACHE_SIZE=90000 #MB
+WEBCACHE_PATH="/mnt/squidcache/"
 
 ###########################
 ##### SETUP
@@ -333,35 +333,36 @@ acl windowsupdate dstdomain sls.microsoft.com
 acl windowsupdate dstdomain productactivation.one.microsoft.com
 acl windowsupdate dstdomain ntservicepack.microsoft.com
 
-refresh_pattern -i microsoft.com/.*\.(cab|exe|ms[i|u|f]|[ap]sf|wm[v|a]|dat|zip)     4320 80% 129600 reload-into-ims
-refresh_pattern -i windowsupdate.com/.*\.(cab|exe|ms[i|u|f]|[ap]sf|wm[v|a]|dat|zip) 4320 80% 129600 reload-into-ims
-refresh_pattern -i windows.com/.*\.(cab|exe|ms[i|u|f]|[ap]sf|wm[v|a]|dat|zip)       4320 80% 129600 reload-into-ims
+#refresh_pattern -i microsoft.com/.*\.(cab|exe|ms[i|u|f]|[ap]sf|wm[v|a]|dat|zip)     4320 80% 129600 reload-into-ims
+#refresh_pattern -i windowsupdate.com/.*\.(cab|exe|ms[i|u|f]|[ap]sf|wm[v|a]|dat|zip) 4320 80% 129600 reload-into-ims
+#refresh_pattern -i windows.com/.*\.(cab|exe|ms[i|u|f]|[ap]sf|wm[v|a]|dat|zip)       4320 80% 129600 reload-into-ims
 
-refresh_pattern pkg\.tar\.xz$   0       20%     4320 refresh-ims
-refresh_pattern d?rpm$          0       20%     4320 refresh-ims
-refresh_pattern deb$            0       20%     4320 refresh-ims
-refresh_pattern udeb$           0       20%     4320 refresh-ims
-refresh_pattern Packages\.bz2$  0       20%     4320 refresh-ims
-refresh_pattern Sources\.bz2$   0       20%     4320 refresh-ims
-refresh_pattern Release\.gpg$   0       20%     4320 refresh-ims
-refresh_pattern Release$        0       20%     4320 refresh-ims
+# pictures
+refresh_pattern -i \.(gif|png|jpg|jpeg|ico)\$ 10080 90% 43200 override-expire ignore-no-cache ignore-no-store ignore-private
+# medias
+refresh_pattern -i \.(iso|avi|mkv|flac|wav|mp3|mp4|mpeg|swf|flv|x-flv)\$ 43200 90% 432000 override-expire ignore-no-cache ignore-no-store ignore-private
+# packages & binaries
+refresh_pattern -i \.(udeb|deb|drpm|rpm|exe|bin|ppt|doc|tiff)\$ 10080 90% 43200 override-expire ignore-no-cache ignore-no-store ignore-private
+# archives
+refresh_pattern -i \.(zip|tar|jar|tgz|ram|rar|gz|xz|bz2|7z)\$ 10080 90% 43200 override-expire ignore-no-cache ignore-no-store ignore-private
 
+# distros packages & sources
+refresh_pattern pkg\.tar\.xz\$   0       20%     4320 refresh-ims
+refresh_pattern Packages\.bz2\$  0       20%     4320 refresh-ims
+refresh_pattern Sources\.bz2\$   0       20%     4320 refresh-ims
+refresh_pattern Release\.gpg\$   0       20%     4320 refresh-ims
+refresh_pattern Release\$        0       20%     4320 refresh-ims
 refresh_pattern (Release|Packages(.gz)*)\$       0       20%     2880
 refresh_pattern \.pkg\.tar\.            0       20%     129600  reload-into-ims
 refresh_pattern \.tar(\.bz2|\.gz|\.xz)\$              0       20%     129600  reload-into-ims
-refresh_pattern \.rpm\$          0       20%     129600  reload-into-ims
-refresh_pattern \.jar\$          0       20%     129600  reload-into-ims
-refresh_pattern \.zip\$          0       20%     129600  reload-into-ims
-refresh_pattern \.bin\$          0       20%     129600  reload-into-ims
-refresh_pattern \.exe\$          0       20%     129600  reload-into-ims
-refresh_pattern \.iso\$          0       20%     129600  reload-into-ims
-refresh_pattern (\.deb|\.udeb)\$ 0       20%     129600  reload-into-ims
 refresh_pattern Packages.gz\$            0       100%    129600  reload-into-ims
 
+# general
 refresh_pattern ^ftp:          1440    20%     10080
 refresh_pattern ^gopher:       1440    0%      1440
+refresh_pattern -i youtube.com/.* 10080 90% 43200
 refresh_pattern -i (/cgi-bin/|\?) 0    0%      0
-refresh_pattern .              0       20%     4320
+refresh_pattern . 0 40% 40320
 
 
 range_offset_limit ${WEBCACHE_OBJMAXSIZE} MB windowsupdate
