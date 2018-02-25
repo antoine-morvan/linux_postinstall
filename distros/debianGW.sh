@@ -377,7 +377,7 @@ shutdown_lifetime 5 seconds
 EOF
 
 # clear cache path
-rm -rf ${WEBCACHE_PATH}
+rm -rf ${WEBCACHE_PATH}/*
 mkdir -p ${WEBCACHE_PATH}
 chown proxy:proxy ${WEBCACHE_PATH}
 # init cache structure
