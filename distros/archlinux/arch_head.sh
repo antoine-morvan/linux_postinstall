@@ -119,13 +119,12 @@ sed -i "s/flat-volumes = no/flat-volumes = yes/g" /etc/pulse/daemon.conf
 ##########################
 
 case $SETUP_MODE in
-  workstation)
-    #DHCP conflicts with WICD
-    systemctl disable dhcpcd
-    systemctl enable wicd
-    systemctl enable lightdm
-    systemctl enable tlp
-    ;;
+	workstation)
+		systemctl disable dhcpcd
+		systemctl enable wicd
+		systemctl enable lightdm
+		systemctl enable tlp
+		;;
 esac
 
 #keyboard configuration is done in xfce settings
