@@ -6,7 +6,7 @@ INSTALLHEAD=`cat /setup.dat | sed '4q;d'`
 source /arch_func.sh
 
 PKGS=""
-AURPKGS="skypeforlinux-bin"
+AURPKGS="skypeforlinux-stable-bin"
 
 install_packs "$PKGS"
 install_packs_aur "$AURPKGS"
