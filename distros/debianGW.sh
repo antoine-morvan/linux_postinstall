@@ -19,6 +19,7 @@ LANIFACE=enp0s8
 LANNET=10.3.0.0/24
 # list of DNS IPs to use when forwarding DNS requests from LAN
 EXTERNALDNSLIST="8.8.8.8 8.8.4.4"
+#EXTERNALDNSLIST="10.4.1.79"
 # number of IP addresses to save free from DHCP range
 FIXEDADDRCOUNT=24
 # minimum size of the DHCP range
