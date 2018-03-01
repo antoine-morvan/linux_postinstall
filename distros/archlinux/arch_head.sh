@@ -12,7 +12,7 @@ SETUP_MODE=$1
 ##########################
 
 #xorg-utils xorg-server-utils
-PACKS="xorg xorg-server xorg-xinit xorg-util-macros xorg-twm xorg-xclock xdg-user-dirs xterm gksu rxvt-unicode urxvt-url-select lightdm lightdm-gtk-greeter lightdm-gtk-greeter-settings terminator pulseaudio pavucontrol paprefs mate-themes wicd wicd-gtk xfce4 xfce4-goodies xfce4-artwork xfce4-session xfce4-settings xfwm4 xfwm4-themes xfconf xscreensaver-arch-logo thunar numlockx pinta gvfs-smb ruby imagemagick librsvg iptraf-ng arandr elementary-icon-theme gtk-engines xarchiver-gtk2 gnome-keyring seahorse gtk-engine-murrine python-setuptools gparted filezilla keepassc veracrypt lsb-release smartmontools"
+PACKS="xorg xorg-server xorg-xinit xorg-util-macros xorg-twm xorg-xclock xdg-user-dirs xterm gksu rxvt-unicode urxvt-url-select lightdm lightdm-gtk-greeter lightdm-gtk-greeter-settings terminator pulseaudio pavucontrol paprefs mate-themes wicd wicd-gtk xfce4 xfce4-goodies xfce4-artwork xfce4-session xfce4-settings xfwm4 xfwm4-themes xfconf xscreensaver-arch-logo thunar numlockx pinta gvfs-smb ruby imagemagick librsvg iptraf-ng arandr elementary-icon-theme gtk-engines xarchiver-gtk2 gnome-keyring seahorse gtk-engine-murrine python-setuptools gparted filezilla keepassxc veracrypt lsb-release smartmontools"
 
 case $SETUP_MODE in
   workstation)
