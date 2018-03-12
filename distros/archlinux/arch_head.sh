@@ -23,7 +23,7 @@ esac
 if [ "$TESTSYSTEM" != "YES" ]; then
 	EXTRA=" hexchat ario deluge xfburn acetoneiso2"
 	EXTRA+=" latex2rtf lyx texmaker texlive-most pandoc texstudio "
-	EXTRA+=" maven gradle gitg xdot dropbox filelight gdmap qt5 youtube-dl "
+	EXTRA+=" maven gradle gitg xdot filelight gdmap qt5 youtube-dl "
 	EXTRA+=" mcomix tigervnc wireshark-gtk mkvtoolnix-gui"
 
   case $SETUP_MODE in
@@ -43,7 +43,7 @@ if [ "$TESTSYSTEM" != "YES" ]; then
 
   case $SETUP_MODE in
     workstation)
-      AUREXTRA+=" gephi xvidcap gtk-theme-flatstudio jabref jdk jdk7 jdk6 jdk5 jdk-devel javafx-scenebuilder nextcloud-client yed"
+      AUREXTRA+=" gephi xvidcap gtk-theme-flatstudio dropbox jabref jdk jdk7 jdk6 jdk5 jdk-devel javafx-scenebuilder nextcloud-client yed"
       ;;
   esac
 
