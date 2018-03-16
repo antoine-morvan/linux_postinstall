@@ -97,7 +97,7 @@ done
 set -e
 
 for GROUP in ${GROUPS}; do
-  [ "${GROUP}" != "root"] && adduser ${USER} ${GROUP}
+  [ "${GROUP}" != "root" ] && adduser ${USER} ${GROUP}
 done
 chmod +w /etc/sudoers
 echo "%wheel ALL=(ALL) ALL" >> /etc/sudoers
