@@ -43,9 +43,21 @@ fi
 
 install_packs ${PACKS}
 
+###
+### UI & drivers
+###
+
+setup-xorg-base
+
+## VBox guest 
+echo "http://nl.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories
+install_packs "virtualbox-additions-grsec xf86-video-vmware"
+echo vboxpci >> /etc/modules
+echo vboxdrv >> /etc/modules
+echo vboxnetflt >> /etc/modules
 
 
-
+install_packs "xfce4"
 
 echo ""
 echo "Done."
