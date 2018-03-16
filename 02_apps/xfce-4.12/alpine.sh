@@ -96,12 +96,6 @@ FILE=/etc/xdg/xfce4/panel/default.xml
 [ -e $FILE ] && mv $FILE $FILE.bk
 retry "wget -q -O ${FILE} ${SETUP_SCRIPT_LOCATION}/02_apps/xfce-4.12/default-panel.xml"
 
-#change icon to debian
-sed -i 's/debian-logo/archlinux-icon-crystal/g' $FILE
-sed -i 's/iceweasel/firefox/g' $FILE
-sed -i 's/icedove/thunderbird/g' $FILE
-sed -i 's/PlayOnLinux/playonlinux/g' $FILE
-rsvg-convert /usr/share/archlinux/icons/archlinux-icon-crystal-64.svg -o /usr/share/pixmaps/archlinux-icon-crystal.png
 ln -s /usr/share/byobu/pixmaps/byobu.svg /usr/share/pixmaps/byobu.svg
 
 mkdir -p /etc/skel/.config/xfce4/panel/

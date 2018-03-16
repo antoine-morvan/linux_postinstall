@@ -48,15 +48,13 @@ install_packs ${PACKS}
 ### UI & drivers
 ###
 
-
-echo ""
-echo "Done."
-echo ""
-
 setup-xorg-base
 install_packs "alpine-desktop xfce4 thunar-volman faenza-icon-theme slim"
 
 ## VBox guest 
+###
+### at time of writing: issues with vbox modules
+###
 #install_packs "virtualbox-additions-grsec xf86-video-vmware xf86-input-vmmouse xf86-input-keyboard"
 # virtualbox-guest-modules-grsec virtualbox-additions-grsec xf86-video-vmware xf86-input-mouse xf86-input-keyboard"
 echo vboxpci >> /etc/modules
