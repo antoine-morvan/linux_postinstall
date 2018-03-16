@@ -1,4 +1,4 @@
-#!/bin/bash -eu
+#!/bin/ash -eu
 
 # run as sudo
 
