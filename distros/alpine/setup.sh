@@ -83,6 +83,10 @@ EndSection
 EOF
 
 
+dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/xfce-4.12/alpine.sh
+
+
+
 echo ""
 echo "Done."
 echo ""
