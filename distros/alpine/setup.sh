@@ -20,7 +20,7 @@ export LOGCNT=0
 
 #enable all online repos
 
-sed -i 's/^#http//g' /etc/apk/repositories
+sed -i 's/^#http/http/g' /etc/apk/repositories
 
 apk update
 apk upgrade
