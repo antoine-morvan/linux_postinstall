@@ -21,6 +21,7 @@ export LOGCNT=0
 #enable all online repos
 
 sed -i 's/^#http/http/g' /etc/apk/repositories
+echo "http://nl.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories
 
 apk update
 apk upgrade
@@ -50,14 +51,17 @@ install_packs ${PACKS}
 setup-xorg-base
 
 ## VBox guest 
-echo "http://nl.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories
-install_packs "virtualbox-additions-grsec xf86-video-vmware"
+#install_packs "virtualbox-additions-grsec xf86-video-vmware xf86-input-vmmouse xf86-input-keyboard"
+install_packs "virtualbox-guest-modules-grsec virtualbox-additions-grsec xf86-video-vmware xf86-input-mouse xf86-input-keyboard"
 echo vboxpci >> /etc/modules
 echo vboxdrv >> /etc/modules
 echo vboxnetflt >> /etc/modules
 
 
-install_packs "xfce4"
+install_packs "xfce4 slim"
+
+#rc-service dbus start
+#rc-service slim start
 
 echo ""
 echo "Done."
