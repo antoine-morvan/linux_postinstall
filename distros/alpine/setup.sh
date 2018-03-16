@@ -92,6 +92,7 @@ set +e
 RES=1
 while [ "${RES}" != "0" ]; do
   passwd ${USER}
+  RES=$?
 done
 set -e
 
