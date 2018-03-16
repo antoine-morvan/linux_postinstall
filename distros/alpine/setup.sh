@@ -49,7 +49,7 @@ install_packs ${PACKS}
 ###
 
 setup-xorg-base
-install_packs "alpine-desktop xfce4 thunar-volman faenza-icon-theme slim"
+install_packs "alpine-desktop xfce4 thunar-volman faenza-icon-theme slim terminator geany filezilla vlc firefox deadbeef"
 
 ## VBox guest 
 ###
@@ -83,7 +83,17 @@ EOF
 
 dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/xfce-4.12/alpine.sh
 
+GROUPS=$(groups)
+read -p "User login: " USER
+adduser ${USER}
 
+
+for GROUP in ${GROUPS}; do
+  adduser ${USER} ${GROUP}
+done
+
+addgroup ${USER}
+adduser ${USER} ${USER}
 
 echo ""
 echo "Done."
