@@ -54,25 +54,34 @@ echo "Done."
 echo ""
 
 setup-xorg-base
+install_packs "alpine-desktop xfce4 thunar-volman faenza-icon-theme slim"
 
 ## VBox guest 
 #install_packs "virtualbox-additions-grsec xf86-video-vmware xf86-input-vmmouse xf86-input-keyboard"
-install_packs "alpine-desktop"
 # virtualbox-guest-modules-grsec virtualbox-additions-grsec xf86-video-vmware xf86-input-mouse xf86-input-keyboard"
 echo vboxpci >> /etc/modules
 echo vboxdrv >> /etc/modules
 echo vboxnetflt >> /etc/modules
 
-
-install_packs "xfce4 thunar-volman faenza-icon-theme slim"
-
 rc-update add dbus
 rc-update add udev
-
-#rc-service dbus start
-#rc-service slim start
+rc-update add slim
 
 setup-keymap fr fr-latin9
+
+#############################
+#######	 X config   #########
+#############################
+
+cat >> /etc/X11/xorg.conf.d/10-keyboard-layout.conf << EOF
+Section "InputClass"
+        Identifier "system-keyboard"
+        MatchIsKeyboard "on"
+        Option "XkbLayout" "fr"
+        Option "XkbVariant" "latin9"
+EndSection
+EOF
+
 
 echo ""
 echo "Done."
