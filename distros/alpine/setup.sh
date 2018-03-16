@@ -53,24 +53,26 @@ echo ""
 echo "Done."
 echo ""
 
-exit 0
 setup-xorg-base
 
 ## VBox guest 
 #install_packs "virtualbox-additions-grsec xf86-video-vmware xf86-input-vmmouse xf86-input-keyboard"
-install_packs "virtualbox-guest-modules-grsec virtualbox-additions-grsec xf86-video-vmware xf86-input-mouse xf86-input-keyboard"
+install_packs "alpine-desktop"
+# virtualbox-guest-modules-grsec virtualbox-additions-grsec xf86-video-vmware xf86-input-mouse xf86-input-keyboard"
 echo vboxpci >> /etc/modules
 echo vboxdrv >> /etc/modules
 echo vboxnetflt >> /etc/modules
 
 
-install_packs "xfce4 slim"
+install_packs "xfce4 thunar-volman faenza-icon-theme slim"
 
-#rc-update add dbus
-#rc-update add udev
+rc-update add dbus
+rc-update add udev
 
 #rc-service dbus start
 #rc-service slim start
+
+setup-keymap fr fr-latin9
 
 echo ""
 echo "Done."
