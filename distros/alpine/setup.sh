@@ -48,6 +48,12 @@ install_packs ${PACKS}
 ### UI & drivers
 ###
 
+
+echo ""
+echo "Done."
+echo ""
+
+exit 0
 setup-xorg-base
 
 ## VBox guest 
@@ -59,6 +65,9 @@ echo vboxnetflt >> /etc/modules
 
 
 install_packs "xfce4 slim"
+
+#rc-update add dbus
+#rc-update add udev
 
 #rc-service dbus start
 #rc-service slim start
