@@ -49,7 +49,7 @@ install_packs ${PACKS}
 ###
 
 setup-xorg-base
-install_packs "alpine-desktop xfce4 thunar-volman faenza-icon-theme slim terminator geany filezilla vlc firefox deadbeef"
+install_packs "alpine-desktop xfce4 thunar-volman faenza-icon-theme slim terminator geany filezilla vlc deadbeef"
 
 ## VBox guest 
 ###
