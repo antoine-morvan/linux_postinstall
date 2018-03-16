@@ -95,7 +95,7 @@ mkdir -p /etc/xdg/xfce4/panel/
 FILE=/etc/xdg/xfce4/panel/default.xml
 [ -e $FILE ] && mv $FILE $FILE.bk
 retry "wget -q -O ${FILE} ${SETUP_SCRIPT_LOCATION}/02_apps/xfce-4.12/default-panel.xml"
-
+sed -i 's/iceweasel/firefox/g' $FILE
 ln -s /usr/share/byobu/pixmaps/byobu.svg /usr/share/pixmaps/byobu.svg
 
 mkdir -p /etc/skel/.config/xfce4/panel/

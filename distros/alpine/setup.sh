@@ -83,17 +83,18 @@ EOF
 
 dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/xfce-4.12/alpine.sh
 
+echo ""
+echo ""
 GROUPS=$(groups)
 read -p "User login: " USER
 adduser ${USER}
 
-
 for GROUP in ${GROUPS}; do
   adduser ${USER} ${GROUP}
 done
-
-addgroup ${USER}
-adduser ${USER} ${USER}
+chmod +w /etc/sudoers
+echo "%wheel ALL=(ALL) ALL" >> /etc/sudoers
+chmod -w /etc/sudoers
 
 echo ""
 echo "Done."
