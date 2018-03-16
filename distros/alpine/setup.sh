@@ -87,10 +87,16 @@ echo ""
 echo ""
 GROUPS=$(groups)
 read -p "User login: " USER
-adduser ${USER}
+adduser -D ${USER}
+set +e
+RES=1
+while [ "${RES}" != "0" ]; do
+  passwd ${USER}
+done
+set -e
 
 for GROUP in ${GROUPS}; do
-  adduser ${USER} ${GROUP}
+  [ "${GROUP}" != "root"] && adduser ${USER} ${GROUP}
 done
 chmod +w /etc/sudoers
 echo "%wheel ALL=(ALL) ALL" >> /etc/sudoers
