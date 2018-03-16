@@ -202,10 +202,10 @@ X-XFCE-Source=file:///usr/share/applications/firefox.desktop
 EOF
 
 #background
-FILE=/etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml
-[ -e $FILE ] && mv $FILE $FILE.bk
-retry "wget -q -O ${FILE} ${SETUP_SCRIPT_LOCATION}/02_apps/xfce-4.12/xfce4-desktop.xml"
-sed -i -e "s#%BG%#$BG#g" /etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml
+#FILE=/etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml
+#[ -e $FILE ] && mv $FILE $FILE.bk
+#retry "wget -q -O ${FILE} ${SETUP_SCRIPT_LOCATION}/02_apps/xfce-4.12/xfce4-desktop.xml"
+#sed -i -e "s#%BG%#$BG#g" /etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml
 
 #shortcuts
 FILE=/etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xfce4-keyboard-shortcuts.xml
