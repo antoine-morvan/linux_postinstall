@@ -2,7 +2,7 @@
 # from ubuntu 16.04.2 amd64 desktop 
 # run as sudo
 
-FASTSETUP=NO
+FASTSETUP=YES
 
 ###
 ### instantané 1
