@@ -210,8 +210,10 @@ case $SETUP_MODE in
     systemctl enable ntpdate
     echo samba
     systemctl enable samba
-    echo smbd
-    systemctl enable smbd
+    echo smb
+    systemctl enable smb
+    echo nmb
+    systemctl enable nmb
     echo chkboot
     systemctl enable chkboot
     echo cronie
