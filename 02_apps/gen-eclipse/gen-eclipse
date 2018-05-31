@@ -33,12 +33,12 @@ MIRRORURL="http://ftp.fau.de/eclipse/"
 ECLIPSE_VERSION=oxygen
 ECLIPSE_VERSION_MAJOR=4
 ECLIPSE_VERSION_MIDDLE=7
-ECLIPSE_VERSION_MINOR=3
+ECLIPSE_VERSION_MINOR=3a
 # to find the timestamp check ${MIRRORURL}/eclipse/downloads/drops${ECLIPSE_VERSION_MAJOR}/
 # i.e. http://ftp.fau.de/eclipse//eclipse/downloads/drops4/
 #ECLIPSE_TIMESTAMP=201706120950
 #ECLIPSE_TIMESTAMP=201709061700
-ECLIPSE_TIMESTAMP=201803010715
+ECLIPSE_TIMESTAMP=201803300640
 ECLIPSE_PRE=${ECLIPSE_VERSION_MINOR}
 
 
@@ -632,11 +632,9 @@ setup_eclipse_plugins \
 	net.sf.eclipsecs.feature.group \
 	org.eclipse.gef.sdk.feature.group \
 	org.eclipse.graphiti.sdk.plus.feature.feature.group \
-	org.sonarlint.eclipse.feature.feature.group
-	
-# note : pas compatible avec les dernieres version...
-#	org.eclipse.sdk.ide \
-#	org.eclipse.platform.sdk
+	org.sonarlint.eclipse.feature.feature.group \
+	org.eclipse.sdk.ide \
+	org.eclipse.platform.sdk
 
 setup_eclipse_plugins \
 	"graphiti Dev Feature" \
