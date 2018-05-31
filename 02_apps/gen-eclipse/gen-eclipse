@@ -632,9 +632,11 @@ setup_eclipse_plugins \
 	net.sf.eclipsecs.feature.group \
 	org.eclipse.gef.sdk.feature.group \
 	org.eclipse.graphiti.sdk.plus.feature.feature.group \
-	org.sonarlint.eclipse.feature.feature.group \
-	org.eclipse.sdk.ide \
-	org.eclipse.platform.sdk
+	org.sonarlint.eclipse.feature.feature.group
+	
+# note : pas compatible avec les dernieres version...
+#	org.eclipse.sdk.ide \
+#	org.eclipse.platform.sdk
 
 setup_eclipse_plugins \
 	"graphiti Dev Feature" \
