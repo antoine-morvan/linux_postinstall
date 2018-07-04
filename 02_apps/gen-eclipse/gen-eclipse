@@ -91,11 +91,14 @@ function check_and_set_eclipse_mirror {
 function check_java_version {
 	JAVA8=0
 	JAVA9=0
+	JAVA10=0
 	JAVA8=`java -version 2>&1 | grep 1.8 | wc -l`
 	if [ "$JAVA8" == "0" ]; then
 		JAVA9=`java -version 2>&1 | grep 1.9 | wc -l`
 		if [ "$JAVA9" == "0" ]; then
-			cat << "EOF"
+			JAVA10=`java -version 2>&1 | grep "10\." | wc -l`
+			if [ "$JAVA10" == "0" ]; then
+				cat << "EOF"
 
 Eclipse requires Java 8 or higher. On debian like systems (as root) :
    $ apt-get install openjdk-8-jdk openjdk-8-source
@@ -105,7 +108,8 @@ On other Linux distributions, Windows and MacOSX systems, please
 visit http://www.oracle.com/technetwork/java/javase/downloads/index.html
 
 EOF
-			exit 1
+				exit 1
+			fi
 		fi
 	fi
 }
