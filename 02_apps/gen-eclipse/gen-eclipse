@@ -215,12 +215,12 @@ function check_and_set_platform {
 }
 
 function check_and_set_download_tool {
-  set -e
+  set +e
 	which wget 2>&1 > /dev/null
 	WGETPRESENT=$?
 	which curl 2>&1 > /dev/null
 	CURLPRESENT=$?
-	set +e
+	set -e
 	if [ "$CURLPRESENT" == "0" ]; then
 		DOWNLOADTOOL=curl
 		DOWNLOADOPTION="-o"
