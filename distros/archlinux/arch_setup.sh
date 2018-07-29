@@ -34,9 +34,9 @@ MAINPARTITION=/dev/sda2
 SCREEN=WIDE_16_10
 
 # if set to YES, install only base packages
-TESTSYSTEM=NO
+TESTSYSTEM=YES
 INSTALLHEAD=YES
-CRYPT=YES
+CRYPT=NO
 
 ##############################################################
 
