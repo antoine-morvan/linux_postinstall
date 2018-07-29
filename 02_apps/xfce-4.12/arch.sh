@@ -103,6 +103,12 @@ sed -i 's/debian-logo/archlinux-icon-crystal/g' $FILE
 sed -i 's/iceweasel/firefox/g' $FILE
 sed -i 's/icedove/thunderbird/g' $FILE
 sed -i 's/PlayOnLinux/playonlinux/g' $FILE
+
+mkdir -p /usr/share/archlinux/icons/
+FILE=/usr/share/archlinux/icons/archlinux-icon-crystal-64.svg
+[ -e $FILE ] && mv $FILE $FILE.bk
+retry "wget -q -O ${FILE} https://upload.wikimedia.org/wikipedia/commons/a/a5/Archlinux-icon-crystal-64.svg"
+
 rsvg-convert /usr/share/archlinux/icons/archlinux-icon-crystal-64.svg -o /usr/share/pixmaps/archlinux-icon-crystal.png
 ln -s /usr/share/byobu/pixmaps/byobu.svg /usr/share/pixmaps/byobu.svg
 
@@ -143,9 +149,9 @@ Version=1.0
 Name=Geany
 Name[fr]=Geany
 GenericName=Integrated Development Environment
-GenericName[fr]=Environnement de Développement Intégré
+GenericName[fr]=Environnement de DÃ©veloppement IntÃ©grÃ©
 Comment=A fast and lightweight IDE using GTK2
-Comment[fr]=Un EDI rapide et léger utilisant GTK2
+Comment[fr]=Un EDI rapide et lÃ©ger utilisant GTK2
 Exec=geany %F
 Icon=geany
 Terminal=false
@@ -173,7 +179,7 @@ cat > /etc/skel/.config/xfce4/panel/launcher-9/terminator.desktop << "EOF"
 Name=Terminator
 Name[fr]=Terminator
 Comment=Multiple terminals in one window
-Comment[fr]=Plusieurs terminaux dans une fenêtre
+Comment[fr]=Plusieurs terminaux dans une fenÃªtre
 TryExec=terminator
 Exec=terminator
 Icon=terminator
