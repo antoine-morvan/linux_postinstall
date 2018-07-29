@@ -72,8 +72,23 @@ pause "suoders & build user configured"
 pacman -Syu
 pacman -S archlinux-keyring --noconfirm
 
-pause "keyring for boostraped system configured; about to install base packages..."
+pause "keyring for boostraped system configured; about to install aurman..."
 
+###############################
+#######	INSTALL AURMAN ########
+###############################
+
+pacman -S --noconfirm base-devel git expac pyalpm python python-dateutil python-feedparser python-regex python-requests
+
+(cd /tmp/ && \
+	git clone https://aur.archlinux.org/aurman.git && \
+	cd aurman && \
+	 su build -c "makepkg")
+
+pause "aurman installed; about to install base packages..."
+#################################
+#######	INSTALL PACKAGES ########
+#################################
 PKGS="hddtemp dkms linux-headers linux-lts-headers openssh vim hddtemp lm_sensors vim-plugins lshw acpi acpid p7zip memtest86+ htop nethogs iotop linux-tools nmap bzip2 sharutils rsync tsocks exfat-utils ntp ntfs-3g dnsutils traceroute lzip tree sdparm hdparm dosfstools rarian libzip gnu-netcat cabextract btrfs-progs bwm-ng unrar docker docker-compose screen archey3"
 
 AURPKGS="etherwake byobu bash-completion archey-plus"
