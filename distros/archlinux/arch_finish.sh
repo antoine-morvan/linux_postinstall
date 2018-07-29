@@ -81,7 +81,7 @@ pause "keyring for boostraped system configured; about to install aurman..."
 pacman -S --noconfirm base-devel git expac pyalpm python python-dateutil python-feedparser python-regex python-requests
 
 (cd /tmp/ && \
-	 su build -c "git clone https://aur.archlinux.org/aurman.git && cd aurman && makepkg )
+	 su build -c "git clone https://aur.archlinux.org/aurman.git && cd aurman && makepkg" )
 
 pause "aurman installed; about to install base packages..."
 #################################
