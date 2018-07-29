@@ -315,7 +315,7 @@ pause "keyring configured"
 
 #	no system update: can cause kernel panics
 
-PKGS="base wget os-prober bash yaourt grub sudo gptfdisk efibootmgr lvm2 device-mapper btrfs-progs net-tools wireless_tools"
+PKGS="base wget os-prober bash grub sudo gptfdisk efibootmgr lvm2 device-mapper btrfs-progs net-tools wireless_tools"
 if [ "$TESTSYSTEM" != "YES" ]; then
   case $SETUP_MODE in
     server)
