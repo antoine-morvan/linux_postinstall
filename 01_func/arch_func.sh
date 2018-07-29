@@ -49,22 +49,22 @@ function install_packs {
 
 function upgrade_aur {
 	echo "   Upgrade AUR"
-	cd /tmp && su build -c "yaourt --noconfirm -Syu"
+	cd /tmp && su build -c "aurman --noconfirm -Syu"
 }
 function install_packs_aur {
 	PACKS=$@
 	echo "   Installing AUR packages [$PACKS]"
 	[ "$PACKS" == "" ] && echo "Warning : package list is empty" && return
 	for package in $PACKS; do
-		pause "yaourt --noconfirm -S $package"
+		pause "aurman --noconfirm -S $package"
     set +e
-		cd /tmp && su build -c "yaourt --noconfirm -S $package"
+		cd /tmp && su build -c "aurman --noconfirm -S $package"
     set -e
 		RES=$?
 		if [ "$RES" != "0" ]; then
 			sleep 2
       set +e
-			cd /tmp && su build -c "yaourt --noconfirm -S $package"
+			cd /tmp && su build -c "aurman --noconfirm -S $package"
       set -e
 			RES=$?
 			if [ "$RES" != "0" ]; then
