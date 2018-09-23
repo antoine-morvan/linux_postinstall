@@ -88,7 +88,7 @@ set +e
 (cd /tmp/yay && su build -c "bash" )
 set -e
 pause "Aurman::makepkg"
-(cd /tmp/yay && su build -c "makepkg" )
+(cd /tmp/yay && su build -c "makepkg -si" )
 
 pause "aurman installed; about to install base packages..."
 #################################
