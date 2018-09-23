@@ -74,21 +74,21 @@ pacman -S archlinux-keyring --noconfirm
 
 pause "keyring for boostraped system configured; about to install aurman..."
 
-###############################
-#######	INSTALL AURMAN ########
-###############################
+############################
+#######	INSTALL YAY ########
+############################
 
-pause "Aurman::dep"
-pacman -S --noconfirm base-devel git expac pyalpm python python-dateutil python-feedparser python-regex python-requests
+pause "YAY::dep"
+pacman -S --noconfirm base-devel git expac pyalpm python python-dateutil python-feedparser python-regex python-requests go
 
-pause "Aurman::clone"
-(cd /tmp/ && su build -c "git clone https://aur.archlinux.org/aurman.git" )
-pause "Aurman::pre-makepkg: bash"
+pause "YAY::clone"
+(cd /tmp/ && su build -c "git clone https://aur.archlinux.org/yay.git" )
+pause "YAY::pre-makepkg: bash"
 set +e
-(cd /tmp/aurman && su build -c "bash" )
+(cd /tmp/yay && su build -c "bash" )
 set -e
 pause "Aurman::makepkg"
-(cd /tmp/aurman && su build -c "makepkg" )
+(cd /tmp/yay && su build -c "makepkg" )
 
 pause "aurman installed; about to install base packages..."
 #################################
