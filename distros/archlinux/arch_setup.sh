@@ -16,7 +16,7 @@
 
 ##############################################################
 #for debug
-export ENABLE_PAUSE=YES
+export ENABLE_PAUSE=NO
 
 
 # drive on which grub will be installed 
