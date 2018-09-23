@@ -12,7 +12,7 @@ SETUP_MODE=$1
 ##########################
 
 #xorg-utils xorg-server-utils
-PACKS="xorg xorg-server xorg-xinit xorg-util-macros xorg-twm xorg-xclock xdg-user-dirs xterm rxvt-unicode urxvt-url-select lightdm lightdm-gtk-greeter lightdm-gtk-greeter-settings terminator pulseaudio pavucontrol paprefs mate-themes wicd wicd-gtk xfce4 xfce4-goodies xfce4-artwork xfce4-session xfce4-settings xfwm4 xfwm4-themes xfconf xscreensaver-arch-logo thunar numlockx pinta gvfs-smb ruby imagemagick librsvg iptraf-ng arandr elementary-icon-theme gtk-engines xarchiver-gtk2 gnome-keyring seahorse gtk-engine-murrine python-setuptools gparted filezilla keepassxc veracrypt lsb-release smartmontools"
+PACKS="xorg xorg-server xorg-xinit xorg-util-macros xorg-twm xorg-xclock xdg-user-dirs xterm rxvt-unicode urxvt-url-select lightdm lightdm-gtk-greeter lightdm-gtk-greeter-settings terminator pulseaudio pavucontrol paprefs mate-themes wicd wicd-gtk xfce4 xfce4-goodies xfce4-artwork xfce4-session xfce4-settings xfwm4 xfwm4-themes xfconf thunar numlockx pinta gvfs-smb ruby imagemagick librsvg iptraf-ng arandr elementary-icon-theme gtk-engines xarchiver-gtk2 gnome-keyring seahorse gtk-engine-murrine python-setuptools gparted filezilla keepassxc veracrypt lsb-release smartmontools"
 
 case $SETUP_MODE in
   workstation)
@@ -35,7 +35,7 @@ if [ "$TESTSYSTEM" != "YES" ]; then
   PACKS+=$EXTRA
 fi
 #nextcloud
-AURPACKS="gksu pasystray-gtk2-standalone paman pavumeter qalculate-gtk-nognome xprintidle archlinux-artwork xfce4-multiload-ng-plugin-gtk2 gnome-keyring-query acpi_call-dkms evince2 elementary-xfce-icons-git numix-themes-darkblue xfce-theme-greybird"
+AURPACKS="gksu xscreensaver-arch-logo pasystray-gtk2-standalone paman pavumeter qalculate-gtk-nognome xprintidle archlinux-artwork xfce4-multiload-ng-plugin-gtk2 gnome-keyring-query acpi_call-dkms evince2 elementary-xfce-icons-git numix-themes-darkblue xfce-theme-greybird"
 # arc-faenza-icon-theme"  
 
 if [ "$TESTSYSTEM" != "YES" ]; then
