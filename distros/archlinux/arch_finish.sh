@@ -83,6 +83,8 @@ pacman -S --noconfirm base-devel git expac pyalpm python python-dateutil python-
 
 pause "Aurman::clone"
 (cd /tmp/ && su build -c "git clone https://aur.archlinux.org/aurman.git" )
+pause "Aurman::pre-makepkg: bash"
+(cd /tmp/aurman && su build -c "bash" )
 pause "Aurman::makepkg"
 (cd /tmp/aurman && su build -c "makepkg" )
 
