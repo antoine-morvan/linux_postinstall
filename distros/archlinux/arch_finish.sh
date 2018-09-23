@@ -84,7 +84,7 @@ pacman -S --noconfirm base-devel git expac pyalpm python python-dateutil python-
 pause "YAY::clone"
 (cd /tmp/ && su build -c "git clone https://aur.archlinux.org/yay.git" )
 pause "Aurman::makepkg"
-(cd /tmp/yay && su build -c "makepkg -si" )
+(cd /tmp/yay && su build -c "makepkg -si --noconfirm" )
 
 pause "aurman installed; about to install base packages..."
 #################################
