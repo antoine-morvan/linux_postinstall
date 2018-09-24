@@ -28,7 +28,7 @@ if [ "$TESTSYSTEM" != "YES" ]; then
 
   case $SETUP_MODE in
     workstation)
-      EXTRA+=" avidemux-cli audacity handbrake libreoffice libreoffice-fresh-fr gimp inkscape thunderbird thunderbird-i18n-fr calibre jdk7-openjdk jdk9 openjdk7-src openjdk8-src go java-openjfx java-openjfx-doc java-openjfx-src cordova"
+      EXTRA+=" avidemux-cli audacity handbrake libreoffice libreoffice-fresh-fr gimp inkscape thunderbird thunderbird-i18n-fr calibre jdk7-openjdk openjdk7-src openjdk8-src go java-openjfx java-openjfx-doc java-openjfx-src cordova"
       ;;
   esac
 
@@ -43,7 +43,7 @@ if [ "$TESTSYSTEM" != "YES" ]; then
 
   case $SETUP_MODE in
     workstation)
-      AUREXTRA+=" gephi xvidcap gtk-theme-flatstudio dropbox jabref jdk jdk7 jdk6 jdk5 jdk-devel javafx-scenebuilder nextcloud-client yed"
+      AUREXTRA+=" gephi xvidcap gtk-theme-flatstudio dropbox jabref jdk jdk7 jdk6 jdk5 jdk-devel jdk9 javafx-scenebuilder nextcloud-client yed"
       ;;
   esac
 
