@@ -32,8 +32,8 @@ fi
 FOUND_NVIDIA=`lspci | grep -i vga | grep -i nvidia | wc -l`
 if [ "$FOUND_NVIDIA" != "0" ]; then
 	echo "Found NVidia graphic device"
-	yaourt -Rdd --noconfirm lib32-mesa-libgl
-	yaourt -Rdd --noconfirm mesa-libgl
+	pacman -Rdd --noconfirm lib32-mesa-libgl
+	pacman -Rdd --noconfirm mesa-libgl
 	export IGNORE_CC_MISMATCH=1
 	#for GTX 770
 	install_packs "nvidia-dkms nvidia-utils lib32-nvidia-utils nvidia-settings"
