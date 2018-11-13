@@ -35,7 +35,10 @@ if [ "$FOUND_NVIDIA" != "0" ]; then
 	yaourt -Rdd --noconfirm lib32-mesa-libgl
 	yaourt -Rdd --noconfirm mesa-libgl
 	export IGNORE_CC_MISMATCH=1
-	install_packs "nvidia-340xx-dkms nvidia-340xx-libgl lib32-nvidia-340xx-libgl"
+	#for GTX 770
+	install_packs "nvidia-dkms nvidia-utils lib32-nvidia-utils nvidia-settings"
+	#for GT 8600M
+	#install_packs "nvidia-340xx-dkms nvidia-340xx-libgl lib32-nvidia-340xx-libgl"
 	nvidia-xconfig
 else
 	echo "NVidia not found"
