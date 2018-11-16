@@ -7,6 +7,10 @@ export SETUP_SCRIPT_LOCATION=https://raw.githubusercontent.com/antoine-morvan/li
 [ ! -e ubuntu_func.sh ] &&  wget -q ${SETUP_SCRIPT_LOCATION}/01_func/ubuntu_func.sh -O ubuntu_func.sh
 source ubuntu_func.sh
 
+# add 17.10 repo for getting python-wnck
+sudo sh -c "echo 'deb http://archive.ubuntu.com/ubuntu artful main universe' > /etc/apt/sources.list.d/artful-main-universe.list"
+apt update 
+
 #setup application
 apt-get -y install python python-gtk2 python-xlib python-dbus python-wnck python-setuptools git
 
