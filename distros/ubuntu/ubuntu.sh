@@ -103,7 +103,7 @@ apt-file update
 
 #install packages that require user action (i.e. license) at the end
 if [ "$FASTSETUP" != "YES" ]; then
-  apt-get -y install wireshark-gtk steam davfs2 wine
+  apt-get -y install wireshark-gtk steam davfs2 wine-stable
 fi
 
 
