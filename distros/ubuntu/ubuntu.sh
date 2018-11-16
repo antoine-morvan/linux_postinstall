@@ -14,7 +14,7 @@ FASTSETUP=NO
 #configure proxy for installation...
 #test if local server is present
 #export SETUP_SCRIPT_LOCATION=http://koub.org/files/linux/
-export SETUP_SCRIPT_LOCATION=https://raw.githubusercontent.com/antoine-morvan/linux_postinstall/master
+export SETUP_SCRIPT_LOCATION=https://raw.githubusercontent.com/antoine-morvan/linux_postinstall/master/
 export ENABLE_PAUSE=NO
 export LOGCNT=0
 
