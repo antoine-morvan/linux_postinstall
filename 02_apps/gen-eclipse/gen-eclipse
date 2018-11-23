@@ -32,6 +32,7 @@ MIRRORURL="http://mirror.ibcp.fr/pub/eclipse/"
 ECLIPSE_VERSION=photon
 ECLIPSE_VERSION_MAJOR=4
 ECLIPSE_VERSION_MIDDLE=9
+ECLIPSE_VERSION_MINOR=
 # to find the timestamp check ${MIRRORURL}/eclipse/downloads/drops${ECLIPSE_VERSION_MAJOR}/
 # i.e. http://ftp.fau.de/eclipse//eclipse/downloads/drops4/
 ECLIPSE_TIMESTAMP=201809060745
