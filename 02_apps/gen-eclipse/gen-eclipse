@@ -88,17 +88,44 @@ function check_and_set_eclipse_mirror {
   URL="${MIRRORURL}${ECLIPSE_URL_PATH}${ECLIPSE_ARCHIVE_NAME}"
 }
 
+function jdk_version() {
+  local result
+  local java_cmd
+  if [[ -n $(type -p java) ]]
+  then
+    java_cmd=java
+  elif [[ (-n "$JAVA_HOME") && (-x "$JAVA_HOME/bin/java") ]]
+  then
+    java_cmd="$JAVA_HOME/bin/java"
+  fi
+  local IFS=$'\n'
+  # remove \r for Cygwin
+  local lines=$("$java_cmd" -Xms32M -Xmx32M -version 2>&1 | tr '\r' '\n')
+  if [[ -z $java_cmd ]]
+  then
+    result=no_java
+  else
+    for line in $lines; do
+      if [[ (-z $result) && ($line = *"version \""*) ]]
+      then
+        local ver=$(echo $line | sed -e 's/.*version "\(.*\)"\(.*\)/\1/; 1q')
+        # on macOS, sed doesn't support '?'
+        if [[ $ver = "1."* ]]
+        then
+          result=$(echo $ver | sed -e 's/1\.\([0-9]*\)\(.*\)/\1/; 1q')
+        else
+          result=$(echo $ver | sed -e 's/\([0-9]*\)\(.*\)/\1/; 1q')
+        fi
+      fi
+    done
+  fi
+  echo "$result"
+}
+
 function check_java_version {
-	JAVA8=0
-	JAVA9=0
-	JAVA10=0
-	JAVA8=`java -version 2>&1 | grep 1.8 | wc -l`
-	if [ "$JAVA8" == "0" ]; then
-		JAVA9=`java -version 2>&1 | grep 1.9 | wc -l`
-		if [ "$JAVA9" == "0" ]; then
-			JAVA10=`java -version 2>&1 | grep "10\." | wc -l`
-			if [ "$JAVA10" == "0" ]; then
-				cat << "EOF"
+	v="$(jdk_version)"
+	if [ v -lt 8 ]; then
+		cat << "EOF"
 
 Eclipse requires Java 8 or higher. On debian like systems (as root) :
    $ apt-get install openjdk-8-jdk openjdk-8-source
@@ -108,9 +135,7 @@ On other Linux distributions, Windows and MacOSX systems, please
 visit http://www.oracle.com/technetwork/java/javase/downloads/index.html
 
 EOF
-				exit 1
-			fi
-		fi
+		exit 1
 	fi
 }
 
