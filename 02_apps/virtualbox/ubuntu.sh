@@ -13,7 +13,7 @@ echo "deb http://download.virtualbox.org/virtualbox/debian $(lsb_release -sc) co
 wget -q -O- http://download.virtualbox.org/virtualbox/debian/oracle_vbox_2016.asc | sudo apt-key add -
 
 upgrade
-install_packs virtualbox-5.2
+install_packs virtualbox-6.0
 
 exit
 
