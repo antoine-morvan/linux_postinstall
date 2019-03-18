@@ -89,7 +89,7 @@ function check_and_set_eclipse_mirror {
 }
 
 function jdk_version() {
-  local result
+  local result=
   local java_cmd
   if [[ -n $(type -p java) ]]
   then

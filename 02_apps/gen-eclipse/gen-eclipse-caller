@@ -9,7 +9,7 @@ USER=`whoami`
 SOURCE_SCRIPT=https://raw.githubusercontent.com/antoine-morvan/linux_postinstall/master/02_apps/gen-eclipse/gen-eclipse
 
 TMPFILE=`mktemp`
-wget $SOURCE_SCRIPT -O $TMPFILE
+wget --no-cache $SOURCE_SCRIPT -O $TMPFILE
 chmod +x $TMPFILE
 $TMPFILE $ARG1
 rm $TMPFILE
