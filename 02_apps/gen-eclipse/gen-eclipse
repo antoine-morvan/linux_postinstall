@@ -124,7 +124,7 @@ function jdk_version() {
 
 function check_java_version {
 	v="$(jdk_version)"
-	if [ v -lt 8 ]; then
+	if [ $v -lt 8 ]; then
 		cat << "EOF"
 
 Eclipse requires Java 8 or higher. On debian like systems (as root) :
