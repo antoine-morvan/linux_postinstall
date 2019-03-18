@@ -26,8 +26,8 @@ apt-get -y install wget
 source ubuntu_func.sh
 
 #update source.list
-[ `grep "^deb-src http://fr.archive.ubuntu.com/ubuntu/ xenial multiverse" /etc/apt/sources.list | wc -l` == 0 ] && \
-	echo "deb http://archive.canonical.com/ubuntu xenial partner" >> /etc/apt/sources.list
+[ `grep "^deb-src http://fr.archive.ubuntu.com/ubuntu/ $(lsb_release -sc) multiverse" /etc/apt/sources.list | wc -l` == 0 ] && \
+	echo "deb http://archive.canonical.com/ubuntu $(lsb_release -sc) partner" >> /etc/apt/sources.list
 
 #disable auto updates/upgrades
 if [ -e /etc/apt/apt.conf.d/10periodic ]; then
@@ -117,13 +117,14 @@ dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/quicktile/ubuntu.sh
 dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/truecrypt/ubuntu.sh
 
 dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/gen-eclipse/ubuntu.sh
-dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/purple-plugins/ubuntu.sh
+#dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/purple-plugins/ubuntu.sh
+
+dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/deadbeef/ubuntu.sh
+dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/skype/ubuntu.sh
 
 
 if [ "$FASTSETUP" != "YES" ]; then
-  dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/deadbeef/ubuntu.sh
   dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/virtualbox/ubuntu.sh
-  dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/skype/ubuntu.sh
 fi
 
 
