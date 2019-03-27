@@ -618,7 +618,21 @@ echo "${ECHOPREFIX}  * Call Setup function"
 setup_eclipse_plugins \
 	"ALL" \
 	${ECLIPSE_PLUGINS_INSTALL_PATH} \
-	${MIRRORURL}/eclipse/updates/${ECLIPSE_VERSION_MAJOR}.${ECLIPSE_VERSION_MIDDLE},http://eclipse-color-theme.github.io/update/,${MIRRORURL}/releases/${ECLIPSE_VERSION},http://repo1.maven.org/maven2/.m2e/connectors/m2eclipse-tycho/0.9.0/N/LATEST/,http://community.polarion.com/projects/subversive/download/eclipse/6.0/update-site/,http://anb0s.github.io/EasyShell,http://update.eclemma.org/,http://andrei.gmxhome.de/eclipse/,http://findbugs.cs.umd.edu/eclipse/,http://download.eclipse.org/efxclipse/updates-released/2.4.0/site,https://dl.bintray.com/eclipse-cs/eclipse-cs/8.10.0/,http://eclipse.sonarlint.org/,${MIRRORURL}/modeling/tmf/xtext/updates/releases/,${MIRRORURL}/buildship/updates/e47/releases/,http://download.eclipse.org/technology/subversive/4.0/update-site/ \
+${MIRRORURL}/releases/${ECLIPSE_VERSION},\
+${MIRRORURL}/eclipse/updates/${ECLIPSE_VERSION_MAJOR}.${ECLIPSE_VERSION_MIDDLE},\
+http://eclipse-color-theme.github.io/update/,\
+http://andrei.gmxhome.de/eclipse/,\
+http://anb0s.github.io/EasyShell,\
+http://repo1.maven.org/maven2/.m2e/connectors/m2eclipse-tycho/0.9.0/N/LATEST/,\
+http://update.eclemma.org/,\
+http://findbugs.cs.umd.edu/eclipse/,\
+http://download.eclipse.org/efxclipse/updates-released/3.3.0/site,\
+https://dl.bintray.com/eclipse-cs/eclipse-cs/8.18.0/,\
+http://eclipse.sonarlint.org/,\
+${MIRRORURL}/modeling/tmf/xtext/updates/releases/,\
+${MIRRORURL}/buildship/updates/e47/releases/,\
+http://community.polarion.com/projects/subversive/download/eclipse/6.0/update-site/,\
+http://download.eclipse.org/technology/subversive/4.0/update-site/ \
 	org.eclipse.releng.tools.feature.group \
 	com.github.eclipsecolortheme.feature.feature.group \
 	org.eclipse.cdt.feature.group \
@@ -640,7 +654,7 @@ setup_eclipse_plugins \
 	org.eclipse.egit.gitflow.feature.feature.group \
 	org.eclipse.team.svn.feature.group \
 	org.polarion.eclipse.team.svn.connector.feature.group \
-  org.polarion.eclipse.team.svn.connector.svnkit18.feature.group \
+	org.polarion.eclipse.team.svn.connector.svnkit18.feature.group \
 	org.eclipse.emf.mwe2.runtime.sdk.feature.group \
 	org.eclipse.emf.sdk.feature.group \
 	org.eclipse.xtend.sdk.feature.group \
