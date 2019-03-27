@@ -623,6 +623,7 @@ ${MIRRORURL}/eclipse/updates/${ECLIPSE_VERSION_MAJOR}.${ECLIPSE_VERSION_MIDDLE},
 http://eclipse-color-theme.github.io/update/,\
 http://andrei.gmxhome.de/eclipse/,\
 http://anb0s.github.io/EasyShell,\
+https://download.eclipse.org/technology/m2e/releases/,\
 http://repo1.maven.org/maven2/.m2e/connectors/m2eclipse-tycho/0.9.0/N/LATEST/,\
 http://update.eclemma.org/,\
 http://findbugs.cs.umd.edu/eclipse/,\
