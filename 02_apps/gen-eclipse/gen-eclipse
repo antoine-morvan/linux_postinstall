@@ -627,7 +627,6 @@ https://download.eclipse.org/technology/m2e/releases/,\
 http://repo1.maven.org/maven2/.m2e/connectors/m2eclipse-tycho/0.9.0/N/LATEST/,\
 http://update.eclemma.org/,\
 http://findbugs.cs.umd.edu/eclipse/,\
-http://download.eclipse.org/efxclipse/updates-released/3.3.0/site,\
 https://dl.bintray.com/eclipse-cs/eclipse-cs/8.18.0/,\
 http://eclipse.sonarlint.org/,\
 ${MIRRORURL}/modeling/tmf/xtext/updates/releases/,\
@@ -667,7 +666,6 @@ http://download.eclipse.org/technology/subversive/4.0/update-site/ \
 	org.eclipse.eclemma.feature.feature.group \
 	AnyEditTools.feature.group \
 	edu.umd.cs.findbugs.plugin.eclipse.feature.group \
-	org.eclipse.fx.ide.feature.feature.group \
 	net.sf.eclipsecs.feature.group \
 	org.eclipse.gef.sdk.feature.group \
 	org.eclipse.graphiti.sdk.plus.feature.feature.group \
