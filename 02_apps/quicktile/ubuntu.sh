@@ -7,45 +7,14 @@ export SETUP_SCRIPT_LOCATION=https://raw.githubusercontent.com/antoine-morvan/li
 [ ! -e ubuntu_func.sh ] &&  wget -q ${SETUP_SCRIPT_LOCATION}/01_func/ubuntu_func.sh -O ubuntu_func.sh
 source ubuntu_func.sh
 
-# add 17.10 repo for getting python-wnck
-sudo sh -c "echo 'deb http://archive.ubuntu.com/ubuntu artful main universe' > /etc/apt/sources.list.d/artful-main-universe.list"
-apt update 
+#setup application deps
+apt-get -y install python python-gtk2 python-xlib python-dbus python-wnck python-setuptools git libpango1.0-0 python-pip
 
-#setup application
-apt-get -y install python python-gtk2 python-xlib python-dbus python-wnck python-setuptools git
-
-git clone https://github.com/ssokolow/quicktile.git quicktile
-
-(cd quicktile && ./install.sh)
-
-#cleaning
-rm -rf ./quicktile/
+# used https://pkgs.org to find python-wnck
+wget http://ftp.br.debian.org/debian/pool/main/g/gnome-python-desktop/python-wnck_2.32.0+dfsg-3_amd64.deb
+sudo dpkg -i python-wnck_2.32.0+dfsg-3_amd64.deb 
+sudo -H pip2 install https://github.com/ssokolow/quicktile/archive/master.zip
 
 #add default config
 mkdir -p /etc/skel/.config/
 retry "wget -q -O /etc/skel/.config/quicktile.cfg ${SETUP_SCRIPT_LOCATION}/02_apps/quicktile/quicktile.cfg"
-
-exit
-
-##
-## Old way
-##
-
-cp quicktile/quicktile.py /usr/local/bin/quicktile.py
-chmod 755 /usr/local/bin/quicktile.py
-
-# add special script to link XDG config dir to /etc/quicktile
-cat > /usr/local/bin/quicktile_startup.sh << EOF
-#!/bin/bash
-export XDG_CONFIG_HOME=\${HOME}/.config/quicktile/
-/usr/local/bin/quicktile.py --daemonize
-EOF
-chmod +x /usr/local/bin/quicktile_startup.sh
-
-mkdir -p /etc/xdg/autostart/
-retry "wget -q -O /etc/xdg/autostart/quicktile.desktop ${SETUP_SCRIPT_LOCATION}/02_apps/quicktile/quicktile.desktop"
-chmod +x /etc/xdg/autostart/quicktile.desktop
-
-mkdir -p /etc/skel/.config/quicktile/
-retry "wget -q -O /etc/skel/.config/quicktile/quicktile.cfg ${SETUP_SCRIPT_LOCATION}/02_apps/quicktile/quicktile.cfg"
-
