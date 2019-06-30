@@ -8,7 +8,7 @@ export SETUP_SCRIPT_LOCATION=https://raw.githubusercontent.com/antoine-morvan/li
 source ubuntu_func.sh
 
 #setup application deps
-apt-get -y install python python-gtk2 python-xlib python-dbus python-wnck python-setuptools git libpango1.0-0 python-pip
+apt-get -y install python python-gtk2 python-xlib python-dbus python-setuptools git libpango1.0-0 python-pip
 
 # used https://pkgs.org to find python-wnck
 wget http://ftp.br.debian.org/debian/pool/main/g/gnome-python-desktop/python-wnck_2.32.0+dfsg-3_amd64.deb
