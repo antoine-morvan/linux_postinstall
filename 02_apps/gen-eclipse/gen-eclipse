@@ -27,7 +27,7 @@ echo "${ECHOPREFIX} starting setup ..."
 #http://artfiles.org/eclipse.org/
 #http://mirror.switch.ch/eclipse/
 
-MIRRORURL="http://mirror.ibcp.fr/pub/eclipse/"
+MIRRORURL="http://ftp.halifax.rwth-aachen.de/eclipse/"
 
 ECLIPSE_VERSION=2019-03
 ECLIPSE_VERSION_MAJOR=4
