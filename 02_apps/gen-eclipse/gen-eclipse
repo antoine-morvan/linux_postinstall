@@ -29,13 +29,13 @@ echo "${ECHOPREFIX} starting setup ..."
 
 MIRRORURL="http://ftp.halifax.rwth-aachen.de/eclipse/"
 
-ECLIPSE_VERSION=2019-03
+ECLIPSE_VERSION=2019-09
 ECLIPSE_VERSION_MAJOR=4
-ECLIPSE_VERSION_MIDDLE=11
+ECLIPSE_VERSION_MIDDLE=13
 ECLIPSE_VERSION_MINOR=
 # to find the timestamp check ${MIRRORURL}/eclipse/downloads/drops${ECLIPSE_VERSION_MAJOR}/
 # i.e. http://ftp.fau.de/eclipse//eclipse/downloads/drops4/
-ECLIPSE_TIMESTAMP=201903070500
+ECLIPSE_TIMESTAMP=201909161045
 ECLIPSE_PRE=${ECLIPSE_VERSION_MINOR}
 
 
@@ -617,7 +617,7 @@ function finish {
 echo "${ECHOPREFIX}  * Call Setup function"
 setup_eclipse_plugins \
 	"ALL" \
-	${ECLIPSE_PLUGINS_INSTALL_PATH} \
+	"${ECLIPSE_PLUGINS_INSTALL_PATH}" \
 ${MIRRORURL}/releases/${ECLIPSE_VERSION},\
 ${MIRRORURL}/eclipse/updates/${ECLIPSE_VERSION_MAJOR}.${ECLIPSE_VERSION_MIDDLE},\
 http://eclipse-color-theme.github.io/update/,\
@@ -681,9 +681,12 @@ http://download.eclipse.org/technology/subversive/4.0/update-site/ \
 
 setup_eclipse_plugins \
 	"graphiti Dev Feature" \
-	${ECLIPSE_PLUGINS_INSTALL_PATH} \
-	http://preesm.insa-rennes.fr/repo/complete/ \
+	"${ECLIPSE_PLUGINS_INSTALL_PATH}" \
+${MIRRORURL}/releases/${ECLIPSE_VERSION},\
+${MIRRORURL}/eclipse/updates/${ECLIPSE_VERSION_MAJOR}.${ECLIPSE_VERSION_MIDDLE},\
+http://preesm.insa-rennes.fr/repo/ \
 	org.ietr.graphiti.dev.feature.feature.group
+	
 
 echo "${ECHOPREFIX}  * Setup function done"
 finish
