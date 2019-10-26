@@ -175,6 +175,7 @@ if [ "$BOOTLOADER" == "SYSLINUX" ]; then
 	syslinux-install_update -iam
 fi
 if [ "$BOOTLOADER" == "GRUB" ]; then
+	mkdir -p /boot/grub/
 	#set grub background
 	if [ "`grep walldeb /etc/default/grub | wc -l`" == "0" ]; then
 		echo "GRUB_BACKGROUND=/usr/share/wallpapers/wallarch.png" >> /etc/default/grub
