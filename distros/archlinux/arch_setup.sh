@@ -164,29 +164,24 @@ pause "into $MOUNTPOINT"
 ##########################################
 ########  SETUP PACKET MANAGER   #########
 ##########################################
-# select archlinux.fr mirror
-if [ ! -a /etc/pacman.d/mirrorlist.backup ];
-then
+
+if [ ! -a /etc/pacman.d/mirrorlist.backup ]; then
   cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.backup
   cp /etc/pacman.conf /etc/pacman.conf.backup
 fi
+
+cat /etc/pacman.conf.backup | sed 's/#Color/Color/g' > /etc/pacman.conf
+
+if [ "$ARCH" == "x86_64" ]; then
+	HAS_MULTILIB=$(cat /etc/pacman.conf | grep "^\[multilib\]" | wc -l)
+	[ "$HAS_MULTILIB" == "0" ] && echo -e "\n[multilib]\nInclude = /etc/pacman.d/mirrorlist\n" >> /etc/pacman.conf
+fi
+
 echo "Server = http://mir.archlinux.fr/\$repo/os/\$arch" > /etc/pacman.d/mirrorlist
 echo "Server = http://mir1.archlinux.fr/archlinux/\$repo/os/\$arch" >> /etc/pacman.d/mirrorlist
+
 echo "Server = http://delta.archlinux.fr/\$repo/os/\$arch" >> /etc/pacman.d/mirrorlist
 echo "Server = http://mirrors.kernel.org/archlinux/\$repo/os/\$arch" >> /etc/pacman.d/mirrorlist
-
-echo "" > /tmp/pacman.conf
-echo "[archlinuxfr]" >> /tmp/pacman.conf
-echo "SigLevel = Never" >> /tmp/pacman.conf
-echo "Server = http://repo.archlinux.fr/\$arch" >> /tmp/pacman.conf
-
-if [ "$ARCH" == "x86_64" ];
-then
-  echo "" >> /tmp/pacman.conf
-  echo "[multilib]" >> /tmp/pacman.conf
-  echo "Include = /etc/pacman.d/mirrorlist" >> /tmp/pacman.conf
-fi
-[ "`grep archlinuxfr /etc/pacman.conf | wc -l`" == "0" ] && cat /tmp/pacman.conf >> /etc/pacman.conf
 
 pause "pacman configured"
 #######################################
