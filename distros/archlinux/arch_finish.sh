@@ -241,8 +241,8 @@ case $SETUP_MODE in
     systemctl enable smb
     echo nmb
     systemctl enable nmb
-    echo chkboot
-    systemctl enable chkboot
+    echo chkboot -> disabled
+    #systemctl enable chkboot
     echo cronie
     systemctl enable cronie
     ;;
