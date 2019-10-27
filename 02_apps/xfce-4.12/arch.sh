@@ -78,6 +78,10 @@ FILE=/etc/xdg/xfce4/xfconf/xfce-perchannel-xml/keyboard-layout.xml
 [ -e $FILE ] && mv $FILE $FILE.bk
 retry "wget -q -O ${FILE} ${SETUP_SCRIPT_LOCATION}/02_apps/xfce-4.12/keyboard-layout.xml"
 
+FILE=/etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xfce4-screensaver.xml
+[ -e $FILE ] && mv $FILE $FILE.bk
+retry "wget -q -O ${FILE} ${SETUP_SCRIPT_LOCATION}/02_apps/xfce-4.12/xfce4-screensaver.xml"
+
 #default icon view & show address bar (Thunar)
 mkdir -p /etc/skel/.config/Thunar/
 echo "[Configuration]" > /etc/skel/.config/Thunar/thunarrc
