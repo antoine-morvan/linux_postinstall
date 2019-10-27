@@ -198,8 +198,6 @@ chmod +x /usr/local/sbin/firewall-tuning.sh
 
 #read -p "press enter ... (before enabling services)"
 
-echo dhcpcd
-systemctl enable dhcpcd
 echo iptables
 systemctl enable iptables
 echo fireall
@@ -212,7 +210,18 @@ echo docker
 systemctl enable docker
 
 case $SETUP_MODE in
+  server)
+	echo dhcpcd
+	systemctl enable dhcpcd
+	;;
   workstation)
+    if [ "$INSTALLHEAD" == "YES" ]; then
+		echo dhcpcd
+		systemctl disable dhcpcd
+	else
+		echo dhcpcd
+		systemctl enable dhcpcd
+    fi
     echo hddtemp
     systemctl enable hddtemp
     echo lmsensors
