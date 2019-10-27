@@ -99,7 +99,8 @@ case $SETUP_MODE in
     PKGS+=" samba cifs-utils base-devel libtool linux-zen-headers parted emacs zip unzip curl fakeroot alsa-utils fuse cmake pkg-config python git svn ttf-dejavu sshfs davfs2 tmux subversion libcups cups ghostscript nss-mdns mercurial dri2proto glproto xorg-util-macros resourceproto bigreqsproto xtrans xcmiscproto xf86driproto intltool cronie autofs jre8-openjdk"
     AURPKGS+=" chkboot stapler dtach"
     if [ "$TESTSYSTEM" != "YES" ]; then
-      PKGS+=" pacgraph lynx perl-xml-parser alsi apache php php-apache markdown cloc arj unarj unace rpmextract tig lhasa openvpn ghc dvtm clang openmp"
+	  #removed: alsi
+      PKGS+=" pacgraph lynx perl-xml-parser apache php php-apache markdown cloc arj unarj unace rpmextract tig lhasa openvpn ghc dvtm clang openmp"
       AURPKGS+=" hstr-git maven-bash-completion-git perl-bash-completion kingbash-gb-git ms-sys"
     fi
     ;;
