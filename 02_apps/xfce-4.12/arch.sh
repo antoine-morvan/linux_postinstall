@@ -265,7 +265,7 @@ sed -i -e 's%#greeter-setup-script=%greeter-setup-script=/usr/bin/numlockx on%g'
 
 cat >> /etc/lightdm/lightdm-gtk-greeter.conf << EOF
 background=$BG
-theme-name=Numix-DarkBlue
+theme-name=Greybird
 xft-antialias=true
 xft-dpi=80
 xft-hintstyle=hintfull
