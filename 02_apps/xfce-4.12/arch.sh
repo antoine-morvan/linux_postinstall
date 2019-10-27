@@ -10,7 +10,7 @@ upgrade
 #install_packs 
 
 echo ""
-echo "** Config XFCE 4.12"
+echo "** Config XFCE 4.14"
 echo ""
 
 #get theme
@@ -230,6 +230,7 @@ retry "wget -q -O ${FILE} ${SETUP_SCRIPT_LOCATION}/02_apps/xfce-4.12/xfce4-keybo
 FILE=/etc/skel/.xscreensaver
 [ -e $FILE ] && mv $FILE $FILE.bk
 retry "wget -q -O ${FILE} ${SETUP_SCRIPT_LOCATION}/02_apps/xfce-4.12/xscreensaver"
+echo "xscreensaver.newLoginCommand:" >> /etc/skel/.Xresources
 
 #disable volumed (replaced by pasystray)
 #rm -f /etc/xdg/autostart/xfce4-volumed.desktop
