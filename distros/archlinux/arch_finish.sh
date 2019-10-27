@@ -92,7 +92,7 @@ pause "aurman installed; about to install base packages..."
 #################################
 PKGS="hddtemp dkms linux-headers linux-lts-headers openssh vim hddtemp lm_sensors vim-plugins lshw acpi acpid p7zip memtest86+ htop nethogs iotop linux-tools nmap bzip2 sharutils rsync tsocks exfat-utils ntp ntfs-3g dnsutils traceroute lzip tree sdparm hdparm dosfstools rarian libzip gnu-netcat cabextract btrfs-progs bwm-ng unrar docker docker-compose screen archey3"
 
-AURPKGS="etherwake byobu bash-completion archey-plus"
+AURPKGS="etherwake byobu bash-completion archey-plus archey4"
 
 case $SETUP_MODE in
   workstation)
@@ -285,7 +285,7 @@ echo "alias grep='grep --color=auto'" >> /etc/skel/.bashrc
 echo "alias fgrep='fgrep --color=auto'" >> /etc/skel/.bashrc
 echo "alias egrep='egrep --color=auto'" >> /etc/skel/.bashrc
 echo "alias autoremove='sudo pacman -Rcns \$(pacman -Qdtq)'" >> /etc/skel/.bashrc
-echo "archey" >> /etc/skel/.bashrc
+echo "archey3" >> /etc/skel/.bashrc
 
 pause "mod blacklisted & alias configured"
 
