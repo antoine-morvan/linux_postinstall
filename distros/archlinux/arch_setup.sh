@@ -327,7 +327,7 @@ pacstrap $MOUNTPOINT $PKGS
 pause "system bootstraped"
 
 #preconfig system
-cat /tmp/pacman.conf >> $MOUNTPOINT/etc/pacman.conf
+cat /etc/pacman.conf >> $MOUNTPOINT/etc/pacman.conf
 cp /etc/resolv.conf $MOUNTPOINT/etc/resolv.conf
 genfstab -U -p $MOUNTPOINT >> $MOUNTPOINT/etc/fstab
 
