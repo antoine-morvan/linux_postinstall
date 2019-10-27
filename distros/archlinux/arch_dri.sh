@@ -15,10 +15,14 @@ echo ""
 #######    MACHINE SPECIFIC	########
 ########################################
 
-FOUND_VBOX=`lspci | grep -i vga | grep -i virtualbox | wc -l`
+FOUND_VBOX=`lspci | grep -i vga | grep -i 'virtualbox\|vbox\|vmware' | wc -l`
 if [ "$FOUND_VBOX" != "0" ]; then
 	echo "Found VirtualBox"
-	DRVINSTALL="virtualbox-guest-utils"
+	if [ "$INSTALLHEAD" == "YES" ]; then
+		DRVINSTALL="virtualbox-guest-utils xf86-video-vmware"
+	else
+		DRVINSTALL="virtualbox-guest-utils-nox"
+	fi
 	install_packs "$DRVINSTALL"
 	mkdir -p /etc/modules-load.d/
 	mkdir -p /etc/modprode.d/
