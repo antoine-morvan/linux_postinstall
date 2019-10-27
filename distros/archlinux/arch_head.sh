@@ -24,7 +24,7 @@ if [ "$TESTSYSTEM" != "YES" ]; then
 	EXTRA=" hexchat ario deluge xfburn acetoneiso2"
 	EXTRA+=" latex2rtf lyx texmaker texlive-most pandoc texstudio "
 	EXTRA+=" maven gradle gitg xdot filelight gdmap qt5 youtube-dl "
-	EXTRA+=" mcomix tigervnc wireshark-gtk mkvtoolnix-gui"
+	EXTRA+=" mcomix tigervnc mkvtoolnix-gui"
 
   case $SETUP_MODE in
     workstation)
