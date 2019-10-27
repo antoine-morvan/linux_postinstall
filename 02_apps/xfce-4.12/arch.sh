@@ -226,12 +226,6 @@ FILE=/etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xfce4-keyboard-shortcuts.xml
 [ -e $FILE ] && mv $FILE $FILE.bk
 retry "wget -q -O ${FILE} ${SETUP_SCRIPT_LOCATION}/02_apps/xfce-4.12/xfce4-keyboard-shortcuts.xml"
 
-#xscreensaver avoid using desktop pictures
-FILE=/etc/skel/.xscreensaver
-[ -e $FILE ] && mv $FILE $FILE.bk
-retry "wget -q -O ${FILE} ${SETUP_SCRIPT_LOCATION}/02_apps/xfce-4.12/xscreensaver"
-echo "xscreensaver.newLoginCommand:" >> /etc/skel/.Xresources
-
 #disable volumed (replaced by pasystray)
 #rm -f /etc/xdg/autostart/xfce4-volumed.desktop
 [ ! -e /etc/xdg/autostart/pasystray.desktop ] && ln -s /usr/share/applications/pasystray.desktop /etc/xdg/autostart/pasystray.desktop

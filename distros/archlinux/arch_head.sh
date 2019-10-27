@@ -35,7 +35,7 @@ if [ "$TESTSYSTEM" != "YES" ]; then
   PACKS+=$EXTRA
 fi
 #nextcloud
-AURPACKS="gksu xscreensaver-arch-logo pasystray-gtk2-standalone paman pavumeter qalculate-gtk-nognome xprintidle archlinux-artwork xfce4-multiload-ng-plugin-gtk2 gnome-keyring-query acpi_call-dkms evince2 elementary-xfce-icons-git numix-themes-darkblue xfce-theme-greybird"
+AURPACKS="gksu pasystray-gtk2-standalone paman pavumeter qalculate-gtk-nognome xprintidle archlinux-artwork xfce4-multiload-ng-plugin-gtk2 gnome-keyring-query acpi_call-dkms evince2 elementary-xfce-icons-git numix-themes-darkblue xfce-theme-greybird"
 # arc-faenza-icon-theme"  
 
 if [ "$TESTSYSTEM" != "YES" ]; then
@@ -265,13 +265,6 @@ cat > /usr/local/bin/X_startup.sh << "EOF"
  if [ ! "$(pidof xfwm4)" ]; then
      exit 0
  fi
-
-## Condition: Start xscreensaver, if required.
-## note : not needed since there is a .desktop in /etc/xdg/autostart/
-## in addition: causes a bug when 2 instances of xscreensaver are running
-#if [ ! "$(pidof xscreensaver)" ]; then
-#    xscreensaver -no-splash &
-#fi
 
 ## numlock on by default
 numlock on
