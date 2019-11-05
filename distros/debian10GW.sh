@@ -18,8 +18,7 @@ LANIFACE=enp0s8
 # network and mask of the LAN
 LANNET=172.30.250.0/24
 # list of DNS IPs to use when forwarding DNS requests from LAN
-#EXTERNALDNSLIST="8.8.8.8 8.8.4.4"
-EXTERNALDNSLIST="10.4.1.79"
+EXTERNALDNSLIST="8.8.8.8 8.8.4.4"
 # number of IP addresses to save free from DHCP range
 FIXEDADDRCOUNT=24
 # minimum size of the DHCP range
@@ -296,6 +295,7 @@ EOF
 
 ## setup squid
 
+echo " -- Stop squid"
 # stop squid before updating config
 /etc/init.d/squid stop
 
@@ -378,17 +378,22 @@ shutdown_lifetime 5 seconds
 
 EOF
 
+echo " -- Clear squid cache"
 # clear cache path
 rm -rf ${WEBCACHE_PATH}/*
 mkdir -p ${WEBCACHE_PATH}
 chown proxy:proxy ${WEBCACHE_PATH}
+echo " -- Init squid cache"
 # init cache structure
 squid -z
 
+echo " -- Start squid"
 /etc/init.d/squid start
 
+echo " -- Check squid"
 squid -k check
 
+echo " -- Fix permissions"
 ## make general users part of sudo group
 l=$(grep "^UID_MIN" /etc/login.defs)
 l1=$(grep "^UID_MAX" /etc/login.defs)
