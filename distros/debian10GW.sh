@@ -383,9 +383,11 @@ echo " -- Clear squid cache"
 rm -rf ${WEBCACHE_PATH}/*
 mkdir -p ${WEBCACHE_PATH}
 chown proxy:proxy ${WEBCACHE_PATH}
-echo " -- Init squid cache"
+echo " -- Init squid cache && sleep 5s"
 # init cache structure
 squid -z
+
+sleep 5
 
 echo " -- Start squid"
 /etc/init.d/squid start
