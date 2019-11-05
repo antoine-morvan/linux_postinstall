@@ -397,23 +397,6 @@ outlet.DEFAULT_OUTPUT.cleanupDerived=false
 outlet.DEFAULT_OUTPUT.derived=false
 EOF
 
-	if [ "$DARKTHEME" == "YES" ]; then
-		echo "${ECHOPREFIX}   o Config DarkTheme"
-		cat > ${installationpath}/workspace/.metadata/.plugins/org.eclipse.core.runtime/.settings/org.eclipse.e4.ui.css.swt.theme.prefs << EOF
-themeid=org.eclipse.e4.ui.css.theme.high-contrast
-EOF
-
-		#config theme dark
-		cat > ${installationpath}/workspace/.metadata/.plugins/org.eclipse.core.runtime/.settings/org.eclipse.e4.ui.css.swt.theme << EOF
-	themeid=org.eclipse.e4.ui.css.theme.high-contrast
-EOF
-
-		#config tm terminal
-		cat > ${installationpath}/workspace/.metadata/.plugins/org.eclipse.core.runtime/.settings/org.eclipse.tm.terminal.control.prefs << EOF
-TerminalPrefInvertColors=true
-EOF
-	fi
-
 	if [ "$SETUP_SVN" == "YES" ]; then
 		#Config SVN Console output
 		echo "${ECHOPREFIX}   o Config SVN"
