@@ -397,21 +397,19 @@ outlet.DEFAULT_OUTPUT.cleanupDerived=false
 outlet.DEFAULT_OUTPUT.derived=false
 EOF
 
-	if [ "$SETUP_SVN" == "YES" ]; then
-		#Config SVN Console output
-		echo "${ECHOPREFIX}   o Config SVN"
-		cat > ${installationpath}/workspace/.metadata/.plugins/org.eclipse.core.runtime/.settings/org.eclipse.team.svn.ui.prefs << "EOF"
+	#Config SVN Console output
+	echo "${ECHOPREFIX}   o Config SVN"
+	cat > ${installationpath}/workspace/.metadata/.plugins/org.eclipse.core.runtime/.settings/org.eclipse.team.svn.ui.prefs << "EOF"
 eclipse.preferences.version=1
 preference.console.autoshow=1
 preference.console.limitEnabled=false
 EOF
 
-		#Force SVN Decorators in worksapce
-		cat > ${installationpath}/workspace/.metadata/.plugins/org.eclipse.core.runtime/.settings/org.eclipse.ui.workbench.prefs << "EOF"
+	#Force SVN Decorators in worksapce
+	cat > ${installationpath}/workspace/.metadata/.plugins/org.eclipse.core.runtime/.settings/org.eclipse.ui.workbench.prefs << "EOF"
 eclipse.preferences.version=1
 ENABLED_DECORATORS=org.eclipse.team.svn.ui.decorator.SVNLightweightDecorator\:true,
 EOF
-	fi
 
 	#skip wizard tab on startup
 	echo "${ECHOPREFIX}   o Disable wizard tab"
@@ -421,76 +419,74 @@ EOF
 <state reopen="false"/>
 EOF
 
-	if [ "$SETUP_EASYSHELL" == "YES" ]; then
-		#Config Easyshell terminal & explorer
-		echo "${ECHOPREFIX}   o Config EasyShell"
-		cat > ${installationpath}/workspace/.metadata/.plugins/org.eclipse.core.runtime/.settings/com.tetrade.eclipse.plugins.easyshell.prefs << EOF
+	#Config Easyshell terminal & explorer
+	echo "${ECHOPREFIX}   o Config EasyShell"
+	cat > ${installationpath}/workspace/.metadata/.plugins/org.eclipse.core.runtime/.settings/com.tetrade.eclipse.plugins.easyshell.prefs << EOF
 IdStr=cmdUnknown
 eclipse.preferences.version=1
 listPreference=-1
 targetRunPreference=cd {1} && run ./''{3}''
 EOF
-		TERMS="terminator xfce4-terminal gnome-terminal konsole urxvtc"
-		for term in ${TERMS}; do
-			if [ ! -z `which ${term}` -a -x `which ${term}` ];
-			then
-				case ${term} in
-					terminator)
-						echo "${ECHOPREFIX}     - Terminator"
-						echo "targetPreference=terminator --working-directory\\={1}" >> ${installationpath}/workspace/.metadata/.plugins/org.eclipse.core.runtime/.settings/com.tetrade.eclipse.plugins.easyshell.prefs
-						;;
-					xfce4-terminal)
-						echo "${ECHOPREFIX}     - XFCE"
-						echo "targetPreference=xfce4-terminal --default-working-directory\\={1}" >> ${installationpath}/workspace/.metadata/.plugins/org.eclipse.core.runtime/.settings/com.tetrade.eclipse.plugins.easyshell.prefs
-						;;
-					gnome-terminal)
-						echo "${ECHOPREFIX}     - Gnome"
-						echo "targetPreference=gnome-terminal --working-directory\\={1}" >> ${installationpath}/workspace/.metadata/.plugins/org.eclipse.core.runtime/.settings/com.tetrade.eclipse.plugins.easyshell.prefs
-						;;
-					konsole)
-						echo "${ECHOPREFIX}     - Konsole"
-						echo "targetPreference=konsole --workdir {1}" >> ${installationpath}/workspace/.metadata/.plugins/org.eclipse.core.runtime/.settings/com.tetrade.eclipse.plugins.easyshell.prefs
-						;;
-					urxvtc)
-						echo "${ECHOPREFIX}     - urxvtc"
-						echo "targetPreference=urxvtc -cd  {1}" >> ${installationpath}/workspace/.metadata/.plugins/org.eclipse.core.runtime/.settings/com.tetrade.eclipse.plugins.easyshell.prefs
-						;;
-					*)
-						echo "unknown terminal ${term}"
-						;;
-				esac
-				break
-			fi
-		done
-		NAVS="thunar nautilus konqueror firefox"
-		for nav in ${NAVS}; do
-			if [ ! -z `which ${nav}` -a -x `which ${nav}` ];
-			then
-				case ${nav} in
-					thunar)
-						echo "${ECHOPREFIX}     - Thunar"
-						echo "targetExplorePreference=thunar {2}" >> ${installationpath}/workspace/.metadata/.plugins/org.eclipse.core.runtime/.settings/com.tetrade.eclipse.plugins.easyshell.prefs
-						;;
-					nautilus)
-						echo "${ECHOPREFIX}     - Nautilus"
-						echo "targetExplorePreference=nautilus {2}" >> ${installationpath}/workspace/.metadata/.plugins/org.eclipse.core.runtime/.settings/com.tetrade.eclipse.plugins.easyshell.prefs
-						;;
-					konqueror)
-						echo "${ECHOPREFIX}     - Konqueror"
-						echo "targetExplorePreference=konqueror file:\"{2}\"" >> ${installationpath}/workspace/.metadata/.plugins/org.eclipse.core.runtime/.settings/com.tetrade.eclipse.plugins.easyshell.prefs
-						;;
-					firefox)
-						echo "${ECHOPREFIX}     - Firefox"
-						echo "targetExplorePreference=firefox file:\"{2}\"" >> ${installationpath}/workspace/.metadata/.plugins/org.eclipse.core.runtime/.settings/com.tetrade.eclipse.plugins.easyshell.prefs
-						;;
-					*)
-						echo "unknown file explorer ${nav}"
-						;;
-				esac
-				break
-			fi
-		done
-	fi
+	TERMS="terminator xfce4-terminal gnome-terminal konsole urxvtc"
+	for term in ${TERMS}; do
+		if [ ! -z `which ${term}` -a -x `which ${term}` ];
+		then
+			case ${term} in
+				terminator)
+					echo "${ECHOPREFIX}     - Terminator"
+					echo "targetPreference=terminator --working-directory\\={1}" >> ${installationpath}/workspace/.metadata/.plugins/org.eclipse.core.runtime/.settings/com.tetrade.eclipse.plugins.easyshell.prefs
+					;;
+				xfce4-terminal)
+					echo "${ECHOPREFIX}     - XFCE"
+					echo "targetPreference=xfce4-terminal --default-working-directory\\={1}" >> ${installationpath}/workspace/.metadata/.plugins/org.eclipse.core.runtime/.settings/com.tetrade.eclipse.plugins.easyshell.prefs
+					;;
+				gnome-terminal)
+					echo "${ECHOPREFIX}     - Gnome"
+					echo "targetPreference=gnome-terminal --working-directory\\={1}" >> ${installationpath}/workspace/.metadata/.plugins/org.eclipse.core.runtime/.settings/com.tetrade.eclipse.plugins.easyshell.prefs
+					;;
+				konsole)
+					echo "${ECHOPREFIX}     - Konsole"
+					echo "targetPreference=konsole --workdir {1}" >> ${installationpath}/workspace/.metadata/.plugins/org.eclipse.core.runtime/.settings/com.tetrade.eclipse.plugins.easyshell.prefs
+					;;
+				urxvtc)
+					echo "${ECHOPREFIX}     - urxvtc"
+					echo "targetPreference=urxvtc -cd  {1}" >> ${installationpath}/workspace/.metadata/.plugins/org.eclipse.core.runtime/.settings/com.tetrade.eclipse.plugins.easyshell.prefs
+					;;
+				*)
+					echo "unknown terminal ${term}"
+					;;
+			esac
+			break
+		fi
+	done
+	NAVS="thunar nautilus konqueror firefox"
+	for nav in ${NAVS}; do
+		if [ ! -z `which ${nav}` -a -x `which ${nav}` ];
+		then
+			case ${nav} in
+				thunar)
+					echo "${ECHOPREFIX}     - Thunar"
+					echo "targetExplorePreference=thunar {2}" >> ${installationpath}/workspace/.metadata/.plugins/org.eclipse.core.runtime/.settings/com.tetrade.eclipse.plugins.easyshell.prefs
+					;;
+				nautilus)
+					echo "${ECHOPREFIX}     - Nautilus"
+					echo "targetExplorePreference=nautilus {2}" >> ${installationpath}/workspace/.metadata/.plugins/org.eclipse.core.runtime/.settings/com.tetrade.eclipse.plugins.easyshell.prefs
+					;;
+				konqueror)
+					echo "${ECHOPREFIX}     - Konqueror"
+					echo "targetExplorePreference=konqueror file:\"{2}\"" >> ${installationpath}/workspace/.metadata/.plugins/org.eclipse.core.runtime/.settings/com.tetrade.eclipse.plugins.easyshell.prefs
+					;;
+				firefox)
+					echo "${ECHOPREFIX}     - Firefox"
+					echo "targetExplorePreference=firefox file:\"{2}\"" >> ${installationpath}/workspace/.metadata/.plugins/org.eclipse.core.runtime/.settings/com.tetrade.eclipse.plugins.easyshell.prefs
+					;;
+				*)
+					echo "unknown file explorer ${nav}"
+					;;
+			esac
+			break
+		fi
+	done
 	echo "${ECHOPREFIX}"
 	echo "${ECHOPREFIX} CONFIGURATION Done. "
 	echo "${ECHOPREFIX}"
