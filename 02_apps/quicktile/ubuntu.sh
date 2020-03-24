@@ -15,3 +15,7 @@ sudo -H pip2 install https://github.com/ssokolow/quicktile/archive/master.zip
 #add default config
 mkdir -p /etc/skel/.config/
 retry "wget -q -O /etc/skel/.config/quicktile.cfg ${SETUP_SCRIPT_LOCATION}/02_apps/quicktile/quicktile.cfg"
+
+mkdir -p /etc/xdg/autostart/
+retry "wget -q -O /etc/xdg/autostart/quicktile.desktop ${SETUP_SCRIPT_LOCATION}/02_apps/quicktile/quicktile.desktop"
+chmod +x /etc/xdg/autostart/quicktile.desktop
