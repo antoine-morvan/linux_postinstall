@@ -159,80 +159,17 @@ FILE=/etc/skel/.config/xfce4/panel/battery-94.rc
 [ -e $FILE ] && mv $FILE $FILE.bk
 retry "wget -q -O ${FILE} ${SETUP_SCRIPT_LOCATION}/02_apps/xfce-4.12/panel/battery-94.rc"
 
-
 mkdir -p /etc/skel/.config/xfce4/panel/launcher-7
-cat > /etc/skel/.config/xfce4/panel/launcher-7/geany.desktop << "EOF"
-[Desktop Entry]
-Type=Application
-Version=1.0
-Name=Geany
-Name[fr]=Geany
-GenericName=Integrated Development Environment
-GenericName[fr]=Environnement de Développement Intégré
-Comment=A fast and lightweight IDE using GTK2
-Comment[fr]=Un EDI rapide et léger utilisant GTK2
-Exec=geany %F
-Icon=geany
-Terminal=false
-Categories=GTK;Development;IDE;
-MimeType=text/plain;text/x-chdr;text/x-csrc;text/x-c++hdr;text/x-c++src;text/x-java;text/x-dsrc;text/x-pascal;text/x-perl;text/x-python;application/x-php;application/x-httpd-php3;application/x-httpd-php4;application/x-httpd-php5;application/xml;text/html;text/css;text/x-sql;text/x-diff;
-StartupNotify=true
-X-XFCE-Source=file:///usr/share/applications/geany.desktop
-EOF
-mkdir -p /etc/skel/.config/xfce4/panel/launcher-8
-cat > /etc/skel/.config/xfce4/panel/launcher-8/qalculate.desktop << "EOF"
-[Desktop Entry]
-Name=Qalculate!
-Comment=Powerful and easy to use calculator
-Exec=qalculate-gtk
-Icon=qalculate.png
-Terminal=false
-Type=Application
-StartupNotify=true
-Categories=GNOME;Application;Utility;
-X-XFCE-Source=file:///usr/share/applications/qalculate-gtk.desktop
-EOF
-mkdir -p /etc/skel/.config/xfce4/panel/launcher-9
-cat > /etc/skel/.config/xfce4/panel/launcher-9/terminator.desktop << "EOF"
-[Desktop Entry]
-Name=Terminator
-Name[fr]=Terminator
-Comment=Multiple terminals in one window
-Comment[fr]=Plusieurs terminaux dans une fenêtre
-TryExec=terminator
-Exec=terminator
-Icon=terminator
-Type=Application
-Categories=GNOME;GTK;Utility;TerminalEmulator;
-StartupNotify=true
-X-Ubuntu-Gettext-Domain=terminator
-X-XFCE-Source=file:///usr/share/applications/terminator.desktop
-EOF
+ln -s /usr/share/applications/geany.desktop /etc/skel/.config/xfce4/panel/launcher-7/geany.desktop
 
+mkdir -p /etc/skel/.config/xfce4/panel/launcher-8
+ln -s /usr/share/applications/qalculate-gtk.desktop /etc/skel/.config/xfce4/panel/launcher-8/qalculate.desktop
+
+mkdir -p /etc/skel/.config/xfce4/panel/launcher-9
+ln -s /usr/share/applications/terminator.desktop /etc/skel/.config/xfce4/panel/launcher-9/terminator.desktop
 
 mkdir -p /etc/skel/.config/xfce4/panel/launcher-14
-cat > /etc/skel/.config/xfce4/panel/launcher-14/firefox.desktop << "EOF"
-[Desktop Entry]
-Encoding=UTF-8
-Name=Firefox
-Name[fr]=Firefox
-Comment=Browse the World Wide Web
-Comment[fr]=Navigue sur Internet
-GenericName=Web Browser
-GenericName[fr]=Navigateur Web
-X-GNOME-FullName=Firefox Web Browser
-X-GNOME-FullName[fr]=Navigateur Web Firefox
-Exec=firefox %u
-Terminal=false
-X-MultipleArgs=false
-Type=Application
-Icon=firefox
-Categories=Network;WebBrowser;
-MimeType=text/html;text/xml;application/xhtml+xml;application/xml;application/vnd.mozilla.xul+xml;application/rss+xml;application/rdf+xml;image/gif;image/jpeg;image/png;x-scheme-handler/http;x-scheme-handler/https;
-StartupWMClass=Firefox
-StartupNotify=true
-X-XFCE-Source=file:///usr/share/applications/firefox.desktop
-EOF
+ln -s /usr/share/applications/firefox.desktop /etc/skel/.config/xfce4/panel/launcher-14/firefox.desktop
 
 #shortcuts
 FILE=/etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xfce4-keyboard-shortcuts.xml
