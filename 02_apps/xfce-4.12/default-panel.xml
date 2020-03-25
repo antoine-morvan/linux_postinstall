@@ -23,9 +23,7 @@
         <value type="int" value="14"/> <!-- launcher: iceweasel -->
         <value type="int" value="19"/> <!-- launcher: chromium -->
         <value type="int" value="16"/> <!-- launcher: skype -->
-        <value type="int" value="17"/> <!-- launcher: pidgin -->
         <value type="int" value="20"/> <!-- launcher: steam -->
-        <value type="int" value="21"/> <!-- launcher: PlayonLinux -->
         <value type="int" value="22"/> <!-- launcher: DeadBeef -->
         <value type="int" value="2"/> <!-- launcher: vlc -->
         <value type="int" value="23"/> <!-- launcher: virtualbox -->
@@ -114,11 +112,6 @@
         <value type="string" value="skypeforlinux.desktop"/>
       </property>
     </property>
-    <property name="plugin-17" type="string" value="launcher">
-      <property name="items" type="array">
-        <value type="string" value="pidgin.desktop"/>
-      </property>
-    </property>
     <property name="plugin-18" type="string" value="launcher">
       <property name="items" type="array">
         <value type="string" value="icedove.desktop"/>
@@ -137,11 +130,6 @@
     <property name="plugin-22" type="string" value="launcher">
       <property name="items" type="array">
         <value type="string" value="deadbeef.desktop"/>
-      </property>
-    </property>
-    <property name="plugin-21" type="string" value="launcher">
-      <property name="items" type="array">
-        <value type="string" value="PlayOnLinux.desktop"/>
       </property>
     </property>
     <property name="plugin-2" type="string" value="launcher">
