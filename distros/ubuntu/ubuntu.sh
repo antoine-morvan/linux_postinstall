@@ -97,18 +97,18 @@ PACKS="htop geany bwm-ng qalculate-gtk filezilla vlc apt-file autotools-dev m4 l
 
 
 #install various tools
-apt -y install $PACKS
+apt install -y --no-install-recommends $PACKS
 
 if [ "$FASTSETUP" != "YES" ]; then
   EXTRAPACKS=" mercurial lynx audacity keepassx thunderbird ghc clang playonlinux xfburn deluge libreoffice gimp inkscape calibre acetoneiso latex2rtf lyx texmaker pstotext texlive-full pandoc texstudio golang maven gradle openjfx openjfx-source jabref handbrake owncloud-client"
-  apt -y install $EXTRAPACKS
+  apt install -y --no-install-recommends $EXTRAPACKS
 fi
 
 apt-file update
 
 #install packages that require user action (i.e. license) at the end
 if [ "$FASTSETUP" != "YES" ]; then
-  apt -y install wireshark-gtk steam davfs2 wine-stable
+  apt install -y --no-install-recommends wireshark-gtk steam davfs2 wine-stable
 fi
 
 
