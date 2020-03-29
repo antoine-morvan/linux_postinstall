@@ -11,7 +11,7 @@ FASTSETUP=NO
 [ `whoami` != root ] && echo "should run as sudo" && exit 1
 
 
-USR=${SUDO_USER}
+export USR=${SUDO_USER}
 
 
 #configure proxy for installation...
