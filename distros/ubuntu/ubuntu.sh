@@ -8,7 +8,10 @@ FASTSETUP=NO
 ### instantané 1
 ###
 
-[ `whoami` != root ] && echo "should run as root" && exit 1
+[ `whoami` != root ] && echo "should run as sudo" && exit 1
+
+
+USR=${SUDO_USER}
 
 
 #configure proxy for installation...
@@ -131,14 +134,6 @@ fi
 
 echo ""
 echo ""
-echo ""
-echo " Installed users :"
-echo ""
-ls -ilh /home/
-echo ""
-
-RESUSR=1
-while [ $RESUSR != 0 ]; do read -p "user to config : " USR; bash -c "id $USR > /dev/null"; RESUSR=$?; done
 
 cp -R `find /etc/skel -mindepth 1 -maxdepth 1` /home/$USR/
 chown -R $USR:$USR /home/$USR
