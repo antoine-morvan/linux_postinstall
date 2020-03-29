@@ -90,7 +90,7 @@ chmod +x /usr/local/bin/gitstorecredential-10h
 
 
 #remove amazon app. FFS
-apt-get -y remove unity-webapps-common
+apt-get -y remove unity-webapps-common gdm3
 
 #ttf-mscorefonts
 PACKS="htop geany bwm-ng qalculate-gtk filezilla vlc apt-file autotools-dev m4 libtool automake autoconf intltool wget bash net-tools zsh samba cifs-utils lshw libtool p7zip htop nethogs iotop parted emacs zip unzip curl fakeroot alsa-utils linux-tools-generic fuse cmake pkg-config python git screen nmap bzip2 sharutils rsync subversion ttf-dejavu tsocks exfat-utils sshfs ntp dtach tmux ntfs-3g subversion sdparm hdparm dnsutils traceroute lzip tree cups ghostscript dosfstools intltool netcat cabextract bwm-ng markdown cloc arj unar unace tig lhasa openvpn dvtm libomp5 byobu rar vim iptables pidgin xterm rxvt-unicode lightdm lightdm-gtk-greeter terminator pulseaudio pavucontrol paprefs mate-themes xfce4 xfce4-goodies xfce4-session xfce4-settings xfwm4 xfwm4-themes xfconf thunar numlockx pinta ruby imagemagick iptraf-ng arandr elementary-icon-theme gnome-keyring seahorse python-setuptools tlp bash-completion lsb-release smartmontools graphviz gparted filezilla faac libboost-all-dev dbus icoutils zenity hexchat gitg xdot  filelight gdmap qt5-default youtube-dl pasystray pavumeter xprintidle firefox update-manager system-config-printer-common nscd "
