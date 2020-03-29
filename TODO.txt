@@ -1,8 +1,6 @@
 
 ##### reporté ds le script, à valider
 
-[ubuntu] racourcis steam
-[UBUNTU] Set default background
 
 ##### fait, à reporter dans le script de postinstall
 
@@ -29,3 +27,6 @@ ajouter mkvtoolnix & mkvextract (ubuntu)
 [ubuntu] full unattended install
 [ubuntu] steam/wine specif scripts
 [UBUNTU] verif launcher chrome
+[ubuntu] racourcis steam
+[UBUNTU] Set default background
+
