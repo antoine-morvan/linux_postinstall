@@ -169,7 +169,7 @@ mkdir -p /etc/skel/.config/xfce4/panel/launcher-14
 ln -s /usr/share/applications/firefox.desktop /etc/skel/.config/xfce4/panel/launcher-14/firefox.desktop
 
 mkdir -p /etc/skel/.config/xfce4/panel/launcher-19
-ln -s /usr/share/applications/google-chrome.desktop /etc/skel/.config/xfce4/panel/launcher-19/google-chrome.desktop
+ln -s /usr/share/applications/chromium-browser.desktop /etc/skel/.config/xfce4/panel/launcher-19/chromium.desktop
 
 #shortcuts
 FILE=/etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xfce4-keyboard-shortcuts.xml
