@@ -1,6 +1,4 @@
 
-FUCKING BACKUP
-
 ##### reporté ds le script, à valider
 
 drivers video intel
@@ -9,112 +7,20 @@ drivers video intel
 
 ##### solution easy, todo
 
-ajouter la directive suivante dans mpd.conf : audio_output_format "44100:16:2"
+[UBUNTU] verif launcher chrome
+[UBUNTU] Install docker (https://docs.docker.com/install/linux/docker-ce/ubuntu/)
+[UBUNTU] Install docker-compose (via pip3)
+[UBUNTU] Set user in docker group
+[UBUNTU] Auto select user (end of main script)
+[UBUNTU] Desactiver HDDTemp
+[UBUNTU] Set default background
 
 ##### à trouver une solution
-
-utiliser aurman à la place de yaourt ..........
 
 utiliser blkid pour détecter les differents types de volumes ...
  - blkid -t TYPE=crypto_LUKS
 
-arch:
-  - hostnamectl set-hostname $hostname
-  - sensors-detect --auto
-  -> pb sonar ?
-
 ajouter mkvtoolnix & mkvextract (ubuntu)
-ajouter kotlin + xcore + marketplace dans eclipse
-ajouter eclipse sdk dans l'install eclipse
- + visual vm (binary + IDE plugin https://visualvm.github.io/idesupport.html)
- + https://marketplace.eclipse.org/content/markdown-text-editor
-
-autossh + http://proxychains.sourceforge.net/
-vsync @ intel IGP
-systeme de backup => backintime
-	tester backintime (en cli avec autoconf? voir ce que génère la GUI)
-	vérif la config automatique
-	trouver client gtk?
-gen-eclipse
-	-	install PTP
-	-	config easyshell
-	-	vue par défaut : java
-	-	splitter en plusieurs scripts ?
-	-	./eclipse -nosplash -application org.eclipse.equinox.p2.director -h
-check conky config (HDDs) avec une installation depuis USB et/ou gros partitionage crypté (arch+deb?)
 
 ##### done & validated #####
-
-config apt ubuntu (activer tous les dépots, désactiver les maj auto)
-Fix deadbeef setup for ubuntu
-	deadbeef@ubuntu : bug filebrowser ?
-ajouter la derniere version de skype pour ubuntu (deb [arch=amd64] https://repo.skype.com/deb stable main)
-utiliser les depots vbox sur ubuntu:
-  wget -q -O- http://download.virtualbox.org/virtualbox/debian/oracle_vbox_2016.asc | sudo apt-key add -
-  echo "deb http://download.virtualbox.org/virtualbox/debian $(lsb_release -sc) contrib" | sudo tee /etc/apt/sources.list.d/virtualbox.list
-config skype (dark theme, pas de son de notif, fermer = systray, ...)
-verifier la maj du bug avec dvtm
-Fix keyboard layout : config déplacée dans xfce
-Fix touchpad sensibility on x230 => update /etc/X11/xorg.conf.d/50-synaptics.conf
-Fix touchpad timeout => config de xfce modifiée
-ajouter cron + auto startup
-configurer linux pour pas freeze sur les grosses copies
-pb driver NVidia => désactiver le check de la version de GCC lors de la construction des modules DKMS
-check bug de la sortie de lockscreen: clavier inutilisable => désactiver la 2eme instance de xscreensaver
-check bug detection grub (kernel hooks) une fois sur 2  => à cause du dd
-pourquoi les nouveaux terminators se retrouvent derriere? => désactiver serveur DBUS
-mettre le bon clavier sur XFCE
-activer la synchro verticale sur la lecture video avec intel (et les autres cartes)
-ajouter gen-eclipse
-virer les retry_log qui sont un peu partout ...
-ajouter un système pour vérifier que la partoche /boot a pas été modfiée depuis le dernier boot
-essayer theme numix sur lightdm
-désactiver la lecture des températures des HDDS ........
- => virer hddtemp des sudoers
-vérifier les raccourcis sur xfce / quicktile / deadbeef (conflit volume xfce/deadbeef?)
-mise en veille prolongée
-llvm sur arch en crypted
-ajouter deadbeef + plugins + conf !
-wicd always select wired connectin when possible !!
-ajouter icone deadbeef
-ajouter des lignes dans conky popur la memoire 
-trouver pourquoi les dossiers Bureau/Musique/Public sont pas créé en mode test
-remettre multiload-ng dans la barre des taches comme il faut ...
-https://wiki.archlinux.org/index.php/Skype#Skype_sounds_stops_media_player_or_other_sound_sources
-@arch: setup printer : https://wiki.archlinux.org/index.php/CUPS
-désactiver le touchpad pendant la saisie
-owncloud + client
-ajouter qt dans l'install (vbox est en dep dessus sur arch)
-texlive-most (et autres meta packets?)
-gdmap et/ou filelight
-pandoc ? (outil pour exporter vers HTML/MD à partir de latex)
-ajouter texstudio gsmartcontrol
-ajouter dosfstols sur arch pour avoir le support du fat
-pacgraph ghc
-éditeurs graphml yed + gephi
-ajouter les extensions virtualbox (virtualbox-ext-*)
-trouver un autre visualiseur git => tig
-xfce multiload-ng-plugin !!!!!!!!!!!
-configurer xfce multiload
-Fonts @ arch ?
-chrome pepper flash ???
-gestion de l'alimentation : https://wiki.archlinux.org/index.php/Power_management#ACPI_events
-gestion des archives dans xfce thunar + ajout du support des formats
-scrollback infini sur terminator
-changer de version d'evince => evince2
-ajouter gitstorecredential-10h
-tree .......
-ajout de toutes les JVMs
-dropbox
-archey  alsi
-$EDITOR=vim
-déplacer les dossiers par défaut XDG
-raccourcis whiskermenu alt win
-trouver pourquoi les mots de passe ne sont pas enregistrés sous archlinux
-utiliser un kernel custom?
-désactiver l'icone systray pour la battery
-check les services activés ... 	dkms / lmsensors / cupsd & cupsbrower	
-tlp & cie
-utiliser veracrypt au lieu de truecrypt? => les 2 !
-monter /tmp sur un HDD et pas en RAM (ou config plus intéressante)
 
