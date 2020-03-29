@@ -1,14 +1,14 @@
 
 ##### reporté ds le script, à valider
 
-[UBUNTU] verif launcher chrome
+[ubuntu] racourcis steam
+[UBUNTU] Set default background
 
 ##### fait, à reporter dans le script de postinstall
 
 
 ##### solution easy, todo
 
-[UBUNTU] Set default background
 
 ##### à trouver une solution
 
@@ -28,3 +28,4 @@ ajouter mkvtoolnix & mkvextract (ubuntu)
 [UBUNTU] Set user in docker group
 [ubuntu] full unattended install
 [ubuntu] steam/wine specif scripts
+[UBUNTU] verif launcher chrome
