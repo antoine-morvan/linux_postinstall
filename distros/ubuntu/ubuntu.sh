@@ -133,6 +133,8 @@ dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/skype/ubuntu.sh
 
 if [ "$FASTSETUP" != "YES" ]; then
   dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/virtualbox/ubuntu.sh
+  dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/steam/ubuntu.sh
+  dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/wine/ubuntu.sh
 fi
 
 
