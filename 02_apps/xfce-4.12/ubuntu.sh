@@ -171,6 +171,9 @@ ln -s /usr/share/applications/firefox.desktop /etc/skel/.config/xfce4/panel/laun
 mkdir -p /etc/skel/.config/xfce4/panel/launcher-19
 ln -s /usr/share/applications/chromium-browser.desktop /etc/skel/.config/xfce4/panel/launcher-19/chromium.desktop
 
+mkdir -p /etc/skel/.config/xfce4/panel/launcher-20
+ln -s /usr/share/applications/steam.desktop /etc/skel/.config/xfce4/panel/launcher-19/steam.desktop
+
 #shortcuts
 FILE=/etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xfce4-keyboard-shortcuts.xml
 [ -e $FILE ] && mv $FILE $FILE.bk

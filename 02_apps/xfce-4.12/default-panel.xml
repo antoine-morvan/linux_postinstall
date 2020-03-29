@@ -13,11 +13,11 @@
         <value type="int" value="1"/> <!-- windows menu -->
         <value type="int" value="91"/> <!-- whisker menu -->
         <!-- <value type="int" value="2"/> --> <!-- applications menu -->
-		
+
         <value type="int" value="7"/> <!-- launcher: geany -->
         <value type="int" value="8"/> <!-- launcher: qalculate -->
         <value type="int" value="9"/> <!-- launcher: terminator -->
-		
+
         <value type="int" value="15"/> <!-- launcher: filezilla -->
         <value type="int" value="18"/> <!-- launcher: icedove -->
         <value type="int" value="14"/> <!-- launcher: iceweasel -->
@@ -27,14 +27,14 @@
         <value type="int" value="22"/> <!-- launcher: DeadBeef -->
         <value type="int" value="2"/> <!-- launcher: vlc -->
         <value type="int" value="23"/> <!-- launcher: virtualbox -->
-		
+
         <value type="int" value="3"/> <!-- task bar -->
         <value type="int" value="4"/> <!-- separator -->
 
         <value type="int" value="92"/> <!-- multiload ng -->
         <value type="int" value="93"/> <!-- xfsensor -->
         <value type="int" value="94"/> <!-- battery -->
-	
+
         <value type="int" value="5"/> <!-- systray -->
         <value type="int" value="10"/> <!-- pager (desktops) -->
         <value type="int" value="11"/> <!-- weather -->
@@ -124,7 +124,7 @@
     </property>
     <property name="plugin-20" type="string" value="launcher">
       <property name="items" type="array">
-        <value type="string" value="steam-wrapper.desktop"/>
+        <value type="string" value="steam.desktop"/>
       </property>
     </property>
     <property name="plugin-22" type="string" value="launcher">
@@ -145,6 +145,6 @@
 	<property name="plugin-91" type="string" value="whiskermenu"/>
 	<property name="plugin-92" type="string" value="multiload-ng-xfce4"/>
 	<property name="plugin-93" type="string" value="xfce4-sensors-plugin"/>
-	<property name="plugin-94" type="string" value="battery"/>		
+	<property name="plugin-94" type="string" value="battery"/>
   </property>
 </channel>
