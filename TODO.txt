@@ -1,20 +1,20 @@
 
 ##### reporté ds le script, à valider
 
-[UBUNTU] verif launcher chrome
-[UBUNTU] Desactiver HDDTemp
 
-[UBUNTU] Virer GDM3 & ubuntu desktop
-[UBUNTU] Auto select user (end of main script)
+[Ubuntu] virer desktop ubuntu
+
+[UBUNTU] Install docker (https://docs.docker.com/install/linux/docker-ce/ubuntu/)
+[UBUNTU] Install docker-compose (via pip3)
+[UBUNTU] Set user in docker group
 
 ##### fait, à reporter dans le script de postinstall
 
 
 ##### solution easy, todo
 
-[UBUNTU] Install docker (https://docs.docker.com/install/linux/docker-ce/ubuntu/)
-[UBUNTU] Install docker-compose (via pip3)
-[UBUNTU] Set user in docker group
+[UBUNTU] verif launcher chrome
+
 
 [UBUNTU] Set default background
 
@@ -27,3 +27,6 @@ ajouter mkvtoolnix & mkvextract (ubuntu)
 
 ##### done & validated #####
 
+[UBUNTU] Desactiver HDDTemp
+[UBUNTU] Virer GDM3 & ubuntu desktop
+[UBUNTU] Auto select user (end of main script)
