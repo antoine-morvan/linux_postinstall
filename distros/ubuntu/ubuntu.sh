@@ -90,24 +90,25 @@ chmod +x /usr/local/bin/gitstorecredential-10h
 
 
 #remove amazon app. FFS
-apt-get -y remove unity-webapps-common gdm3
+apt -y remove unity-webapps-common gdm3
 
 #ttf-mscorefonts
 PACKS="htop geany bwm-ng qalculate-gtk filezilla vlc apt-file autotools-dev m4 libtool automake autoconf intltool wget bash net-tools zsh samba cifs-utils lshw libtool p7zip htop nethogs iotop parted emacs zip unzip curl fakeroot alsa-utils linux-tools-generic fuse cmake pkg-config python git screen nmap bzip2 sharutils rsync subversion ttf-dejavu tsocks exfat-utils sshfs ntp dtach tmux ntfs-3g subversion sdparm hdparm dnsutils traceroute lzip tree cups ghostscript dosfstools intltool netcat cabextract bwm-ng markdown cloc arj unar unace tig lhasa openvpn dvtm libomp5 byobu rar vim iptables pidgin xterm rxvt-unicode lightdm lightdm-gtk-greeter terminator pulseaudio pavucontrol paprefs mate-themes xfce4 xfce4-goodies xfce4-session xfce4-settings xfwm4 xfwm4-themes xfconf thunar numlockx pinta ruby imagemagick iptraf-ng arandr elementary-icon-theme gnome-keyring seahorse python-setuptools tlp bash-completion lsb-release smartmontools graphviz gparted filezilla faac libboost-all-dev dbus icoutils zenity hexchat gitg xdot  filelight gdmap qt5-default youtube-dl pasystray pavumeter xprintidle firefox update-manager system-config-printer-common nscd "
 
-if [ "$FASTSETUP" != "YES" ]; then
-  EXTRAPACKS=" mercurial lynx audacity keepassx thunderbird ghc clang playonlinux xfburn deluge libreoffice gimp inkscape calibre acetoneiso latex2rtf lyx texmaker pstotext texlive-full pandoc texstudio golang maven gradle openjfx openjfx-source jabref handbrake owncloud-client"
-  PACKS+=$EXTRAPACKS
-fi
 
 #install various tools
-apt-get -y install $PACKS
+apt -y install $PACKS
+
+if [ "$FASTSETUP" != "YES" ]; then
+  EXTRAPACKS=" mercurial lynx audacity keepassx thunderbird ghc clang playonlinux xfburn deluge libreoffice gimp inkscape calibre acetoneiso latex2rtf lyx texmaker pstotext texlive-full pandoc texstudio golang maven gradle openjfx openjfx-source jabref handbrake owncloud-client"
+  apt -y install $EXTRAPACKS
+fi
 
 apt-file update
 
 #install packages that require user action (i.e. license) at the end
 if [ "$FASTSETUP" != "YES" ]; then
-  apt-get -y install wireshark-gtk steam davfs2 wine-stable
+  apt -y install wireshark-gtk steam davfs2 wine-stable
 fi
 
 
