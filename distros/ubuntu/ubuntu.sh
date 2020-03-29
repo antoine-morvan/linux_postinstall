@@ -99,7 +99,7 @@ PACKS="htop geany bwm-ng qalculate-gtk filezilla vlc apt-file autotools-dev m4 l
 apt install -y --no-install-recommends $PACKS
 
 if [ "$FASTSETUP" != "YES" ]; then
-  EXTRAPACKS=" mercurial lynx audacity keepassx thunderbird ghc clang playonlinux xfburn deluge libreoffice gimp inkscape calibre acetoneiso latex2rtf lyx texmaker pstotext texlive-full pandoc texstudio golang maven gradle openjfx openjfx-source jabref handbrake owncloud-client"
+  EXTRAPACKS=" mercurial lynx audacity keepassx thunderbird ghc clang playonlinux xfburn deluge libreoffice gimp inkscape calibre acetoneiso latex2rtf lyx texmaker pstotext texlive-full pandoc texstudio golang maven gradle openjfx openjfx-source jabref handbrake owncloud-client "
   apt install -y --no-install-recommends $EXTRAPACKS
 fi
 
@@ -108,7 +108,8 @@ apt-file update
 
 #install packages that require user action (i.e. license) at the end
 if [ "$FASTSETUP" != "YES" ]; then
-  apt install -y --no-install-recommends wireshark-gtk steam davfs2 wine-stable
+  export DEBIAN_FRONTEND=noninteractive
+  apt install -y --no-install-recommends -q -o Dpkg::Options::="--force-confdef" wireshark-gtk davfs2
 fi
 
 
