@@ -121,6 +121,7 @@ dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/geany/ubuntu.sh
 dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/conky/ubuntu.sh
 dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/quicktile/ubuntu.sh
 dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/truecrypt/ubuntu.sh
+dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/chrome/ubuntu.sh
 
 dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/gen-eclipse/ubuntu.sh
 #dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/purple-plugins/ubuntu.sh
