@@ -10,7 +10,7 @@ source ubuntu_func.sh
 upgrade 
 install_packs librsvg2-bin byobu xfce4 xfce4-goodies libgtk2.0-dev pasystray qalculate-gtk xscreensaver \
 	murrine-themes gtk2-engines-murrine community-themes libxfce4ui-1-dev xfce4-panel-dev libxfce4util-dev \
-	git checkinstall hddtemp lightdm-gtk-greeter
+	git checkinstall lightdm-gtk-greeter
 
 #install multiload ng for xfce
 git clone https://github.com/udda/multiload-ng.git multiload
@@ -24,10 +24,6 @@ git clone https://github.com/udda/multiload-ng.git multiload
 	dpkg -i multiload-ng*.deb
 )
 rm -rf multiload
-
-chmod u+s /usr/sbin/hddtemp
-systemctl enable hddtemp
-
 
 echo ""
 echo "** Config XFCE 4.12"

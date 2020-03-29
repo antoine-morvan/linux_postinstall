@@ -7,12 +7,11 @@ drivers video intel
 
 ##### solution easy, todo
 
+[UBUNTU] Auto select user (end of main script)
 [UBUNTU] verif launcher chrome
 [UBUNTU] Install docker (https://docs.docker.com/install/linux/docker-ce/ubuntu/)
 [UBUNTU] Install docker-compose (via pip3)
 [UBUNTU] Set user in docker group
-[UBUNTU] Auto select user (end of main script)
-[UBUNTU] Desactiver HDDTemp
 [UBUNTU] Set default background
 
 ##### à trouver une solution
