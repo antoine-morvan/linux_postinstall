@@ -1,17 +1,21 @@
 
 ##### reporté ds le script, à valider
 
-drivers video intel
+[UBUNTU] verif launcher chrome
+[UBUNTU] Desactiver HDDTemp
+
+[UBUNTU] Virer GDM3 & ubuntu desktop
+[UBUNTU] Auto select user (end of main script)
 
 ##### fait, à reporter dans le script de postinstall
 
+
 ##### solution easy, todo
 
-[UBUNTU] Auto select user (end of main script)
-[UBUNTU] verif launcher chrome
 [UBUNTU] Install docker (https://docs.docker.com/install/linux/docker-ce/ubuntu/)
 [UBUNTU] Install docker-compose (via pip3)
 [UBUNTU] Set user in docker group
+
 [UBUNTU] Set default background
 
 ##### à trouver une solution
