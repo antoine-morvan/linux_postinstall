@@ -1,12 +1,8 @@
 
 ##### reporté ds le script, à valider
 
-
-[Ubuntu] virer desktop ubuntu
-
-[UBUNTU] Install docker (https://docs.docker.com/install/linux/docker-ce/ubuntu/)
-[UBUNTU] Install docker-compose (via pip3)
-[UBUNTU] Set user in docker group
+[ubuntu] move popup packages at begning
+[ubuntu] steam/wine specif scripts
 
 ##### fait, à reporter dans le script de postinstall
 
@@ -14,7 +10,6 @@
 ##### solution easy, todo
 
 [UBUNTU] verif launcher chrome
-
 
 [UBUNTU] Set default background
 
@@ -30,3 +25,9 @@ ajouter mkvtoolnix & mkvextract (ubuntu)
 [UBUNTU] Desactiver HDDTemp
 [UBUNTU] Virer GDM3 & ubuntu desktop
 [UBUNTU] Auto select user (end of main script)
+
+
+[Ubuntu] virer desktop ubuntu
+[UBUNTU] Install docker (https://docs.docker.com/install/linux/docker-ce/ubuntu/)
+[UBUNTU] Install docker-compose (via pip3)
+[UBUNTU] Set user in docker group
