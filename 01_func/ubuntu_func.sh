@@ -34,17 +34,19 @@ function upgrade {
 	apt-get -y autoremove
 	apt-get -y clean
 }
+
 function install_packs {
+    export DEBIAN_FRONTEND=noninteractive
 	PACKS=$@
 	echo "   Installing packages [$PACKS]"
 	[ "$PACKS" == "" ] && echo "Warning : package list is empty" && return
 	if [ "$ENABLE_PAUSE" == "YES" ]; then
 		for package in $PACKS; do
 			#pause "pacman --noconfirm -S $package"
-			retry "apt-get -y install $package"
+			retry "apt-get install -y -q -o Dpkg::Options::=\"--force-confdef\" $package"
 		done
 	else 
-		retry "apt-get -y install $PACKS"
+		retry "apt-get install -y -q -o Dpkg::Options::=\"--force-confdef\" $PACKS"
 	fi
 }
 
