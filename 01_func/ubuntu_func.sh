@@ -7,14 +7,14 @@ function retry {
 	LOGCNT=$((LOGCNT+1))
 	LOGFILE="retry_mainlog_$LOGCNT.log"
 	MSG="Error executing '$1', logging in '$LOGFILE'. Retrying in 5s."
-	$1 >> $LOGFILE 2>> $LOGFILE
+	/bin/bash -c "$1" >> $LOGFILE 2>> $LOGFILE
 	while [ "$?" != "0" ]; do
 		echo $MSG
 		sleep 5
     LOGCNT=$((LOGCNT+1))
 		LOGFILE="retry_mainlog_$LOGCNT.log"
 		MSG="Error executing '$1', logging in '$LOGFILE'. Retrying in 5s."
-		$1 >> $LOGFILE 2>> $LOGFILE
+		/bin/bash -c "$1" >> $LOGFILE 2>> $LOGFILE
 	done
 }
 
