@@ -139,7 +139,7 @@ chown -R $USR:$USR /home/$USR
 
 
 #clean
-apt -y remove unity-webapps-common gdm3 ubuntu-session
+apt autoremove -y --purge unity-webapps-common gdm3 ubuntu-session xwayland hddtemp
 rm -f retry_* ubuntu_func.sh
 reboot
 exit 0
