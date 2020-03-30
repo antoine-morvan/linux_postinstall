@@ -10,6 +10,9 @@
 
 ##### à trouver une solution
 
+
+[UBUNTU] virer la notif HDDTemp ...
+
 utiliser blkid pour détecter les differents types de volumes ...
  - blkid -t TYPE=crypto_LUKS
 
