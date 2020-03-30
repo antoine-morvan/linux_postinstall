@@ -127,6 +127,7 @@ dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/gen-eclipse/ubuntu.sh
 #dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/purple-plugins/ubuntu.sh
 
 dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/docker/ubuntu.sh
+dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/codium/ubuntu.sh
 
 dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/deadbeef/ubuntu.sh
 dl_and_execute ${SETUP_SCRIPT_LOCATION}/02_apps/skype/ubuntu.sh
