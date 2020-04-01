@@ -11,6 +11,7 @@
 ##### à trouver une solution
 
 
+[UBUNTU] ajouter signal: https://signal.org/fr/download/
 [UBUNTU] virer la notif HDDTemp ...
 
 utiliser blkid pour détecter les differents types de volumes ...
