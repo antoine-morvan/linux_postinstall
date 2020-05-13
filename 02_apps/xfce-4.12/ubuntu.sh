@@ -237,6 +237,7 @@ image/gif=pinta.desktop
 
 EOF
 
+gtk-update-icon-cache /usr/share/icons/elementaryXubuntu-dark/
 
 ############################################
 #################  END  ####################
