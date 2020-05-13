@@ -8,8 +8,14 @@ export SETUP_SCRIPT_LOCATION=https://raw.githubusercontent.com/antoine-morvan/li
 source ubuntu_func.sh
 
 
+CODENAME=$(lsb_release -cs)
+# temporary fix until virtualbox releases focal repo
+if [ "$CODENAME" == "focal" ]; then
+    CODENAME="eoan"
+fi
+
 mkdir -p /etc/apt/sources.list.d/
-echo "deb http://download.virtualbox.org/virtualbox/debian $(lsb_release -sc) contrib" | tee /etc/apt/sources.list.d/virtualbox.list
+echo "deb http://download.virtualbox.org/virtualbox/debian $CODENAME contrib" | tee /etc/apt/sources.list.d/virtualbox.list
 wget -q -O- http://download.virtualbox.org/virtualbox/debian/oracle_vbox_2016.asc | sudo apt-key add -
 
 upgrade
