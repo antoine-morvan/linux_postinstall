@@ -7,26 +7,31 @@ export SETUP_SCRIPT_LOCATION=https://raw.githubusercontent.com/antoine-morvan/li
 [ ! -e ubuntu_func.sh ] &&  wget -q ${SETUP_SCRIPT_LOCATION}/01_func/ubuntu_func.sh -O ubuntu_func.sh
 source ubuntu_func.sh
 
+
+
+
+
+add-apt-repository ppa:alex-p/deadbeef
+
+upgrade
+
+
 #install dep
-apt-get -y install libpango1.0-0 libpangox-1.0-0
-
-VERSION=0.7.2-2
-
-ARCH=i386
-[ `uname -m` == x86_64 ] && ARCH=amd64
-wget https://downloads.sourceforge.net/project/deadbeef/debian/deadbeef-static_${VERSION}_${ARCH}.deb -O /tmp/deadbeef-static_${VERSION}_${ARCH}.deb
-dpkg -i /tmp/deadbeef-static_${VERSION}_${ARCH}.deb
-rm /tmp/deadbeef-static_${VERSION}_${ARCH}.deb
-
-#filebrowser plugin
-wget https://downloads.sourceforge.net/project/deadbeef/plugins/`uname -m`/ddb_filebrowser-1562809-`uname -m`.zip -O /tmp/ddb_filebrowser-1562809-`uname -m`.zip
-unzip -x /tmp/ddb_filebrowser-1562809-x86_64.zip -d /tmp/filebrowser/
-mv /tmp/filebrowser/plugins/ddb_misc_filebrowser_GTK2.so /opt/deadbeef/lib/deadbeef/
-rm -rf /tmp/ddb_filebrowser-1562809-x86_64.zip /tmp/filebrowser/
-
+apt-get -y deadbeef
 
 mkdir -p /etc/skel/.config/deadbeef/
 retry "wget -q -O /etc/skel/.config/deadbeef/config ${SETUP_SCRIPT_LOCATION}/02_apps/deadbeef/config"
+
+
+
+exit
+
+#filebrowser plugin -> broken
+wget https://downloads.sourceforge.net/project/deadbeef/plugins/x86_64/ddb_filebrowser-355e614-linux-x86_64.zip -O /tmp/ddb_filebrowser.zip
+unzip -x /tmp/ddb_filebrowser.zip -d /tmp/filebrowser/
+mv /tmp/filebrowser/plugins/*.so /usr/lib/x86_64-linux-gnu/deadbeef/
+rm -rf /tmp/ddb_filebrowser.zip /tmp/filebrowser/
+
 
 #add file browser plugin
 #wget ${SETUP_SCRIPT_LOCATION}/02_apps/deadbeef/ddb_misc_filebrowser_GTK2.so -O /usr/lib/deadbeef/ddb_misc_filebrowser_GTK2.so
