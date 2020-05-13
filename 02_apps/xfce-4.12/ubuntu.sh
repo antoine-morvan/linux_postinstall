@@ -10,7 +10,7 @@ source ubuntu_func.sh
 upgrade 
 install_packs librsvg2-bin byobu xfce4 xfce4-goodies libgtk2.0-dev pasystray qalculate-gtk xscreensaver \
 	murrine-themes gtk2-engines-murrine libxfce4ui-1-dev xfce4-panel-dev libxfce4util-dev \
-	git checkinstall lightdm-gtk-greeter
+	git checkinstall lightdm-gtk-greeter xubuntu-wallpapers xubuntu-icon-theme xubuntu-artwork
 # missing in ubuntu 20.04: community-themes
 
 
@@ -140,6 +140,9 @@ retry "wget -q -O ${FILE} ${SETUP_SCRIPT_LOCATION}/02_apps/xfce-4.12/panel/xfce4
 FILE=/etc/skel/.config/xfce4/panel/whiskermenu-91.rc
 [ -e $FILE ] && mv $FILE $FILE.bk
 retry "wget -q -O ${FILE} ${SETUP_SCRIPT_LOCATION}/02_apps/xfce-4.12/panel/whiskermenu-91.rc"
+
+sed -i 's/button-icon=archlinux-icon-crystal/button-icon=ubuntu-logo-icon/g' $FILE
+
 
 FILE=/etc/skel/.config/xfce4/panel/multiload-ng-xfce4-92.rc
 [ -e $FILE ] && mv $FILE $FILE.bk
