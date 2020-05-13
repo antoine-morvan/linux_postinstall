@@ -14,7 +14,7 @@ curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
 
 CODENAME=$(lsb_release -cs)
 # temporary fix until docker releases focal repo
-if [ $"CODENAME" == "focal" ]; then
+if [ "$CODENAME" == "focal" ]; then
     CODENAME="eoan"
 fi
 
