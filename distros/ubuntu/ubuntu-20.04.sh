@@ -18,7 +18,7 @@ export USR=${SUDO_USER}
 #test if local server is present
 #export SETUP_SCRIPT_LOCATION=http://koub.org/files/linux/
 export SETUP_SCRIPT_LOCATION=https://raw.githubusercontent.com/antoine-morvan/linux_postinstall/master/
-export ENABLE_PAUSE=NO
+export ENABLE_PAUSE=YES
 export LOGCNT=0
 
 apt-get update
@@ -102,6 +102,7 @@ fi
 
 apt-file update
 
+pause "Press enter to install dedicated software"
 
 ###
 
