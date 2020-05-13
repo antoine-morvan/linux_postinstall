@@ -9,7 +9,6 @@ source ubuntu_func.sh
 
 #install dep
 
-apt remove -y docker docker-engine docker.io containerd runc
 
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
 
@@ -26,6 +25,7 @@ add-apt-repository \
 
 apt update
 
+apt remove -y docker docker-engine docker.io containerd runc
 apt install -y docker-ce docker-ce-cli containerd.io
 
 pip3 install docker-compose
