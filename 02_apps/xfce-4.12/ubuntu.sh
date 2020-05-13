@@ -9,8 +9,9 @@ source ubuntu_func.sh
 
 upgrade 
 install_packs librsvg2-bin byobu xfce4 xfce4-goodies libgtk2.0-dev pasystray qalculate-gtk xscreensaver \
-	murrine-themes gtk2-engines-murrine community-themes libxfce4ui-1-dev xfce4-panel-dev libxfce4util-dev \
+	murrine-themes gtk2-engines-murrine libxfce4ui-1-dev xfce4-panel-dev libxfce4util-dev \
 	git checkinstall lightdm-gtk-greeter
+# missing in ubuntu 20.04: community-themes
 
 
 #install multiload ng for xfce
