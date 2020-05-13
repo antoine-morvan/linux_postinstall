@@ -52,7 +52,7 @@ if [ "$FOUND_VBOX" != "0" ]; then
 	echo "Found VirtualBox"
 	#explicit replacement of wayland with xorg beforehand
 	#apt-get -y install xserver-xorg xserver-xorg-video-all
-	#apt-get -y install virtualbox-guest-dkms virtualbox-guest-x11
+	apt-get -y install virtualbox-guest-dkms virtualbox-guest-x11
 	echo "Skipped VirtualBox Guest"
 else
 	echo "VirtualBox not found"
