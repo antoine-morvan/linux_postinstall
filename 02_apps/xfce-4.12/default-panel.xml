@@ -41,7 +41,7 @@
         <value type="int" value="12"/> <!-- clock (orage) -->
         <value type="int" value="13"/> <!-- logout (actions) -->
       </property>
-      <property name="background-style" type="unit" value="1"/>
+      <property name="background-style" type="uint" value="1"/>
       <property name="background-rgba" type="array">
           <value type="double" value="0.180392"/>
           <value type="double" value="0.203922"/>
