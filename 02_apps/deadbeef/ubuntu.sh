@@ -17,7 +17,7 @@ upgrade
 
 
 #install dep
-apt-get -y deadbeef
+install_packs deadbeef
 
 mkdir -p /etc/skel/.config/deadbeef/
 retry "wget -q -O /etc/skel/.config/deadbeef/config ${SETUP_SCRIPT_LOCATION}/02_apps/deadbeef/config"
