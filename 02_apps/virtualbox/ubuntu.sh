@@ -19,7 +19,7 @@ echo "deb http://download.virtualbox.org/virtualbox/debian $CODENAME contrib" | 
 wget -q -O- http://download.virtualbox.org/virtualbox/debian/oracle_vbox_2016.asc | sudo apt-key add -
 
 upgrade
-install_packs virtualbox-6.0
+install_packs virtualbox-6.1
 
 exit
 
