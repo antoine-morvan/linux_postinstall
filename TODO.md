@@ -36,26 +36,24 @@ __prompt_command() {
 ##### à trouver une solution
 
 
-[UBUNTU] ajouter signal: https://signal.org/fr/download/
-[UBUNTU] virer la notif HDDTemp ...
-
-utiliser blkid pour détecter les differents types de volumes ...
- - blkid -t TYPE=crypto_LUKS
-
-ajouter mkvtoolnix & mkvextract (ubuntu)
+* [UBUNTU] ajouter signal: https://signal.org/fr/download/
+* [UBUNTU] virer la notif HDDTemp ...
+* utiliser blkid pour détecter les differents types de volumes ...
+  - blkid -t TYPE=crypto_LUKS
+* ajouter mkvtoolnix & mkvextract (ubuntu)
 
 ##### done & validated #####
 
-[UBUNTU] Desactiver HDDTemp
-[UBUNTU] Virer GDM3 & ubuntu desktop
-[UBUNTU] Auto select user (end of main script)
-[Ubuntu] virer desktop ubuntu
-[UBUNTU] Install docker (https://docs.docker.com/install/linux/docker-ce/ubuntu/)
-[UBUNTU] Install docker-compose (via pip3)
-[UBUNTU] Set user in docker group
-[ubuntu] full unattended install
-[ubuntu] steam/wine specif scripts
-[UBUNTU] verif launcher chrome
-[ubuntu] racourcis steam
-[UBUNTU] Set default background
+* [UBUNTU] Desactiver HDDTemp
+* [UBUNTU] Virer GDM3 & ubuntu desktop
+* [UBUNTU] Auto select user (end of main script)
+* [Ubuntu] virer desktop ubuntu
+* [UBUNTU] Install docker (https://docs.docker.com/install/linux/docker-ce/ubuntu/)
+* [UBUNTU] Install docker-compose (via pip3)
+* [UBUNTU] Set user in docker group
+* [ubuntu] full unattended install
+* [ubuntu] steam/wine specif scripts
+* [UBUNTU] verif launcher chrome
+* [ubuntu] racourcis steam
+* [UBUNTU] Set default background
 
