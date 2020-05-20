@@ -13,7 +13,7 @@ install_packs librsvg2-bin byobu xfce4 xfce4-goodies libgtk2.0-dev pasystray qal
 	git checkinstall lightdm-gtk-greeter xubuntu-wallpapers xubuntu-icon-theme xubuntu-artwork orage
 # missing in ubuntu 20.04: community-themes
 
-
+apt autoremove -y --purge yaru-theme-icon yaru-theme-gtk yaru-theme-sound yaru-theme-gnome-shell
 #install multiload ng for xfce
 git clone https://github.com/udda/multiload-ng.git multiload
 (cd multiload && \
@@ -62,11 +62,6 @@ retry "wget -q -O /usr/share/icons/Fog.tar.bz2 ${SETUP_SCRIPT_LOCATION}/99_share
 (cd /usr/share/icons &&
 	tar xf Fog.tar.bz2 &&
 	rm Fog.tar.bz2)
-
-retry "wget -q -O /usr/share/icons/elementary-xfce.tar.bz2 ${SETUP_SCRIPT_LOCATION}/99_shared/themes/elementary-xfce.tar.bz2"
-(cd /usr/share/icons &&
-	tar xf 	elementary-xfce.tar.bz2 &&
-	rm 	elementary-xfce.tar.bz2)
 
 chmod -R 755 /usr/share/icons
 
@@ -239,8 +234,6 @@ image/jpeg=pinta.desktop
 image/gif=pinta.desktop
 
 EOF
-
-gtk-update-icon-cache /usr/share/icons/elementaryXubuntu-dark/
 
 ############################################
 #################  END  ####################
