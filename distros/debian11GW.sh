@@ -4,7 +4,7 @@
 ## sample post install script to configure a debian gateway with
 ## a dhcp, bind9 DNS, and transparent squid proxy caching big files.
 ## 
-## tested on debian 10 x86-64
+## tested on debian 11 x86-64
 ## 
 
 ###########################
@@ -40,7 +40,7 @@ apt autoremove -y
 apt clean
 
 ## install deps
-apt install -y bind9 isc-dhcp-server squid ipcalc bwm-ng iptraf nethogs byobu sudo htop
+apt install -y bind9 isc-dhcp-server squid ipcalc bwm-ng iptraf nethogs byobu sudo htop iptables
 
 echo ""
 echo "Apt done."
