@@ -3,7 +3,6 @@ set -eu -o pipefail
 
 ###
 ### TODO
-###  * update firewall setting to systemd
 ###  * cleanup squid config
 ###  * add mechanism to prepare a list of local hosts (name:ip:mac)
 
