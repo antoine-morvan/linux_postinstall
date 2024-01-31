@@ -1,4 +1,11 @@
-#!/bin/bash -eu
+#!/usr/bin/env bash
+set -eu -o pipefail
+
+###
+### TODO
+###  * update firewall setting to systemd
+###  * cleanup squid config
+###  * add mechanism to prepare a list of local hosts (name:ip:mac)
 
 ## 
 ## sample post install script to configure a debian gateway with
@@ -29,6 +36,13 @@ EXTERNALDNSLIST="$OPENDNS_LIST $GOOGLE_LIST $CLOUDFARE_LIST $VERISIGN_LIST $QUAD
 FIXEDADDRCOUNT=32
 # minimum size of the DHCP range
 MINGUESTIPS=50
+
+# format: localname:ip:MACaddress
+# TODO read from external to not disclose personal data here ?
+FIXED_IPS=" \
+
+"
+
 
 # Squid settings
 WEBCACHE_OBJMAXSIZE=512 #MB
@@ -307,7 +321,8 @@ EOF
 
 echo " -- Stop squid"
 # stop squid before updating config
-/etc/init.d/squid stop
+systemctl stop squid
+# /etc/init.d/squid stop
 
 cat > /etc/squid/squid.conf << EOF
 acl manager proto cache_object
@@ -400,13 +415,14 @@ squid -z
 sleep 5
 
 echo " -- Start squid"
-/etc/init.d/squid start
+# /etc/init.d/squid start
+systemctl start squid
 
 echo " -- Check squid"
 squid -k check
 
 echo " -- Fix permissions"
-## make general users part of sudo group
+## make general users part of sudo group (usually just the user added during setup)
 l=$(grep "^UID_MIN" /etc/login.defs)
 l1=$(grep "^UID_MAX" /etc/login.defs)
 USERS=$(awk -F':' -v "min=${l##UID_MIN}" -v "max=${l1##UID_MAX}" '{ if ( $3 >= min && $3 <= max ) print $1}' /etc/passwd)
