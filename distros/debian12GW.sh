@@ -14,6 +14,15 @@ set -eu -o pipefail
 ## tested on debian 12 x86-64
 ## 
 
+## Bootstrap script :
+###########################
+# #!/usr/bin/env bash
+# set -eu -o pipefail
+# wget --no-cache https://raw.githubusercontent.com/antoine-morvan/linux_postinstall/master/distros/debian12GW.sh -O debian12GW.sh
+# chmod +x debian12GW.sh
+# ./debian12GW.sh
+###########################
+
 ###########################
 ##### CONFIG
 ###########################
