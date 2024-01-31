@@ -54,6 +54,8 @@ FIXED_IPS=" \
 
 
 # Squid settings
+WEBCACHE_PORT=3128
+WEBCACHE_PORT_INTERCEPT=3127
 WEBCACHE_OBJMAXSIZE=512 #MB
 WEBCACHE_SIZE=20000 #MB
 WEBCACHE_PATH="/mnt/squidcache/"
@@ -78,6 +80,23 @@ echo ""
 echo "Apt done."
 echo ""
 
+###########################
+##### Setup Users
+###########################
+
+echo " -- Fix permissions"
+## make general users part of sudo group (usually just the user added during setup)
+l=$(grep "^UID_MIN" /etc/login.defs)
+l1=$(grep "^UID_MAX" /etc/login.defs)
+USERS=$(awk -F':' -v "min=${l##UID_MIN}" -v "max=${l1##UID_MAX}" '{ if ( $3 >= min && $3 <= max ) print $1}' /etc/passwd)
+for USR in $USERS; do
+  usermod -a -G sudo $USR
+done
+
+###########################
+##### Setup Users
+###########################
+
 ## calculate LAN addresses
 LANMINIP=$(ipcalc -n -b ${LANNET} | grep HostMin | xargs | cut -d" " -f2)
 LANMAXIP=$(ipcalc -n -b ${LANNET} | grep HostMax | xargs | cut -d" " -f2)
@@ -91,6 +110,10 @@ MINREQHOSTS=$((FIXEDADDRCOUNT + MINGUESTIPS + 1))
 
 SERVERLANIP=${LANMAXIP}
 
+###########################
+##### Setup interfaces
+###########################
+
 ## set lan iface IP
 cat >> /etc/network/interfaces << EOF
 allow-hotplug ${LANIFACE}
@@ -100,6 +123,10 @@ iface ${LANIFACE} inet static
   network ${LANNETADDRESS}
   broadcast ${LANBROADCAST}
 EOF
+
+###########################
+##### Setup DHCP
+###########################
 
 ## enable DHCPd on lan iface
 sed -i -r "s/^(INTERFACESv4=).*/\1\"${LANIFACE}\"/g" /etc/default/isc-dhcp-server
@@ -125,178 +152,9 @@ subnet ${LANNETADDRESS} netmask ${LANMASK} {
 }
 EOF
 
-## enable basic NAT & firewall
-
-cat > /etc/init.d/firewall << EOF
-#!/bin/sh
-
-### BEGIN INIT INFO
-# Provides:          iptables
-# Required-Start:    \$network
-# Required-Stop:     \$network
-# Default-Start:     2 3 4 5 S
-# Default-Stop:      0 1 6
-# Short-Description: Starts iptables
-# Description:       Starts iptables, the firewall.
-### END INIT INFO
-
-DESC="Iptables Firewall"
-NAME=iptables
-DAEMON_ARGS=""
-SCRIPTNAME=/etc/init.d/iptables
-
-. /lib/lsb/init-functions
-
-#################################################
-#
-# Script de firewall
-#
-#################################################
-
-###Variables###
-IPTABLES=/sbin/iptables
-ILAN=$LANIFACE
-IWAN=$WEBIFACE
-ILO=lo
-LAN=$LANNET
-IPWAN=\$(/sbin/ifconfig \$IWAN | grep 'inet ' | tr -s ' ' | tr ' ' : | cut -d: -f4)
-    
-case "\$1" in
-  start)
-		log_begin_msg "Starting Iptables Firewall (purge & set rules)"
-
-    ###CONFIG###
-    #active le forward
-    echo 1 > /proc/sys/net/ipv4/ip_forward
-
-    modprobe ip_nat_ftp
-    modprobe ip_conntrack_ftp
-
-    #purge
-    \$IPTABLES -t filter -F INPUT
-    \$IPTABLES -t filter -F FORWARD
-    \$IPTABLES -t filter -F OUTPUT
-
-    \$IPTABLES -t nat -F PREROUTING
-    \$IPTABLES -t nat -F OUTPUT
-    \$IPTABLES -t nat -F POSTROUTING
-
-    #par defaut
-    \$IPTABLES -t filter -P INPUT DROP
-    \$IPTABLES -t filter -P FORWARD DROP
-    \$IPTABLES -t filter -P OUTPUT DROP
-    \$IPTABLES -t nat -P PREROUTING ACCEPT
-    \$IPTABLES -t nat -P OUTPUT ACCEPT
-    \$IPTABLES -t nat -P POSTROUTING ACCEPT
-
-    #"partage de connexion"
-    \$IPTABLES -t nat -A POSTROUTING -s \$LAN -o \$IWAN -j MASQUERADE
-
-    ###TUNING###
-    # Active la protection broadcast echo
-    echo 1 > /proc/sys/net/ipv4/icmp_echo_ignore_broadcasts
-
-    # Active la protection TCP syn cookie
-    echo 1 > /proc/sys/net/ipv4/tcp_syncookies
-
-    # Enregistre les paquets avec des adresses impossibles
-    # (cela inclut les paquets usurpés (spoofed), les paquets routés
-    # source, les paquets redirigés), mais faites attention à ceci
-    # sur les serveurs web très chargés
-    echo 1 >/proc/sys/net/ipv4/conf/all/log_martians
-
-    #Active la protection sur les mauvais messages d'erreur
-    echo 1 > /proc/sys/net/ipv4/icmp_ignore_bogus_error_responses
-
-    # Maintenant la protection ip spoofing
-    echo 1 > /proc/sys/net/ipv4/conf/all/rp_filter
-
-    # Désactive l'acceptation Redirect ICMP
-    echo 0 > /proc/sys/net/ipv4/conf/all/accept_redirects
-    echo 0 > /proc/sys/net/ipv4/conf/all/send_redirects
-
-    # Désactive Source Routed
-    echo 0 > /proc/sys/net/ipv4/conf/all/accept_source_route
-
-    ###REGLES###
-    #autorise les réponses
-    \$IPTABLES -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
-    \$IPTABLES -A FORWARD -m state --state ESTABLISHED,RELATED -j ACCEPT
-    \$IPTABLES -A OUTPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
-
-    #autorise tout le loopback
-    \$IPTABLES -A INPUT -i \$ILO -j ACCEPT
-    \$IPTABLES -A OUTPUT -o \$ILO -j ACCEPT
-
-    #autorise le trafic sortant du routeur
-    \$IPTABLES -A OUTPUT -j ACCEPT
-    \$IPTABLES -t nat -A OUTPUT -j ACCEPT
-
-    #autorise le traffic du LAN vers le routeur
-    \$IPTABLES -A INPUT -m state --state NEW -i \$ILAN -j ACCEPT
-    \$IPTABLES -A OUTPUT -m state --state NEW -o \$ILAN -j ACCEPT
-
-    #autorise le forward du LAN vers l'extérieur
-    \$IPTABLES -A FORWARD -m state --state NEW -i \$ILAN -o \$IWAN -j ACCEPT
-
-    #autorise le forward du LAN vers le LAN
-    \$IPTABLES -A FORWARD -m state --state NEW -i \$ILAN -o \$ILAN -j ACCEPT
-
-    # normal transparent proxy for HTTP
-    \$IPTABLES -t nat -A PREROUTING -p tcp -i \$ILAN --dport 80 -j REDIRECT --to-port 3127
-    \$IPTABLES -t nat -A OUTPUT -p tcp --dport 80 -m owner --uid-owner proxy -j ACCEPT
-    \$IPTABLES -t nat -A OUTPUT -p tcp --dport 80 -j REDIRECT --to-ports 3127
-	# normal transparent proxy for FTP
-    \$IPTABLES -t nat -A PREROUTING -p tcp -i \$ILAN --dport 21 -j REDIRECT --to-port 3127
-    \$IPTABLES -t nat -A OUTPUT -p tcp --dport 21 -m owner --uid-owner proxy -j ACCEPT
-    \$IPTABLES -t nat -A OUTPUT -p tcp --dport 21 -j REDIRECT --to-ports 3127
-
-    # allow ping
-    \$IPTABLES -A INPUT -p icmp --icmp-type echo-request -j ACCEPT
-    \$IPTABLES -A OUTPUT -p icmp --icmp-type echo-reply -j ACCEPT
-
-    ###bindings####
-    #autorise l'extérieur vers différents services internes à la passerelle
-    #ssh
-    \$IPTABLES -A INPUT -m state --state NEW -i \$IWAN -p Tcp --dport 22 -j ACCEPT
-
-    ###NAT####
-    #autorise l'extérieur vers différents services internes au LAN
-
-    #IP=
-    #PORT=
-    #\$IPTABLES -A FORWARD -d \$IP -p tcp --dport \$PORT -j ACCEPT
-    #\$IPTABLES -t nat -A PREROUTING -d \$IPWAN -p tcp --dport \$PORT -j DNAT --to-destination \$IP:\$PORT
-
-		log_end_msg 0
-		;;
-  stop)
-		log_begin_msg "Stopping Iptables Firewall (purge & accept all)"
-		
-		#purge
-		\$IPTABLES -t filter -F INPUT
-		\$IPTABLES -t filter -F FORWARD
-		\$IPTABLES -t filter -F OUTPUT
-		
-		#accept by default
-		\$IPTABLES -t filter -P INPUT ACCEPT
-		\$IPTABLES -t filter -P FORWARD ACCEPT
-		\$IPTABLES -t filter -P OUTPUT ACCEPT
-		
-		log_end_msg 0
-		;;
-  restart)
-		\$0 start
-		;;
-  *)
-	echo "Usage : \$0 {start | stop}"
-	exit 1
-	;;
-esac
-
-EOF
-chmod +x /etc/init.d/firewall
-update-rc.d firewall defaults
+###########################
+##### Setup DNS
+###########################
 
 ## setup DNS
 
@@ -326,7 +184,9 @@ cat >> /etc/bind/named.conf.options << EOF
 };
 EOF
 
-## setup squid
+###########################
+##### Setup Proxy
+###########################
 
 echo " -- Stop squid"
 # stop squid before updating config
@@ -350,8 +210,8 @@ http_access allow localhost
 http_access allow localnet
 icp_access allow localnet
 icp_access deny all
-http_port 3128
-http_port 3127 intercept
+http_port $WEBCACHE_PORT
+http_port $WEBCACHE_PORT_INTERCEPT intercept
 access_log /var/log/squid/access.log squid
 acl shoutcast rep_header X-HTTP09-First-Line ^ICY.[0-9]
 acl apache rep_header Server ^Apache
@@ -430,15 +290,228 @@ systemctl start squid
 echo " -- Check squid"
 squid -k check
 
-echo " -- Fix permissions"
-## make general users part of sudo group (usually just the user added during setup)
-l=$(grep "^UID_MIN" /etc/login.defs)
-l1=$(grep "^UID_MAX" /etc/login.defs)
-USERS=$(awk -F':' -v "min=${l##UID_MIN}" -v "max=${l1##UID_MAX}" '{ if ( $3 >= min && $3 <= max ) print $1}' /etc/passwd)
-for USR in $USERS; do
-  usermod -a -G sudo $USR
-done
 
-## reboot
+###########################
+##### Setup Firewall
+###########################
+
+cat > /usr/sbin/firewall_router.down.sh << EOF
+#!/usr/bin/env bash
+set -eu -o pipefail
+
+###
+### Disable Routing
+###
+
+echo 0 > /proc/sys/net/ipv4/ip_forward
+
+modprobe -r ip_nat_ftp
+modprobe -r ip_conntrack_ftp
+
+###
+### IPTable restore
+###
+
+# sets defaults
+RULES_FILE=/etc/iptables.defaults.rules
+if [ -f \$RULES_FILE ]; then
+  /sbin/iptables-restore  < \$RULES_FILE
+else
+  echo "Warning: no iptable rules were found under '\$RULES_FILE'"
+fi
+
+###
+### Security Tuning
+###
+
+# Keep security tuning if set
+
+EOF
+cat > /usr/sbin/firewall_router.up.sh << EOF
+#!/usr/bin/env bash
+set -eu -o pipefail
+
+###
+### Enable Routing
+###
+
+echo 1 > /proc/sys/net/ipv4/ip_forward
+
+modprobe ip_nat_ftp
+modprobe ip_conntrack_ftp
+
+###
+### IPTable restore
+###
+
+# sets firewall rules, enables NAT, transparent ftp/http redirect to proxy
+RULES_FILE=/etc/iptables.rules
+if [ -f \$RULES_FILE ]; then
+  /sbin/iptables-restore  < \$RULES_FILE
+else
+  echo "Warning: no iptable rules were found under '\$RULES_FILE'"
+fi
+
+###
+### Security Tuning
+###
+
+# Enable broadcast echo protection
+echo 1 > /proc/sys/net/ipv4/icmp_echo_ignore_broadcasts
+
+# Enable TCP syn cookie protection
+echo 1 > /proc/sys/net/ipv4/tcp_syncookies
+
+# Store packets with impossible addresses
+# Actually disabled
+echo 0 > /proc/sys/net/ipv4/conf/all/log_martians
+
+# Ignore ICMP bogus error responses
+echo 1 > /proc/sys/net/ipv4/icmp_ignore_bogus_error_responses
+
+# Enable IP spoofing protection
+echo 1 > /proc/sys/net/ipv4/conf/all/rp_filter
+
+# Disable ICMP redirects
+echo 0 > /proc/sys/net/ipv4/conf/all/accept_redirects
+echo 0 > /proc/sys/net/ipv4/conf/all/send_redirects
+
+# Disable Source Routed
+echo 0 > /proc/sys/net/ipv4/conf/all/accept_source_route
+
+EOF
+
+cat > /usr/lib/systemd/system/firewall_router.service << EOF
+[Unit]
+Description=Firewall
+After=network.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/sbin/firewall_router.up.sh
+ExecStop=/usr/sbin/firewall_router.down.sh
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+cat > /usr/sbin/firewall_router.iptables_gen.sh << EOF
+#!/usr/bin/env bash
+set -eu -o pipefail
+
+IPTABLES=/sbin/iptables
+ILAN=$LANIFACE
+IWAN=$WEBIFACE
+ILO=lo
+LAN=$LANNET
+IPWAN=\$(ip addr show \$IWAN | grep -Po 'inet \K[\d.]+')
+
+# Purge
+\$IPTABLES -F
+\$IPTABLES -X
+\$IPTABLES -Z
+
+\$IPTABLES -t filter -F INPUT
+\$IPTABLES -t filter -F FORWARD
+\$IPTABLES -t filter -F OUTPUT
+
+\$IPTABLES -t nat -F PREROUTING
+\$IPTABLES -t nat -F OUTPUT
+\$IPTABLES -t nat -F POSTROUTING
+
+# Default: drop
+\$IPTABLES -t filter -P INPUT   DROP
+\$IPTABLES -t filter -P FORWARD DROP
+\$IPTABLES -t filter -P OUTPUT  DROP
+\$IPTABLES -t nat -P PREROUTING  ACCEPT
+\$IPTABLES -t nat -P OUTPUT      ACCEPT
+\$IPTABLES -t nat -P POSTROUTING ACCEPT
+
+# Enable NAT
+\$IPTABLES -t nat -A POSTROUTING -s \$LAN -o \$IWAN -j MASQUERADE
+
+# Allow loopback
+\$IPTABLES -A INPUT -i \$ILO -j ACCEPT
+\$IPTABLES -A OUTPUT -o \$ILO -j ACCEPT
+
+# Drop invalid packets
+\$IPTABLES -A INPUT   -m state --state INVALID -j DROP
+\$IPTABLES -A OUTPUT  -m state --state INVALID -j DROP
+\$IPTABLES -A FORWARD -m state --state INVALID -j DROP
+
+# Allow answers
+\$IPTABLES -A INPUT   -m state --state ESTABLISHED,RELATED -j ACCEPT
+\$IPTABLES -A FORWARD -m state --state ESTABLISHED,RELATED -j ACCEPT
+\$IPTABLES -A OUTPUT  -m state --state ESTABLISHED,RELATED -j ACCEPT
+
+# Allow outgoing trafic from the router
+\$IPTABLES -A OUTPUT -j ACCEPT
+\$IPTABLES -t nat -A OUTPUT -j ACCEPT
+
+# Allow from LAN to routeur
+\$IPTABLES -A INPUT -m state --state NEW -i \$ILAN -j ACCEPT
+\$IPTABLES -A OUTPUT -m state --state NEW -o \$ILAN -j ACCEPT
+
+# Allow FORWARD from LAN to WAN
+\$IPTABLES -A FORWARD -m state --state NEW -i \$ILAN -o \$IWAN -j ACCEPT
+
+# Allow FORWARD from LAN to LAN
+\$IPTABLES -A FORWARD -m state --state NEW -i \$ILAN -o \$ILAN -j ACCEPT
+
+# Transparent redirect HTTP to proxy
+\$IPTABLES -t nat -A PREROUTING -p tcp -i \$ILAN --dport 80 -j REDIRECT --to-port $WEBCACHE_PORT_INTERCEPT
+\$IPTABLES -t nat -A OUTPUT -p tcp --dport 80 -m owner --uid-owner proxy -j ACCEPT
+\$IPTABLES -t nat -A OUTPUT -p tcp --dport 80 -j REDIRECT --to-ports $WEBCACHE_PORT_INTERCEPT
+
+# Transparent redirect FTP to proxy
+\$IPTABLES -t nat -A PREROUTING -p tcp -i \$ILAN --dport 21 -j REDIRECT --to-port $WEBCACHE_PORT_INTERCEPT
+\$IPTABLES -t nat -A OUTPUT -p tcp --dport 21 -m owner --uid-owner proxy -j ACCEPT
+\$IPTABLES -t nat -A OUTPUT -p tcp --dport 21 -j REDIRECT --to-ports $WEBCACHE_PORT_INTERCEPT
+
+# Allow ping (in & out)
+\$IPTABLES -A INPUT -p icmp --icmp-type echo-request -j ACCEPT
+\$IPTABLES -A OUTPUT -p icmp --icmp-type echo-reply -j ACCEPT
+
+### GW bindings ###
+\$IPTABLES -A INPUT -m state --state NEW -i \$IWAN -p Tcp --dport 22 -j ACCEPT # allow ssh
+# \$IPTABLES -A INPUT -m state --state NEW -i \$IWAN -p Tcp --dport 2222 -j ACCEPT
+# \$IPTABLES -A INPUT -m state --state NEW -i \$IWAN -p Tcp --dport 8080 -j ACCEPT
+
+### NAT bindings ###
+
+## Comment: Allow WAN on port \$PORT_WAN to reach \$IP on port \$PORT_LAN
+## TODO: check if working ...
+# IP=172.30.255.209
+# PORT_WAN=49612
+# PORT_LAN=49612
+# \$IPTABLES -A FORWARD -d \$IP -p tcp --dport \$PORT_LAN -j ACCEPT
+# \$IPTABLES -t nat -A PREROUTING -d \$IPWAN -p tcp --dport \$PORT_WAN -j DNAT --to-destination \$IP:\$PORT_LAN
+
+## Comment: example with multiple ports/protocols
+# \$IPTABLES -A FORWARD -d \$IP -p tcp --dport 27015:27032 -j ACCEPT
+# \$IPTABLES -A FORWARD -d \$IP -p udp --dport 27015:27032 -j ACCEPT
+# \$IPTABLES -t nat -A PREROUTING -d \$IPWAN -p tcp --dport \$PORT_WAN -j DNAT --to-destination \$IP
+# \$IPTABLES -t nat -A PREROUTING -d \$IPWAN -p tcp --dport \$PORT_WAN -j DNAT --to-destination \$IP
+
+
+EOF
+
+chmod +x /usr/sbin/firewall_router.iptables_gen.sh
+chmod +x /usr/sbin/firewall_router.down.sh
+chmod +x /usr/sbin/firewall_router.up.sh
+
+# save default rules
+iptables-save > /etc/iptables.defaults.rules
+# configure iptables
+/usr/sbin/firewall_router.iptables_gen.sh
+# save rules
+iptables-save > /etc/iptables.rules
+
+systemctl enable firewall_router
+
+###########################
+##### Cleanup
+###########################
 
 reboot
