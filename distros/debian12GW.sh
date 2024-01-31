@@ -12,9 +12,10 @@
 ###########################
 
 # the iface of the "outside"
-WEBIFACE=ens33
+WEBIFACE=enp0s3
 # the iface of the LAN it will serve
-LANIFACE=ens34
+LANIFACE=enp0s8
+
 # network and mask of the LAN
 LANNET=172.31.250.0/24
 # list of DNS IPs to use when forwarding DNS requests from LAN
@@ -37,6 +38,8 @@ WEBCACHE_PATH="/mnt/squidcache/"
 ###########################
 ##### SETUP
 ###########################
+
+[ "$(whoami)" != "root" ] && echo "Error: need to be executed as root" && exit 1
 
 ## update
 apt update
@@ -61,7 +64,7 @@ LANNETADDRESS=$(ipcalc -n -b ${LANNET} | grep Network | xargs | cut -d" " -f2 | 
 LANHOSTCOUNT=$(ipcalc -n -b ${LANNET} | grep Hosts | xargs | cut -d" " -f2)
 
 MINREQHOSTS=$((FIXEDADDRCOUNT + MINGUESTIPS + 1))
-[ $LANHOSTCOUNT -le $MINREQHOSTS ] && echo "Error : network size is too small." && exit 1
+[ $LANHOSTCOUNT -le $MINREQHOSTS ] && echo "Error : network size is too small. Change netmask." && exit 1
 
 SERVERLANIP=${LANMAXIP}
 
@@ -81,6 +84,8 @@ sed -i -r "s/^(INTERFACESv4=).*/\1\"${LANIFACE}\"/g" /etc/default/isc-dhcp-serve
 ## set DHCPd config
 sed -i -r "s/^(option domain-name .*)/#\1/g" /etc/dhcp/dhcpd.conf
 sed -i -r "s/^(option domain-name-servers)(.*)/\1 ${SERVERLANIP};/g" /etc/dhcp/dhcpd.conf
+
+sed -i -r "s/^#authoritative;/authoritative;/g" /etc/dhcp/dhcpd.conf
 
 ## calculate DHCP range
 HOSTRANGEMIN=$(echo ${LANMINIP} | cut -d'.' -f4)
