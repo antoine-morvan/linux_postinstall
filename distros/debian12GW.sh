@@ -295,8 +295,7 @@ done
 cat >> /etc/bind/named.conf.options << EOF
   };
 
-  dnssec-enable yes;
-  dnssec-validation yes;
+  dnssec-validation auto;
 
   auth-nxdomain no;
   listen-on-v6 { any; };
