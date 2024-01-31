@@ -41,16 +41,32 @@ VERISIGN_LIST="64.6.64.6 64.6.65.6"
 QUAD9_LIST="9.9.9.9 149.112.112.112"
 EXTERNALDNSLIST="$OPENDNS_LIST $GOOGLE_LIST $CLOUDFARE_LIST $VERISIGN_LIST $QUAD9_LIST"
 # number of IP addresses to save free from DHCP range
+# reserved for fixed hosts
 FIXEDADDRCOUNT=32
 # minimum size of the DHCP range
 MINGUESTIPS=50
 
 # format: localname:ip:MACaddress
 # TODO read from external to not disclose personal data here ?
+# rule: (for network 192.168.0.0/24; 10 reserved fixed hosts, enough guest)
+# * first address is the network address (192.168.0.0)
+# * before last address is the router address (192.168.0.254)
+# * last address is the broadcast address (192.168.0.255)
+# => reserved IPs range from 192.168.0.1 to 192.168.0.10 (included)
+# => subnet will range from 192.168.0.11 o max IP
+# 'no spaces, except between hosts
 FIXED_IPS=" \
-
+  myprinter:172.31.250.1:AA:BB:CC:DD:EE:FF \
+  mywifi:172.31.250.2:AA:BB:CC:DD:EE:00 \
 "
 
+# generates for DHCP:
+# host mywifi {
+#         hardware ethernet AA:BB:CC:DD:EE:00;
+#         fixed-address 172.31.250.2;
+# }
+# generates for DNS:
+# TODO
 
 # Squid settings
 WEBCACHE_PORT=3128
