@@ -191,7 +191,6 @@ EOF
 echo " -- Stop squid"
 # stop squid before updating config
 systemctl stop squid
-# /etc/init.d/squid stop
 
 cat > /etc/squid/squid.conf << EOF
 acl manager proto cache_object
@@ -284,7 +283,6 @@ squid -z
 sleep 5
 
 echo " -- Start squid"
-# /etc/init.d/squid start
 systemctl start squid
 
 echo " -- Check squid"
@@ -315,7 +313,8 @@ modprobe -r ip_conntrack_ftp
 # sets defaults
 RULES_FILE=/etc/iptables.defaults.rules
 if [ -f \$RULES_FILE ]; then
-  /sbin/iptables-restore  < \$RULES_FILE
+  /usr/sbin/iptables -F
+  /usr/sbin/iptables-restore  < \$RULES_FILE
 else
   echo "Warning: no iptable rules were found under '\$RULES_FILE'"
 fi
@@ -347,7 +346,8 @@ modprobe ip_conntrack_ftp
 # sets firewall rules, enables NAT, transparent ftp/http redirect to proxy
 RULES_FILE=/etc/iptables.rules
 if [ -f \$RULES_FILE ]; then
-  /sbin/iptables-restore  < \$RULES_FILE
+  /usr/sbin/iptables -F
+  /usr/sbin/iptables-restore  < \$RULES_FILE
 else
   echo "Warning: no iptable rules were found under '\$RULES_FILE'"
 fi
@@ -400,7 +400,7 @@ cat > /usr/sbin/firewall_router.iptables_gen.sh << EOF
 #!/usr/bin/env bash
 set -eu -o pipefail
 
-IPTABLES=/sbin/iptables
+IPTABLES=/usr/sbin/iptables
 ILAN=$LANIFACE
 IWAN=$WEBIFACE
 ILO=lo
@@ -502,11 +502,11 @@ chmod +x /usr/sbin/firewall_router.down.sh
 chmod +x /usr/sbin/firewall_router.up.sh
 
 # save default rules
-iptables-save > /etc/iptables.defaults.rules
+/usr/sbin/iptables-save > /etc/iptables.defaults.rules
 # configure iptables
 /usr/sbin/firewall_router.iptables_gen.sh
 # save rules
-iptables-save > /etc/iptables.rules
+/usr/sbin/iptables-save > /etc/iptables.rules
 
 systemctl enable firewall_router
 
@@ -514,4 +514,9 @@ systemctl enable firewall_router
 ##### Cleanup
 ###########################
 
+SLEEP_TIME=5
+echo -n "Rebooting in $SLEEP_TIME s "
+for i in $(seq 1 $SLEEP_TIME); do echo -n "."; sleep 1; done
+echo ""
+echo "Rebooting"
 reboot
