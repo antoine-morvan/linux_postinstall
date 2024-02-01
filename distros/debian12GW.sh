@@ -136,12 +136,21 @@ DHCPRANGESTOPIP=$(echo ${LANNETADDRESS} | cut -d'.' -f1-3).${HOSTRANGEMAX}
 
 ## set lan iface IP
 cat >> /etc/network/interfaces << EOF
+auto ${LANIFACE}
 allow-hotplug ${LANIFACE}
+iface ${LANIFACE} inet dhcp
+
 iface ${LANIFACE} inet static
   address ${SERVERLANIP}
   netmask ${LANMASK}
   network ${LANNETADDRESS}
   broadcast ${LANBROADCAST}
+EOF
+
+## Set dhclient to use proper domain & name server
+cat >> /etc/dhcp/dhclient.conf << EOF
+supersede domaine-name "$DOMAIN_NAME";
+prepend domaine-name-servers 127.0.0.1;
 EOF
 
 ###################################################################################
