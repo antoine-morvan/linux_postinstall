@@ -244,13 +244,16 @@ cat >> /etc/bind/db.${DOMAIN_NAME} << EOF
 @       IN      NS      $HOSTNAME.$DOMAIN_NAME.
 @       IN      A       127.0.0.1
 
+localhost.$DOMAIN_NAME. IN A 127.0.0.1
+$HOSTNAME.$DOMAIN_NAME. IN A ${SERVERLANIP}
 ;your sites
 EOF
+
 for FixedIP in $FIXED_IPS; do
   NAME=$(echo $FixedIP | cut -d':' -f1)
   IP=$(echo $FixedIP | cut -d':' -f2)
   MAC=$(echo $FixedIP | cut -d':' -f3-)
-  echo "$NAME.$DOMAIN_NAME IN A $IP;" >> /etc/bind/named.conf.local
+  echo "$NAME.$DOMAIN_NAME IN A $IP;" >> /etc/bind/db.${DOMAIN_NAME}
 done
 
 ###########################
