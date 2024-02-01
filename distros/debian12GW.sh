@@ -205,7 +205,12 @@ options {
 
   forwarders {
 EOF
-for dns in $EXTERNALDNSLIST; do
+
+# Use DNS servers specified in the list, as well as the one given by current DHCP (if present)
+set +eu +o pipefail
+CURRENT_DNS=$(cat /etc/resolv.conf | grep nameserver | cut -d' ' -f2 | xargs)
+set -eu -o pipefail
+for dns in $EXTERNALDNSLIST $CURRENT_DNS; do
 cat >> /etc/bind/named.conf.options << EOF
     $dns;
 EOF
