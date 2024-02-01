@@ -232,7 +232,7 @@ cat >> cat /etc/bind/db.${DOMAIN_NAME} << EOF
 ;
 ; BIND data file for local loopback interface
 ;
-$TTL    604800
+\$TTL    604800
 @       IN      SOA     $HOSTNAME.$DOMAIN_NAME. root.$HOSTNAME.$DOMAIN_NAME. (
                               2         ; Serial
                          604800         ; Refresh
