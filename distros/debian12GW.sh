@@ -32,6 +32,7 @@ WEBIFACE=enp0s3
 LANIFACE=enp0s8
 
 # network and mask of the LAN
+DOMAIN_NAME=diablan
 LANNET=172.31.250.0/24
 # list of DNS IPs to use when forwarding DNS requests from LAN
 OPENDNS_LIST="208.67.222.222 208.67.220.220"
@@ -147,7 +148,7 @@ EOF
 sed -i -r "s/^(INTERFACESv4=).*/\1\"${LANIFACE}\"/g" /etc/default/isc-dhcp-server
 
 ## set DHCPd config
-sed -i -r "s/^(option domain-name .*)/#\1/g" /etc/dhcp/dhcpd.conf
+sed -i -r "s/^(option domain-name)(.*)/\1 ${DOMAIN_NAME};/g" /etc/dhcp/dhcpd.conf
 sed -i -r "s/^(option domain-name-servers)(.*)/\1 ${SERVERLANIP};/g" /etc/dhcp/dhcpd.conf
 
 sed -i -r "s/^#authoritative;/authoritative;/g" /etc/dhcp/dhcpd.conf
