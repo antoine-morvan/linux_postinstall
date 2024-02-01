@@ -42,15 +42,14 @@ CLOUDFARE_LIST="1.1.1.1 1.0.0.1"
 VERISIGN_LIST="64.6.64.6 64.6.65.6"
 QUAD9_LIST="9.9.9.9 149.112.112.112"
 EXTERNALDNSLIST="$OPENDNS_LIST $GOOGLE_LIST $CLOUDFARE_LIST $VERISIGN_LIST $QUAD9_LIST"
-# number of IP addresses to save free from DHCP range reserved for fixed
-# hosts, at the beginning of network address range
-FIXEDADDRCOUNT=32
-# minimum size of the DHCP range
-MINGUESTIPS=50
 
-FIXED_IPS=" \
+# Format hostname:ip:mac
+# example: rockytest:172.31.250.7:08:00:27:1c:15:35
+# if address file fixed_hosts.list exists, will be read.
+[ -f fixed_hosts.list ] && FIXED_IPS=$(cat fixed_hosts.list)
+FIXED_IPS=${FIXED_IPS:-" \
   rockytest:172.31.250.7:08:00:27:1c:15:35
-"
+"}
 
 # Squid settings
 WEBCACHE_PORT=3128
@@ -117,13 +116,10 @@ LANBROADCAST=$(ipcalc -n -b ${LANNET} | grep Broadcast | xargs | cut -d" " -f2)
 LANNETADDRESS=$(ipcalc -n -b ${LANNET} | grep Network | xargs | cut -d" " -f2 | cut -d"/" -f1)
 LANHOSTCOUNT=$(ipcalc -n -b ${LANNET} | grep Hosts | xargs | cut -d" " -f2)
 
-MINREQHOSTS=$((FIXEDADDRCOUNT + MINGUESTIPS + 1))
-[ $LANHOSTCOUNT -le $MINREQHOSTS ] && echo "Error : network size is too small. Change netmask." && exit 1
-
 SERVERLANIP=${LANMAXIP}
 
 HOSTRANGEMIN=$(echo ${LANMINIP} | cut -d'.' -f4)
-HOSTRANGEMIN=$((HOSTRANGEMIN+FIXEDADDRCOUNT))
+HOSTRANGEMIN=$((HOSTRANGEMIN))
 HOSTRANGEMAX=$(echo ${LANMAXIP} | cut -d'.' -f4)
 HOSTRANGEMAX=$((HOSTRANGEMAX - 1))
 DHCPRANGESTARTIP=$(echo ${LANNETADDRESS} | cut -d'.' -f1-3).${HOSTRANGEMIN}
