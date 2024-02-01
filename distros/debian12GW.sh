@@ -57,9 +57,11 @@ MINGUESTIPS=50
 # => subnet will range from 192.168.0.11 o max IP
 # 'no spaces, except between hosts
 FIXED_IPS=" \
-  myprinter:172.31.250.1:AA:BB:CC:DD:EE:FF \
-  mywifi:172.31.250.2:AA:BB:CC:DD:EE:00 \
+  rockytest:172.31.250.7:08:00:27:1c:15:35
 "
+
+  # myprinter:172.31.250.1:AA:BB:CC:DD:EE:FF \
+  # mywifi:172.31.250.2:AA:BB:CC:DD:EE:00 \
 
 # generates for DHCP:
 # host mywifi {
@@ -166,7 +168,20 @@ subnet ${LANNETADDRESS} netmask ${LANMASK} {
   range ${DHCPRANGESTARTIP} ${DHCPRANGESTOPIP};
   option routers ${SERVERLANIP};
 }
+
 EOF
+
+for FixedIP in $FIXED_IPS; do
+  NAME=$(echo $FixedIP | cut -d':' -f1)
+  IP=$(echo $FixedIP | cut -d':' -f2)
+  MAC=$(echo $FixedIP | cut -d':' -f3-)
+  cat >> /etc/dhcp/dhcpd.conf << EOF
+host $NAME {
+        hardware ethernet $MAC;
+        fixed-address $IP;
+}
+EOF
+done
 
 ###########################
 ##### Setup DNS
@@ -181,6 +196,7 @@ options {
   recursion yes;
   allow-query { any; };
   allow-recursion { any; };
+  allow-query-cache { any; };
 
   forwarders {
 EOF
@@ -199,6 +215,42 @@ cat >> /etc/bind/named.conf.options << EOF
   listen-on { any; };
 };
 EOF
+
+cat >> << EOF
+search ${DOMAIN_NAME}
+EOF
+
+cat >>  << EOF
+
+zone "${DOMAIN_NAME}" {
+    type master;
+    file "/etc/bind/db.${DOMAIN_NAME}";
+};
+
+EOF
+cat >> cat /etc/bind/db.${DOMAIN_NAME} << EOF
+;
+; BIND data file for local loopback interface
+;
+$TTL    604800
+@       IN      SOA     $HOSTNAME.$DOMAIN_NAME. root.$HOSTNAME.$DOMAIN_NAME. (
+                              2         ; Serial
+                         604800         ; Refresh
+                          86400         ; Retry
+                        2419200         ; Expire
+                         604800 )       ; Negative Cache TTL
+;
+@       IN      NS      $HOSTNAME.$DOMAIN_NAME.
+@       IN      A       127.0.0.1
+
+;your sites
+EOF
+for FixedIP in $FIXED_IPS; do
+  NAME=$(echo $FixedIP | cut -d':' -f1)
+  IP=$(echo $FixedIP | cut -d':' -f2)
+  MAC=$(echo $FixedIP | cut -d':' -f3-)
+  echo "$NAME.$DOMAIN_NAME IN A $IP;" >> /etc/bind/named.conf.local
+done
 
 ###########################
 ##### Setup Proxy
