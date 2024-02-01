@@ -148,8 +148,8 @@ EOF
 sed -i -r "s/^(INTERFACESv4=).*/\1\"${LANIFACE}\"/g" /etc/default/isc-dhcp-server
 
 ## set DHCPd config
-sed -i -r "s/^(option domain-name)(.*)/\1 ${DOMAIN_NAME};/g" /etc/dhcp/dhcpd.conf
-sed -i -r "s/^(option domain-name-servers)(.*)/\1 ${SERVERLANIP};/g" /etc/dhcp/dhcpd.conf
+sed -i -r "s/^(option domain-name )(.*)/\1${DOMAIN_NAME};/g" /etc/dhcp/dhcpd.conf
+sed -i -r "s/^(option domain-name-servers )(.*)/\1${SERVERLANIP};/g" /etc/dhcp/dhcpd.conf
 
 sed -i -r "s/^#authoritative;/authoritative;/g" /etc/dhcp/dhcpd.conf
 
