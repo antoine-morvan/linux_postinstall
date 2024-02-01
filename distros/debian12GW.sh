@@ -1,30 +1,32 @@
 #!/usr/bin/env bash
 set -eu -o pipefail
 
-###
-### TODO
-###  * cleanup squid config
-###  * add mechanism to prepare a list of local hosts (name:ip:mac)
+###################################################################################
+##### TODO
+##  * Fix dhclient config for router ...
+##  * cleanup squid config
+##  * add mechanism to prepare a list of local hosts from external file
+###################################################################################
+## Sample post install script to configure a debian gateway with an ISC DHCP,
+## bind9 DNS, IPTables with NAT and firewall, and transparent Squid proxy caching
+## big files.
+## 
+## Tested on debian 12 x86-64
+###################################################################################
 
-## 
-## sample post install script to configure a debian gateway with
-## a dhcp, bind9 DNS, and transparent squid proxy caching big files.
-## 
-## tested on debian 12 x86-64
-## 
-
-## Bootstrap script :
-###########################
+###################################################################################
+##### Bootstrap script :
+###################################################################################
 # #!/usr/bin/env bash
 # set -eu -o pipefail
 # wget --no-cache https://raw.githubusercontent.com/antoine-morvan/linux_postinstall/master/distros/debian12GW.sh -O debian12GW.sh
 # chmod +x debian12GW.sh
 # ./debian12GW.sh
-###########################
+###################################################################################
 
-###########################
-##### CONFIG
-###########################
+###################################################################################
+##### Setup Configuration
+###################################################################################
 
 # the iface of the "outside"
 WEBIFACE=enp0s3
@@ -41,35 +43,15 @@ CLOUDFARE_LIST="1.1.1.1 1.0.0.1"
 VERISIGN_LIST="64.6.64.6 64.6.65.6"
 QUAD9_LIST="9.9.9.9 149.112.112.112"
 EXTERNALDNSLIST="$OPENDNS_LIST $GOOGLE_LIST $CLOUDFARE_LIST $VERISIGN_LIST $QUAD9_LIST"
-# number of IP addresses to save free from DHCP range
-# reserved for fixed hosts
+# number of IP addresses to save free from DHCP range reserved for fixed
+# hosts, at the beginning of network address range
 FIXEDADDRCOUNT=32
 # minimum size of the DHCP range
 MINGUESTIPS=50
 
-# format: localname:ip:MACaddress
-# TODO read from external to not disclose personal data here ?
-# rule: (for network 192.168.0.0/24; 10 reserved fixed hosts, enough guest)
-# * first address is the network address (192.168.0.0)
-# * before last address is the router address (192.168.0.254)
-# * last address is the broadcast address (192.168.0.255)
-# => reserved IPs range from 192.168.0.1 to 192.168.0.10 (included)
-# => subnet will range from 192.168.0.11 o max IP
-# 'no spaces, except between hosts
 FIXED_IPS=" \
   rockytest:172.31.250.7:08:00:27:1c:15:35
 "
-
-  # myprinter:172.31.250.1:AA:BB:CC:DD:EE:FF \
-  # mywifi:172.31.250.2:AA:BB:CC:DD:EE:00 \
-
-# generates for DHCP:
-# host mywifi {
-#         hardware ethernet AA:BB:CC:DD:EE:00;
-#         fixed-address 172.31.250.2;
-# }
-# generates for DNS:
-# TODO
 
 # Squid settings
 WEBCACHE_PORT=3128
@@ -78,41 +60,54 @@ WEBCACHE_OBJMAXSIZE=512 #MB
 WEBCACHE_SIZE=20000 #MB
 WEBCACHE_PATH="/mnt/squidcache/"
 
-###########################
-##### SETUP
-###########################
+###################################################################################
+##### System Setup
+###################################################################################
 
+echo " -- Check user"
 [ "$(whoami)" != "root" ] && echo "Error: need to be executed as root" && exit 1
 
-## update
+###########################
+##### Update && Install
+###########################
+
+echo " -- Update system"
 apt update
 apt upgrade -y
 apt dist-upgrade -y
 apt autoremove -y
 apt clean
 
-## install deps
-apt install -y bind9 isc-dhcp-server squid ipcalc bwm-ng iptraf nethogs byobu sudo htop iptables
+echo " -- Install required packages"
+apt install -y bind9 isc-dhcp-server squid ipcalc bwm-ng iptraf nethogs byobu sudo htop iptables ca-certificates curl
 
-echo ""
-echo "Apt done."
-echo ""
+echo " -- Install docker"
+# from https://docs.docker.com/engine/install/debian/
+install -m 0755 -d /etc/apt/keyrings
+curl -fsSL https://download.docker.com/linux/debian/gpg -o /etc/apt/keyrings/docker.asc
+chmod a+r /etc/apt/keyrings/docker.asc
+
+# Add the repository to Apt sources:
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/debian \
+  $(. /etc/os-release && echo "$VERSION_CODENAME") stable" > /etc/apt/sources.list.d/docker.list
+apt-get update
+apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
 ###########################
 ##### Setup Users
 ###########################
 
 echo " -- Fix permissions"
-## make general users part of sudo group (usually just the user added during setup)
+## make general users (usually just the user added during setup) part of sudo and docker groups
 l=$(grep "^UID_MIN" /etc/login.defs)
 l1=$(grep "^UID_MAX" /etc/login.defs)
 USERS=$(awk -F':' -v "min=${l##UID_MIN}" -v "max=${l1##UID_MAX}" '{ if ( $3 >= min && $3 <= max ) print $1}' /etc/passwd)
 for USR in $USERS; do
-  usermod -a -G sudo $USR
+  usermod -a -G sudo docker $USR
 done
 
 ###########################
-##### Setup Users
+##### Compute LAN Adresses
 ###########################
 
 ## calculate LAN addresses
@@ -128,6 +123,13 @@ MINREQHOSTS=$((FIXEDADDRCOUNT + MINGUESTIPS + 1))
 
 SERVERLANIP=${LANMAXIP}
 
+HOSTRANGEMIN=$(echo ${LANMINIP} | cut -d'.' -f4)
+HOSTRANGEMIN=$((HOSTRANGEMIN+FIXEDADDRCOUNT))
+HOSTRANGEMAX=$(echo ${LANMAXIP} | cut -d'.' -f4)
+HOSTRANGEMAX=$((HOSTRANGEMAX - 1))
+DHCPRANGESTARTIP=$(echo ${LANNETADDRESS} | cut -d'.' -f1-3).${HOSTRANGEMIN}
+DHCPRANGESTOPIP=$(echo ${LANNETADDRESS} | cut -d'.' -f1-3).${HOSTRANGEMAX}
+
 ###########################
 ##### Setup interfaces
 ###########################
@@ -142,9 +144,9 @@ iface ${LANIFACE} inet static
   broadcast ${LANBROADCAST}
 EOF
 
-###########################
-##### Setup DHCP
-###########################
+###################################################################################
+##### DHCP Setup
+###################################################################################
 
 ## enable DHCPd on lan iface
 sed -i -r "s/^(INTERFACESv4=).*/\1\"${LANIFACE}\"/g" /etc/default/isc-dhcp-server
@@ -155,13 +157,6 @@ sed -i -r "s/^(option domain-name-servers )(.*)/\1${SERVERLANIP};/g" /etc/dhcp/d
 
 sed -i -r "s/^#authoritative;/authoritative;/g" /etc/dhcp/dhcpd.conf
 
-## calculate DHCP range
-HOSTRANGEMIN=$(echo ${LANMINIP} | cut -d'.' -f4)
-HOSTRANGEMIN=$((HOSTRANGEMIN+FIXEDADDRCOUNT))
-HOSTRANGEMAX=$(echo ${LANMAXIP} | cut -d'.' -f4)
-HOSTRANGEMAX=$((HOSTRANGEMAX - 1))
-DHCPRANGESTARTIP=$(echo ${LANNETADDRESS} | cut -d'.' -f1-3).${HOSTRANGEMIN}
-DHCPRANGESTOPIP=$(echo ${LANNETADDRESS} | cut -d'.' -f1-3).${HOSTRANGEMAX}
 
 cat >> /etc/dhcp/dhcpd.conf << EOF
 subnet ${LANNETADDRESS} netmask ${LANMASK} {
@@ -183,9 +178,9 @@ host $NAME {
 EOF
 done
 
-###########################
-##### Setup DNS
-###########################
+###################################################################################
+##### DNS Setup
+###################################################################################
 
 echo "Setup DNS"
 ## setup DNS
@@ -303,9 +298,9 @@ zone "${REV_ZONE}.in-addr.arpa" {
 EOF
 done
 
-###########################
-##### Setup Proxy
-###########################
+###################################################################################
+##### Proxy Setup
+###################################################################################
 
 echo " -- Stop squid"
 # stop squid before updating config
@@ -408,9 +403,9 @@ echo " -- Check squid"
 squid -k check
 
 
-###########################
-##### Setup Firewall
-###########################
+###################################################################################
+##### Firewall Setup
+###################################################################################
 
 cat > /usr/sbin/firewall_router.down.sh << EOF
 #!/usr/bin/env bash
@@ -629,9 +624,9 @@ chmod +x /usr/sbin/firewall_router.up.sh
 
 systemctl enable firewall_router
 
-###########################
+###################################################################################
 ##### Cleanup
-###########################
+###################################################################################
 
 SLEEP_TIME=5
 echo -n "Rebooting in $SLEEP_TIME s "
