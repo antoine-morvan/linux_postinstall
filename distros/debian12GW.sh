@@ -4,6 +4,7 @@ set -eu -o pipefail
 ###################################################################################
 ##### TODO
 ##  * cleanup squid config
+##  * cache HTTPS large files : https://rasika90.medium.com/how-i-saved-tons-of-gbs-with-https-caching-41550b4ada8a
 ###################################################################################
 ## Sample post install script to configure a debian gateway with an ISC DHCP,
 ## bind9 DNS, IPTables with NAT and firewall, and transparent Squid proxy caching
@@ -63,6 +64,8 @@ WEBCACHE_PATH="/mnt/squidcache/"
 
 echo " -- Check user"
 [ "$(whoami)" != "root" ] && echo "Error: need to be executed as root" && exit 1
+# extra groups to add normal users to
+GROUPS=sudo
 
 ###########################
 ##### Update && Install
@@ -78,6 +81,7 @@ apt clean
 echo " -- Install required packages"
 apt install -y bind9 isc-dhcp-server squid ipcalc bwm-ng iptraf nethogs byobu sudo htop iptables ca-certificates curl
 
+
 # echo " -- Install docker"
 # # from https://docs.docker.com/engine/install/debian/
 # install -m 0755 -d /etc/apt/keyrings
@@ -89,6 +93,7 @@ apt install -y bind9 isc-dhcp-server squid ipcalc bwm-ng iptraf nethogs byobu su
 #   $(. /etc/os-release && echo "$VERSION_CODENAME") stable" > /etc/apt/sources.list.d/docker.list
 # apt-get update
 # apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+# GROUPS+=",docker"
 
 ###########################
 ##### Setup Users
@@ -100,7 +105,7 @@ l=$(grep "^UID_MIN" /etc/login.defs)
 l1=$(grep "^UID_MAX" /etc/login.defs)
 USERS=$(awk -F':' -v "min=${l##UID_MIN}" -v "max=${l1##UID_MAX}" '{ if ( $3 >= min && $3 <= max ) print $1}' /etc/passwd)
 for USR in $USERS; do
-  usermod -a -G sudo,docker $USR
+  usermod -a -G $GROUPS $USR
 done
 
 ###########################
