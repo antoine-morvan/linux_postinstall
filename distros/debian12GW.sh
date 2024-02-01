@@ -148,7 +148,7 @@ EOF
 
 ## Set dhclient to use proper domain & name server
 cat >> /etc/dhcp/dhclient.conf << EOF
-ersede domain-name "$DOMAIN_NAME";
+supersede domain-name "$DOMAIN_NAME";
 prepend domain-name-servers 127.0.0.1;
 EOF
 
