@@ -4,7 +4,6 @@ set -eu -o pipefail
 ###################################################################################
 ##### TODO
 ##  * cleanup squid config
-##  * cache HTTPS large files : https://rasika90.medium.com/how-i-saved-tons-of-gbs-with-https-caching-41550b4ada8a
 ###################################################################################
 ## Sample post install script to configure a debian gateway with an ISC DHCP,
 ## bind9 DNS, IPTables with NAT and firewall, and transparent Squid proxy caching
@@ -315,6 +314,8 @@ done
 ###################################################################################
 ##### Proxy Setup
 ###################################################################################
+
+# Note: cannot cache HTTPS objects: that's a man in the middle attack ...
 
 echo " -- Stop squid"
 # stop squid before updating config
