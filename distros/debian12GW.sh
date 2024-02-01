@@ -4,6 +4,8 @@ set -eu -o pipefail
 ###################################################################################
 ##### TODO
 ##  * cleanup squid config (no HTTPS cache, see note)
+##  * https://wiki.squid-cache.org/ConfigExamples/index
+##  * http://server1.sharewiz.net/doku.php?id=pfsense:squid:refresh_patterns
 ###################################################################################
 ## Sample post install script to configure a debian gateway with an ISC DHCP,
 ## bind9 DNS, IPTables with NAT and firewall, and transparent Squid proxy caching
