@@ -4,7 +4,6 @@ set -eu -o pipefail
 ###################################################################################
 ##### TODO
 ##  * cleanup squid config
-##  * add mechanism to prepare a list of local hosts from external file
 ###################################################################################
 ## Sample post install script to configure a debian gateway with an ISC DHCP,
 ## bind9 DNS, IPTables with NAT and firewall, and transparent Squid proxy caching
