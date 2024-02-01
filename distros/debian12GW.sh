@@ -187,6 +187,7 @@ done
 ##### Setup DNS
 ###########################
 
+echo "Setup DNS"
 ## setup DNS
 
 cat > /etc/bind/named.conf.options << EOF
@@ -228,7 +229,7 @@ zone "${DOMAIN_NAME}" {
 };
 
 EOF
-cat >> cat /etc/bind/db.${DOMAIN_NAME} << EOF
+cat >> /etc/bind/db.${DOMAIN_NAME} << EOF
 ;
 ; BIND data file for local loopback interface
 ;
