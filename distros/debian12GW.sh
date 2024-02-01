@@ -247,6 +247,26 @@ $HOSTNAME.$DOMAIN_NAME. IN A ${SERVERLANIP}
 EOF
 
 ZONES=""
+# Add reverse for router
+IP_ZONE=$(echo $SERVERLANIP |cut -d'.' -f-3)
+LAST_DIGIT=$(echo $SERVERLANIP |cut -d'.' -f4)
+ZONE_FILE=/etc/bind/db.$IP_ZONE
+if [ ! -f $ZONE_FILE ]; then
+  ZONES+=" $IP_ZONE"
+  cat > $ZONE_FILE << EOF
+\$TTL    604800
+@       IN      SOA     $HOSTNAME.$DOMAIN_NAME. root.$HOSTNAME.$DOMAIN_NAME. (
+                            2         ; Serial
+                        604800         ; Refresh
+                        86400         ; Retry
+                      2419200         ; Expire
+                        604800 )       ; Negative Cache TTL
+      NS      $HOSTNAME.$DOMAIN_NAME.
+EOF
+fi
+echo "$LAST_DIGIT PTR $HOSTNAME.$DOMAIN_NAME." >> $ZONE_FILE
+
+# Add reverse for fixed hosts
 for FixedIP in $FIXED_IPS; do
   NAME=$(echo $FixedIP | cut -d':' -f1)
   IP=$(echo $FixedIP | cut -d':' -f2)
