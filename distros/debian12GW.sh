@@ -3,7 +3,7 @@ set -eu -o pipefail
 
 ###################################################################################
 ##### TODO
-##  * cleanup squid config
+##  * cleanup squid config (no HTTPS cache, see note)
 ###################################################################################
 ## Sample post install script to configure a debian gateway with an ISC DHCP,
 ## bind9 DNS, IPTables with NAT and firewall, and transparent Squid proxy caching
@@ -396,7 +396,7 @@ quick_abort_min -1
 
 cache_dir aufs ${WEBCACHE_PATH} ${WEBCACHE_SIZE} 16 256
 
-shutdown_lifetime 5 seconds
+shutdown_lifetime 1 seconds
 
 EOF
 
