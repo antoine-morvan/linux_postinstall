@@ -81,6 +81,7 @@ apt clean
 echo " -- Install required packages"
 apt install -y bind9 isc-dhcp-server squid ipcalc bwm-ng iptraf nethogs byobu sudo htop iptables ca-certificates curl
 
+## Warning: docker setup seems to produce unbootable VM...
 
 # echo " -- Install docker"
 # # from https://docs.docker.com/engine/install/debian/
