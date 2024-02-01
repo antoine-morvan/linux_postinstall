@@ -246,11 +246,41 @@ $HOSTNAME.$DOMAIN_NAME. IN A ${SERVERLANIP}
 ;your sites
 EOF
 
+ZONES=""
 for FixedIP in $FIXED_IPS; do
   NAME=$(echo $FixedIP | cut -d':' -f1)
   IP=$(echo $FixedIP | cut -d':' -f2)
   MAC=$(echo $FixedIP | cut -d':' -f3-)
   echo "$NAME.$DOMAIN_NAME. IN A $IP" >> /etc/bind/db.${DOMAIN_NAME}
+
+  IP_ZONE=$(echo $IP |cut -d'.' -f-3)
+  LAST_DIGIT=$(echo $IP |cut -d'.' -f4)
+  ZONE_FILE=/etc/bind/db.$IP_ZONE
+  if [ ! -f $ZONE_FILE ]; then
+    ZONES+=" $IP_ZONE"
+    cat > $ZONE_FILE << EOF
+\$TTL    604800
+@       IN      SOA     $HOSTNAME.$DOMAIN_NAME. root.$HOSTNAME.$DOMAIN_NAME. (
+                              2         ; Serial
+                         604800         ; Refresh
+                          86400         ; Retry
+                        2419200         ; Expire
+                         604800 )       ; Negative Cache TTL
+        NS      $HOSTNAME.$DOMAIN_NAME.
+EOF
+  fi
+  echo "$LAST_DIGIT PTR $NAME.$DOMAIN_NAME." >> $ZONE_FILE
+done
+
+for ZONE in $ZONES; do
+  ZONE_FILE=/etc/bind/db.$IP_ZONE
+  REV_ZONE=$(echo $ZONE | cut -d'.' -f3).$(echo $ZONE | cut -d'.' -f2).$(echo $ZONE | cut -d'.' -f1)
+  cat >> /etc/bind/named.conf.local  << EOF
+zone "${REV_ZONE}.in-addr.arpa" {
+    type master;
+    file "${ZONE_FILE}";
+};
+EOF
 done
 
 ###########################
