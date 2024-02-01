@@ -216,7 +216,7 @@ cat >> /etc/bind/named.conf.options << EOF
 };
 EOF
 
-cat >> << EOF
+cat >> /etc/resolv.conf << EOF
 search ${DOMAIN_NAME}
 EOF
 
