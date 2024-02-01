@@ -220,7 +220,7 @@ cat >> /etc/resolv.conf << EOF
 search ${DOMAIN_NAME}
 EOF
 
-cat >>  << EOF
+cat >> /etc/bind/named.conf.local  << EOF
 
 zone "${DOMAIN_NAME}" {
     type master;
