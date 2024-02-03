@@ -53,8 +53,10 @@ FIXED_IPS=${FIXED_IPS:-" \
 # Squid settings
 WEBCACHE_PORT=3128
 WEBCACHE_PORT_INTERCEPT=3127
-WEBCACHE_OBJMAXSIZE=512 #MB
-WEBCACHE_SIZE=20000 #MB
+WEBCACHE_OBJMAXSIZE=$((20*1024)) #MB
+WEBCACHE_SIZE=$((310*1024)) #MB
+# WEBCACHE_OBJMAXSIZE=512 #MB
+# WEBCACHE_SIZE=20000 #MB
 WEBCACHE_PATH="/mnt/squidcache/"
 
 ###################################################################################
@@ -418,7 +420,6 @@ acl Windows_Update dstdomain wsus.ds.download.windowsupdate.com
 acl Windows_Update dstdomain au.b1.download.windowsupdate.com
 range_offset_limit -1  Windows_Update
 
-# Windows update.
 refresh_pattern windowsupdate.com/.*\.(cab|exe|dll|msi|psf) 10080 100% 43200 reload-into-ims
 refresh_pattern update.microsoft.com/.*\.(cab|exe)                  43200 100% 129600 ignore-no-cache ignore-no-store ignore-reload reload-into-ims
 refresh_pattern download.microsoft.com/.*\.(cab|exe|dll|msi|psf) 10080 100% 43200 reload-into-ims
