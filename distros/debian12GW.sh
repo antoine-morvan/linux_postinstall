@@ -4,8 +4,6 @@ set -eu -o pipefail
 ###################################################################################
 ##### TODO
 ##  * cleanup squid config (no HTTPS cache, see note)
-##  * https://wiki.squid-cache.org/ConfigExamples/index
-##  * http://server1.sharewiz.net/doku.php?id=pfsense:squid:refresh_patterns
 ###################################################################################
 ## Sample post install script to configure a debian gateway with an ISC DHCP,
 ## bind9 DNS, IPTables with NAT and firewall, and transparent Squid proxy caching
@@ -319,86 +317,119 @@ done
 
 # Note: cannot cache HTTPS objects: that's a man in the middle attack ...
 
+##  * https://wiki.squid-cache.org/ConfigExamples/index
+##  * http://server1.sharewiz.net/doku.php?id=pfsense:squid:refresh_patterns
+
 echo " -- Stop squid"
 # stop squid before updating config
 systemctl stop squid
 
 cat > /etc/squid/squid.conf << EOF
+## General configuration
+
 acl manager proto cache_object
+acl localhost src 127.0.0.1/32 ::1
+acl to_localhost dst 127.0.0.0/8 0.0.0.0/32 ::1
 acl localnet src ${LANNET}       # RFC1918 possible internal network
-acl SSL_ports port 443          # https
-acl Safe_ports port 80          # http
-acl Safe_ports port 21          # ftp
-acl Safe_ports port 443         # https
-acl purge method PURGE
-acl CONNECT method CONNECT
-http_access deny manager
-http_access deny purge
-http_access deny !Safe_ports
-http_access deny CONNECT !SSL_ports
-http_access allow localhost
-http_access allow localnet
-icp_access allow localnet
-icp_access deny all
+
 http_port $WEBCACHE_PORT
 http_port $WEBCACHE_PORT_INTERCEPT intercept
+
 access_log /var/log/squid/access.log squid
-acl shoutcast rep_header X-HTTP09-First-Line ^ICY.[0-9]
-acl apache rep_header Server ^Apache
 hosts_file /etc/hosts
 coredump_dir /var/spool/squid
 
-acl windowsupdate dstdomain windowsupdate.microsoft.com
-acl windowsupdate dstdomain .update.microsoft.com
-acl windowsupdate dstdomain download.windowsupdate.com
-acl windowsupdate dstdomain redir.metaservices.microsoft.com
-acl windowsupdate dstdomain images.metaservices.microsoft.com
-acl windowsupdate dstdomain c.microsoft.com
-acl windowsupdate dstdomain www.download.windowsupdate.com
-acl windowsupdate dstdomain wustat.windows.com
-acl windowsupdate dstdomain crl.microsoft.com
-acl windowsupdate dstdomain sls.microsoft.com
-acl windowsupdate dstdomain productactivation.one.microsoft.com
-acl windowsupdate dstdomain ntservicepack.microsoft.com
-
-# windows update files
-refresh_pattern -i \.(cab|exe|ms[i|u|f]|[ap]sf|wm[v|a]|dat|zip)       4320 80% 129600 reload-into-ims
-
-# pictures
-refresh_pattern -i \.(gif|png|jpg|jpeg|ico)\$ 10080 90% 43200 override-expire ignore-no-cache ignore-no-store ignore-private
-# medias
-refresh_pattern -i \.(iso|avi|mkv|flac|wav|mp3|mp4|mpeg|swf|flv|x-flv)\$ 43200 90% 432000 override-expire ignore-no-cache ignore-no-store ignore-private
-# packages & binaries
-refresh_pattern -i \.(udeb|deb|drpm|rpm|exe|bin|ppt|doc|tiff)\$ 10080 90% 43200 override-expire ignore-no-cache ignore-no-store ignore-private
-# archives
-refresh_pattern -i \.(zip|tar|jar|tgz|ram|rar|gz|xz|bz2|7z)\$ 10080 90% 43200 override-expire ignore-no-cache ignore-no-store ignore-private
-
-# distros packages & sources
-refresh_pattern pkg\.tar\.xz\$   0       20%     4320 refresh-ims
-refresh_pattern Packages\.bz2\$  0       20%     4320 refresh-ims
-refresh_pattern Sources\.bz2\$   0       20%     4320 refresh-ims
-refresh_pattern Release\.gpg\$   0       20%     4320 refresh-ims
-refresh_pattern Release\$        0       20%     4320 refresh-ims
-refresh_pattern (Release|Packages(.gz)*)\$       0       20%     2880
-refresh_pattern \.pkg\.tar\.            0       20%     129600  reload-into-ims
-refresh_pattern \.tar(\.bz2|\.gz|\.xz)\$              0       20%     129600  reload-into-ims
-refresh_pattern Packages.gz\$            0       100%    129600  reload-into-ims
-
-# general
-refresh_pattern ^ftp:          1440    20%     10080
-refresh_pattern ^gopher:       1440    0%      1440
-refresh_pattern -i youtube.com/.* 10080 90% 43200
-refresh_pattern -i (/cgi-bin/|\?) 0    0%      0
-refresh_pattern . 0 40% 40320
-
-
 maximum_object_size ${WEBCACHE_OBJMAXSIZE} MB
-range_offset_limit -1 windowsupdate
-quick_abort_min -1
-
 cache_dir aufs ${WEBCACHE_PATH} ${WEBCACHE_SIZE} 16 256
-
 shutdown_lifetime 1 seconds
+cache_mem 512 MB
+
+
+## Services ports
+
+acl Safe_ports port 80          # http
+acl Safe_ports port 21          # ftp
+acl Safe_ports port 443         # https
+acl SSL_ports port 443          # https
+
+acl Safe_ports port 70          # gopher
+acl Safe_ports port 210         # wais
+acl Safe_ports port 1025-65535  # unregistered ports
+acl Safe_ports port 280         # http-mgmt
+acl Safe_ports port 488         # gss-http
+acl Safe_ports port 591         # filemaker
+acl Safe_ports port 777         # multiling http
+
+## Access rules
+
+acl CONNECT method CONNECT
+acl purge method PURGE
+
+http_access allow manager localhost
+http_access deny manager
+http_access deny purge
+
+http_access deny !Safe_ports
+http_access deny CONNECT !SSL_ports
+http_access deny to_localhost
+
+http_access allow localnet
+http_access allow localhost
+http_access deny all
+
+icp_access allow localnet
+icp_access deny all
+
+## Refresh patterns
+## refresh_pattern <regexp> <min> <percent> <max> <options>
+## 1 year = 525600 mins, 3 months = 129600, 1 month = 43800 mins, 1 week = 10080 min, 1 day = 1440 min, 12 hours = 720 min, 6 hours = 360 min.
+## References :
+##  * https://wiki.squid-cache.org/ConfigExamples/index
+##  * http://server1.sharewiz.net/doku.php?id=pfsense:squid:refresh_patterns
+##  * http://www.squid-cache.org/Doc/config/refresh_pattern/
+##  * https://www.mnot.net/talks/bits-on-the-wire/refresh_pattern/
+##  * http://www.squid-cache.org/Versions/v2/2.6/cfgman/refresh_pattern.html
+
+acl shoutcast rep_header X-HTTP09-First-Line ^ICY.[0-9]
+acl apache rep_header Server ^Apache
+
+# Disable caching of cgi scripts
+hierarchy_stoplist cgi-bin ?
+refresh_pattern -i (/cgi-bin/|\?) 0     0%      0
+
+# YouTube Video.
+refresh_pattern -i (get_video\?|videoplayback\?|videodownload\?|\.mp4|\.webm|\.flv|((audio|video)\/(webm|mp4))) 241920 100% 241920 override-expire ignore-reload ignore-private ignore-no-store ignore-must-revalidate reload-into-ims ignore-auth store-stale
+refresh_pattern -i ^https?\:\/\/.*\.googlevideo\.com\/videoplayback.*     10080 99% 43200 override-lastmod override-expire ignore-reload reload-into-ims ignore-private reload-into-ims ignore-auth store-stale
+refresh_pattern -i ^https?\:\/\/.*\.googlevideo\.com\/videoplayback.*$    241920 100% 241920 override-expire ignore-reload ignore-private ignore-no-store ignore-must-revalidate reload-into-ims ignore-auth store-stale
+
+# YouTube images.
+refresh_pattern -i (yimg|twimg)\.com\.*         1440 100% 129600 override-expire ignore-reload reload-into-ims
+refresh_pattern -i (ytimg|ggpht)\.com\.*        1440 80% 129600 override-expire override-lastmod ignore-auth ignore-reload reload-into-ims
+
+# Updates: Windows
+refresh_pattern -i windowsupdate.com/.*\.(cab|exe|ms[i|u|f|p]|[ap]sf|wm[v|a]|dat|zip|psf) 43200 80% 129600 reload-into-ims
+refresh_pattern -i microsoft.com/.*\.(cab|exe|ms[i|u|f|p]|[ap]sf|wm[v|a]|dat|zip|psf) 43200 80% 129600 reload-into-ims
+refresh_pattern -i windows.com/.*\.(cab|exe|ms[i|u|f|p]|[ap]sf|wm[v|a]|dat|zip|psf) 43200 80% 129600 reload-into-ims
+refresh_pattern -i microsoft.com.akadns.net/.*\.(cab|exe|ms[i|u|f|p]|[ap]sf|wm[v|a]|dat|zip|psf) 43200 80% 129600 reload-into-ims
+refresh_pattern -i deploy.akamaitechnologies.com/.*\.(cab|exe|ms[i|u|f|p]|[ap]sf|wm[v|a]|dat|zip|psf) 43200 80% 129600 reload-into-ims
+
+# Content Delivery Network
+refresh_pattern -i \.(cdn)                                                             10080 100%  43800  ignore-no-cache ignore-no-store ignore-private override-expire override-lastmod reload-into-ims ignore-reload
+refresh_pattern -i (cdn)                                                               10080 100%  43800  ignore-no-cache ignore-no-store ignore-private override-expire override-lastmod reload-into-ims ignore-reload
+
+refresh_pattern ^ftp:                                       1440  20% 10080       # Cache all FTP requests
+refresh_pattern -i .(gif|png|jpg|jpeg|ico|tiff)$            10080 90% 43200       # Cache images
+refresh_pattern -i .(avi|wav|og(x|v|a|g)|swf|flv|x-flv)$    43200 90% 432000      # Cache media content
+refresh_pattern -i .(mkv|flac|m4v|webm|mov|wmv|m4v|3gp)$    43200 90% 432000      # Cache media content 2
+refresh_pattern -i .(3g2|aac|alac|ape|m4a|wma|ac4)$         43200 90% 432000      # Cache media content 3
+refresh_pattern -i .(mp(e?g|a|e|1|2|3|4)|mk(a|v)|divx)$     43200 90% 432000      # Cache media content 4
+refresh_pattern -i .(zip|gz|tar|tgz|ram|rar|7z|cab|xz)$     10080 90% 43200       # Cache archives 
+refresh_pattern -i .(cb(r|z|t)|jar)$                        10080 90% 43200       # Cache archives 2
+refresh_pattern -i .(cue|iso|bin|img|)$                     10080 90% 43200       # Cache disk images
+refresh_pattern -i .(deb|rpm|exe|ms(i|u|p)|dmg)$            10080 90% 43200       # Cache packages
+
+# Disable caching for everything else
+refresh_pattern .              0       0%      0
 
 EOF
 
