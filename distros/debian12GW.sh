@@ -330,8 +330,9 @@ cat > /etc/squid/squid.conf << EOF
 ## General configuration
 
 acl manager proto cache_object
-acl localhost src 127.0.0.1/32 ::1
-acl to_localhost dst 127.0.0.0/8 0.0.0.0/32 ::1
+# Following 2 rules are obsolete
+# acl localhost src 127.0.0.1/32 ::1
+# acl to_localhost dst 127.0.0.0/8 0.0.0.0/32 ::1
 acl localnet src ${LANNET}       # RFC1918 possible internal network
 
 http_port $WEBCACHE_PORT
@@ -346,30 +347,31 @@ cache_dir aufs ${WEBCACHE_PATH} ${WEBCACHE_SIZE} 16 256
 shutdown_lifetime 1 seconds
 cache_mem 512 MB
 
-
 ## Services ports
+acl SSL_ports port 443
+acl Safe_ports port 80       # http
+acl Safe_ports port 21       # ftp
+acl Safe_ports port 443       # https
+acl Safe_ports port 70       # gopher
+acl Safe_ports port 210       # wais
+acl Safe_ports port 1025-65535    # unregistered ports
+acl Safe_ports port 280       # http-mgmt
+acl Safe_ports port 488       # gss-http
+acl Safe_ports port 591       # filemaker
+acl Safe_ports port 777       # multiling http
 
-acl Safe_ports port 80          # http
-acl Safe_ports port 21          # ftp
-acl Safe_ports port 443         # https
-acl SSL_ports port 443          # https
-
-acl Safe_ports port 70          # gopher
-acl Safe_ports port 210         # wais
-acl Safe_ports port 1025-65535  # unregistered ports
-acl Safe_ports port 280         # http-mgmt
-acl Safe_ports port 488         # gss-http
-acl Safe_ports port 591         # filemaker
-acl Safe_ports port 777         # multiling http
+# If range_offset_limit is set to -1 the quick abort options will NOT work
+range_offset_limit 0
+quick_abort_min 0 KB
+quick_abort_max 0 KB
 
 ## Access rules
 
 acl CONNECT method CONNECT
-acl purge method PURGE
 
+http_access allow localhost manager
 http_access allow manager localhost
 http_access deny manager
-http_access deny purge
 
 http_access deny !Safe_ports
 http_access deny CONNECT !SSL_ports
@@ -392,71 +394,59 @@ icp_access deny all
 ##  * https://www.mnot.net/talks/bits-on-the-wire/refresh_pattern/
 ##  * http://www.squid-cache.org/Versions/v2/2.6/cfgman/refresh_pattern.html
 
-acl shoutcast rep_header X-HTTP09-First-Line ^ICY.[0-9]
-acl apache rep_header Server ^Apache
+#MISC FILE CACHING HERE
+refresh_pattern -i \.(3gp|7z|ace|asx|avi|bin|cab|dat|deb|rpm|divx|dvr-ms)(\?|$)   43800 100% 525600     refresh-ims    # 3GP | 7Z | ACE | ASX | AVI | BIN | CAB | DAT | DEB | RPM | DIVX | DVR-MS
+refresh_pattern -i \.(rar|jar|gz|tgz|tar|bz2|iso)(\?|$)                           43800 100% 525600     refresh-ims    # RAR | JAR | GZ | TGZ | TAR | BZ2 | ISO
+refresh_pattern -i \.(m1v|M2V|M2P|MOD|MOV|FLV)(\?|$)                              43800 100% 525600         # M1V | M2V | M2P | MOD | MOV | FLV
+refresh_pattern -i \.(jp(e?g|e|2)|gif|pn[pg]|bm?|tiff?|ico)(\?|$)                 43800 100% 525600     refresh-ims    # JPG | JPEG | JPE | JP2 | GIF | PNG | BMP | TIFF | ICO | SWF
+refresh_pattern -i \.(mp(e?g|a|e|1|2|3|4)|mk(a|v)|ms(i|u|p))(\?|$)                43800 100% 525600         # MPEG STYLE CACHING, VIDEO AND MUSIC | MPG MPEG | MP1-2-3-4 | MK-A/V | MS-I-U-P
+refresh_pattern -i \.(og(x|v|a|g)|rar|rm|r(a|p)m|snd|vob|wav)(\?|$)               43800 100% 525600         # OGX | OGV | OGA | OGG | RAR | RM | RAM | RPM | SND | VOB | WAV
+refresh_pattern -i \.(wax|wm(a|v)|wmx|wpl|zip|cb(r|z|t))(\?|$)                    43800 100% 525600         # PPS | PPT | WAX | WMA | WMV | WMX | WPL | ZIP | CBR | CBZ | CBT
+refresh_pattern -i \.(woff|exe|dmg|webm)(\?|$)                                    43800 100% 525600     refresh-ims    # WOFF | TXT | EXE | DMG | WEBM
+refresh_pattern -i .(iso|avi|wav|mp3|mp4|mpeg|swf|flv|x-flv)$                     43800 100% 525600         #THIS SHOULD BE DOCUMENTED/DONE ABOVE, BUT LEAVING HERE JUST IN CASE
+refresh_pattern -i .(zip|tar|tgz|ram|rar|bin|tiff)$                               43800 100% 525600     refresh-ims    # DEB | RPM | EXE | ZIP | TAR | TGZ | RAM | RAR | BIN | PPT | DOC | TIFF | DOCX
+refresh_pattern -i .(app|bin|drpm|zip|zipx|tar|tgz|tbz2|tlz|iso|arj|cfs|dar|jar)$ 43800 100% 525600     refresh-ims
+refresh_pattern -i .(bz|bz2|ipa|ram|rar|uxx|gz|msi|dll|lz|lzma|7z|s7z|Z|z|zz|sz)$ 43800 100% 525600     refresh-ims
+refresh_pattern -i .(cab|psf|vidt|apk|wtex|hz|ova|ovf)$                           43800 100% 525600     refresh-ims
+refresh_pattern -i .(flow|asp|aspx)$                                              0 100% 200000         refresh-ims
+refresh_pattern -i .(asx|mp2|mp3|mp4|mp5|wmv|flv|mts|f4v|f4|pls|midi|mid)$        43800 100% 525600     refresh-ims
+refresh_pattern -i .(mpa|m2a|mpe|avi|mov|mpg|mpeg|mpg3|mpg4|mpg5)$                43800 100% 525600
+refresh_pattern -i .(m1s|mp2v|m2s|m2ts|mp2t|rmvb|3pg|3gpp|omg|ogm|asf|war)$       43800 100% 525600     refresh-ims
+refresh_pattern -i .(swf)$                                                        43800 100% 525600
+refresh_pattern -i .(wav|class|dat|zsci|ver|advcs)$                               43800 100% 525600     refresh-ims
+refresh_pattern -i .(gif|png|ico|jpg|jpeg|jp2|webp)$                              43800 100% 525600     refresh-ims
+refresh_pattern -i .(jpx|j2k|j2c|fpx|bmp|tif|tiff|bif)$                           43800 100% 525600     refresh-ims
+refresh_pattern -i .(pcd|pict|rif|exif|hdr|bpg|img|jif|jfif)$                     43800 100% 525600     refresh-ims
+refresh_pattern -i .(woff|woff2|eps|ttf|otf|svg|svgi|svgz|ps|ps1|acsm|eot)$       43800 100% 525600     refresh-ims
+refresh_pattern -i (\.|-)(ba|daa|ddz|dpe|egg|egt|ecab|ess|gho|ghs|gz|ipg|jar|lbr|lqr|lha|lz|lzo|lzma|lzx|mbw|mc.meta|mpq|nth|osz|pak|par|par2|paf|pyk|pk3|pk4|rag|sen|sitx|skb|tb|tib|uha|uue|viv|vsa|z|zoo|nrg|adf|adz|dms|dsk|d64|sdi|mds|mdx|cdi|cue|cif|c2d|daa|b6t)(\?.*)?$ 43800 100% 525600     refresh-ims
+refresh_pattern -i (.|-)(mp3|m4a|aa?c3?|wm?av?|og(x|v|a|g)|ape|mka|au|aiff|zip|flac|m4(b|r)|m1v|m2(v|p)|mo(d|v)|arj|appx|lha|lzh|on2) 43800 100% 525600     refresh-ims
+refresh_pattern -i (.|-)(exe|bin|(n|t)ar|acv|(r|j)ar|t?gz|(g|b)z(ip)?2?|7?z(ip)?|wm[v|a]|patch|diff|mar|vpu|inc|r(a|p)m|kom|iso|sys|[ap]sf|ms[i|u|f]|dat|msi|cab|psf|dvr-ms|ace|asx|qt|xt|esd) 43800 100% 525600     refresh-ims
+refresh_pattern -i (.|-)(ico(.)?|pn[pg]|(g|t)iff?|jpe?g(2|3|4)?|psd|c(d|b)r|cad|bmp|img) 43800 100% 525600     refresh-ims
+refresh_pattern -i (.|-)(webm|(x-)?swf|mp(eg)?(3|4)|mpe?g(av)?|(x-)?f(l|4)v|divx?|rmvb?|mov|trp|ts|avi|m38u|wmv|wmp|m4v|mkv|asf|dv|vob|3gp?2?) 43800 100% 525600     refresh-ims
 
-# Disable caching of cgi scripts
-hierarchy_stoplist cgi-bin ?
-refresh_pattern -i (/cgi-bin/|\?) 0     0%      0
+#new refresh patterns 2
+refresh_pattern -i (\.|-)(def|sig|upt|mid|midi|mpg|mpeg|ram|cav|acc|alz|apk|at3|bke|arc|ass|ba|big|bik|bkf|bld|c4|cals|clipflair|cpt|daa|dmg|ddz|dpe|egg|egt|ecab|ess|esd|gho|ghs|gz|ipg|jar|lbr|lqr|lha|lz|lzo|lzma|lzx|mbw|mc.meta|mpq|nth|osz|pak|par|par2|paf|pyk|pk3|pk4|rag|sen|sitx|skb|tb|tib|uha|uue|viv|vsa|z|zoo|nrg|adf|adz|dms|dsk|d64|sdi|mds|mdx|cdi|cue|cif|c2d|daa|b6t)(\?.*)?$ 43800 100% 525600     refresh-ims
+#end new refresh patterns 2
+#new refresh patterns
+refresh_pattern -i (\.|-)(mp3|m4a|aa?c3?|wm?av?|og(x|v|a|g)|ape|mka|au|aiff|zip|flac|m4(b|r)|m1v|m2(v|p)|mo(d|v)|arj|appx|lha|lzh|on2)(\?.*)?$ 43800 100% 525600     refresh-ims
+refresh_pattern -i (\.|-)(exe|bin|(n|t)ar|acv|(r|j)ar|t?gz|(g|b)z(ip)?2?|7?z(ip)?|wm[v|a]|mar|vpu|inc|r(a|p)m|kom|iso|[ap]sf|ms[i|u|f]|dat|msi|cab|psf|dvr-ms|ace|asx|qt|xt|esd)(\?.*)?$ 43800 100% 525600     refresh-ims
+refresh_pattern -i (\.|-)(ico(.*)?|pn[pg]|(g|t)iff?|jpe?g(2|3|4)?|psd|c(d|b)r|cad|bmp|img)(\?.*)?$ 43800 100% 525600     refresh-ims
+refresh_pattern -i (\.|-)(webm|(x-)?swf|mp(eg)?(3|4)|mpe?g(av)?|(x-)?f(l|4)v|divx?|rmvb?|mov|trp|ts|avi|m38u|wmv|wmp|m4v|mkv|asf|dv|vob|3gp?2?)(\?.*)?$ 43800 100% 525600     refresh-ims
+refresh_pattern -i \.(rar|jar|gz|tgz|tar|bz2|iso|m1v|m2(v|p)|mo(d|v)|flv) 43800 100% 525600     refresh-ims
+refresh_pattern (Release|Packages(.gz)*)$    0   20%  2880 refresh-ims
 
-# YouTube Video.
-refresh_pattern -i (get_video\?|videoplayback\?|videodownload\?|\.mp4|\.webm|\.flv|((audio|video)\/(webm|mp4))) 241920 100% 241920 override-expire ignore-reload ignore-private ignore-no-store ignore-must-revalidate reload-into-ims ignore-auth store-stale
-refresh_pattern -i ^https?\:\/\/.*\.googlevideo\.com\/videoplayback.*     10080 99% 43200 override-lastmod override-expire ignore-reload reload-into-ims ignore-private reload-into-ims ignore-auth store-stale
-refresh_pattern -i ^https?\:\/\/.*\.googlevideo\.com\/videoplayback.*$    241920 100% 241920 override-expire ignore-reload ignore-private ignore-no-store ignore-must-revalidate reload-into-ims ignore-auth store-stale
+# GENERIC CACHING BELOW
+refresh_pattern -i \.(cdn) 43800 100% 525600     refresh-ims       # CDN CACHING
+refresh_pattern -i (cdn)   43800 100% 525600     refresh-ims       # CDN CACHING
+refresh_pattern -i (.|-)(xml|js|jsp|txt|css)?$ 360 20% 1440
 
-# YouTube images.
-refresh_pattern -i (yimg|twimg)\.com\.*         1440 100% 129600 override-expire ignore-reload reload-into-ims
-refresh_pattern -i (ytimg|ggpht)\.com\.*        1440 80% 129600 override-expire override-lastmod ignore-auth ignore-reload reload-into-ims
+#GENERIC SITES/PROTOCOLS
+refresh_pattern ^ftp: 1440 20% 10080
+refresh_pattern ^gopher:  1440  0%  1440
+refresh_pattern -i (/cgi-bin/\?) 0 0% 0
 
-# Updates: Windows
-acl Windows_Update dstdomain windowsupdate.microsoft.com
-acl Windows_Update dstdomain update.microsoft.com
-acl Windows_Update dstdomain download.windowsupdate.com
-acl Windows_Update dstdomain www.download.windowsupdate.com
-acl Windows_Update dstdomain windowsupdate.com
-acl Windows_Update dstdomain au.download.windowsupdate.com
-acl Windows_Update dstdomain bg.v4.pr.dl.ws.microsoft.com
-acl Windows_Update dstdomain wsus.ds.download.windowsupdate.com
-acl Windows_Update dstdomain au.b1.download.windowsupdate.com
-range_offset_limit -1  Windows_Update
-
-refresh_pattern windowsupdate.com/.*\.(cab|exe|dll|msi|psf) 10080 100% 43200 reload-into-ims
-refresh_pattern update.microsoft.com/.*\.(cab|exe)                  43200 100% 129600 ignore-no-cache ignore-no-store ignore-reload reload-into-ims
-refresh_pattern download.microsoft.com/.*\.(cab|exe|dll|msi|psf) 10080 100% 43200 reload-into-ims
-refresh_pattern -i microsoft.com/.*\.(cab|exe|ms[i|u|f]|[ap]sf|wm[v|a]|dat|zip) 4320 80% 43200 reload-into-ims
-refresh_pattern -i windowsupdate.com/.*\.(cab|exe|ms[i|u|f]|[ap]sf|wm[v|a]|dat|zip) 4320 80% 43200 reload-into-ims
-refresh_pattern -i windows.com/.*\.(cab|exe|ms[i|u|f]|[ap]sf|wm[v|a]|dat|zip) 4320 80% 43200 reload-into-ims
-refresh_pattern ([^.]+\.)?(download|(windows)?update)\.(microsoft\.)?com/.*\.(cab|exe|msi|msp|psf) 4320 100% 43200 reload-into-ims
-refresh_pattern update.microsoft.com/.*\.(cab|exe|dll|msi|psf) 10080 100% 43200 reload-into-ims
-refresh_pattern windowsupdate.com/.*\.(cab|exe|dll|msi|psf) 10080 100% 43200 reload-into-ims
-refresh_pattern download.microsoft.com/.*\.(cab|exe|dll|msi|psf) 10080 100% 43200 reload-into-ims
-refresh_pattern www.microsoft.com/.*\.(cab|exe|dll|msi|psf) 10080 100% 43200 reload-into-ims
-
-refresh_pattern au.download.windowsupdate.com/.*\.(cab|exe|dll|msi|psf) 4320 100% 43200 reload-into-ims
-refresh_pattern bg.v4.pr.dl.ws.microsoft.com/.*\.(cab|exe|dll|msi|psf) 4320 100% 43200 reload-into-ims
-refresh_pattern -i .*windowsupdate.com/.*\.(cab|exe)                     259200 100% 259200 ignore-no-store ignore-reload reload-into-ims
-refresh_pattern -i .*update.microsoft.com/.*\.(cab|exe|dll|msi|psf)                  259200 100% 259200 ignore-no-store ignore-reload reload-into-ims
-refresh_pattern au.download.windowsupdate.com/.*\.(cab|exe|dll|msi|psf) 4320 100% 43200 reload-into-ims
-refresh_pattern bg.v4.pr.dl.ws.microsoft.com/.*\.(cab|exe|dll|msi|psf) 4320 100% 43200 reload-into-ims
-
-
-# Content Delivery Network
-refresh_pattern -i \.(cdn)                                                             10080 100%  43800  ignore-no-cache ignore-no-store ignore-private override-expire override-lastmod reload-into-ims ignore-reload
-refresh_pattern -i (cdn)                                                               10080 100%  43800  ignore-no-cache ignore-no-store ignore-private override-expire override-lastmod reload-into-ims ignore-reload
-
-refresh_pattern ^ftp:                                       1440  20% 10080       # Cache all FTP requests
-refresh_pattern -i .(gif|png|jpg|jpeg|ico|tiff)$            10080 90% 43200       # Cache images
-refresh_pattern -i .(avi|wav|og(x|v|a|g)|swf|flv|x-flv)$    43200 90% 432000      # Cache media content
-refresh_pattern -i .(mkv|flac|m4v|webm|mov|wmv|m4v|3gp)$    43200 90% 432000      # Cache media content 2
-refresh_pattern -i .(3g2|aac|alac|ape|m4a|wma|ac4)$         43200 90% 432000      # Cache media content 3
-refresh_pattern -i .(mp(e?g|a|e|1|2|3|4)|mk(a|v)|divx)$     43200 90% 432000      # Cache media content 4
-refresh_pattern -i .(zip|gz|tar|tgz|ram|rar|7z|cab|xz)$     10080 90% 43200       # Cache archives 
-refresh_pattern -i .(cb(r|z|t)|jar)$                        10080 90% 43200       # Cache archives 2
-refresh_pattern -i .(cue|iso|bin|img|)$                     10080 90% 43200       # Cache disk images
-refresh_pattern -i .(deb|rpm|exe|ms(i|u|p)|dmg)$            10080 90% 43200       # Cache packages
-
-# Disable caching for everything else
-refresh_pattern .              0       0%      0
+# catchall line -> no cache
+refresh_pattern . 0 0% 0
 
 EOF
 
