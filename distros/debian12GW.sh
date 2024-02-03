@@ -407,11 +407,37 @@ refresh_pattern -i (yimg|twimg)\.com\.*         1440 100% 129600 override-expire
 refresh_pattern -i (ytimg|ggpht)\.com\.*        1440 80% 129600 override-expire override-lastmod ignore-auth ignore-reload reload-into-ims
 
 # Updates: Windows
-refresh_pattern -i windowsupdate.com/.*\.(cab|exe|ms[i|u|f|p]|[ap]sf|wm[v|a]|dat|zip|psf) 43200 80% 129600 reload-into-ims
-refresh_pattern -i microsoft.com/.*\.(cab|exe|ms[i|u|f|p]|[ap]sf|wm[v|a]|dat|zip|psf) 43200 80% 129600 reload-into-ims
-refresh_pattern -i windows.com/.*\.(cab|exe|ms[i|u|f|p]|[ap]sf|wm[v|a]|dat|zip|psf) 43200 80% 129600 reload-into-ims
-refresh_pattern -i microsoft.com.akadns.net/.*\.(cab|exe|ms[i|u|f|p]|[ap]sf|wm[v|a]|dat|zip|psf) 43200 80% 129600 reload-into-ims
-refresh_pattern -i deploy.akamaitechnologies.com/.*\.(cab|exe|ms[i|u|f|p]|[ap]sf|wm[v|a]|dat|zip|psf) 43200 80% 129600 reload-into-ims
+acl Windows_Update dstdomain windowsupdate.microsoft.com
+acl Windows_Update dstdomain update.microsoft.com
+acl Windows_Update dstdomain download.windowsupdate.com
+acl Windows_Update dstdomain www.download.windowsupdate.com
+acl Windows_Update dstdomain windowsupdate.com
+acl Windows_Update dstdomain au.download.windowsupdate.com
+acl Windows_Update dstdomain bg.v4.pr.dl.ws.microsoft.com
+acl Windows_Update dstdomain wsus.ds.download.windowsupdate.com
+acl Windows_Update dstdomain au.b1.download.windowsupdate.com
+range_offset_limit -1  Windows_Update
+
+# Windows update.
+refresh_pattern windowsupdate.com/.*\.(cab|exe|dll|msi|psf) 10080 100% 43200 reload-into-ims
+refresh_pattern update.microsoft.com/.*\.(cab|exe)                  43200 100% 129600 ignore-no-cache ignore-no-store ignore-reload reload-into-ims
+refresh_pattern download.microsoft.com/.*\.(cab|exe|dll|msi|psf) 10080 100% 43200 reload-into-ims
+refresh_pattern -i microsoft.com/.*\.(cab|exe|ms[i|u|f]|[ap]sf|wm[v|a]|dat|zip) 4320 80% 43200 reload-into-ims
+refresh_pattern -i windowsupdate.com/.*\.(cab|exe|ms[i|u|f]|[ap]sf|wm[v|a]|dat|zip) 4320 80% 43200 reload-into-ims
+refresh_pattern -i windows.com/.*\.(cab|exe|ms[i|u|f]|[ap]sf|wm[v|a]|dat|zip) 4320 80% 43200 reload-into-ims
+refresh_pattern ([^.]+\.)?(download|(windows)?update)\.(microsoft\.)?com/.*\.(cab|exe|msi|msp|psf) 4320 100% 43200 reload-into-ims
+refresh_pattern update.microsoft.com/.*\.(cab|exe|dll|msi|psf) 10080 100% 43200 reload-into-ims
+refresh_pattern windowsupdate.com/.*\.(cab|exe|dll|msi|psf) 10080 100% 43200 reload-into-ims
+refresh_pattern download.microsoft.com/.*\.(cab|exe|dll|msi|psf) 10080 100% 43200 reload-into-ims
+refresh_pattern www.microsoft.com/.*\.(cab|exe|dll|msi|psf) 10080 100% 43200 reload-into-ims
+
+refresh_pattern au.download.windowsupdate.com/.*\.(cab|exe|dll|msi|psf) 4320 100% 43200 reload-into-ims
+refresh_pattern bg.v4.pr.dl.ws.microsoft.com/.*\.(cab|exe|dll|msi|psf) 4320 100% 43200 reload-into-ims
+refresh_pattern -i .*windowsupdate.com/.*\.(cab|exe)                     259200 100% 259200 ignore-no-store ignore-reload reload-into-ims
+refresh_pattern -i .*update.microsoft.com/.*\.(cab|exe|dll|msi|psf)                  259200 100% 259200 ignore-no-store ignore-reload reload-into-ims
+refresh_pattern au.download.windowsupdate.com/.*\.(cab|exe|dll|msi|psf) 4320 100% 43200 reload-into-ims
+refresh_pattern bg.v4.pr.dl.ws.microsoft.com/.*\.(cab|exe|dll|msi|psf) 4320 100% 43200 reload-into-ims
+
 
 # Content Delivery Network
 refresh_pattern -i \.(cdn)                                                             10080 100%  43800  ignore-no-cache ignore-no-store ignore-private override-expire override-lastmod reload-into-ims ignore-reload
