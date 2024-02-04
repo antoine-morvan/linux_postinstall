@@ -106,14 +106,9 @@ echo " -- Fix permissions"
 l=$(grep "^UID_MIN" /etc/login.defs)
 l1=$(grep "^UID_MAX" /etc/login.defs)
 USERS=$(awk -F':' -v "min=${l##UID_MIN}" -v "max=${l1##UID_MAX}" '{ if ( $3 >= min && $3 <= max ) print $1}' /etc/passwd)
-set -x
 for USR in $USERS; do
   usermod -a -G $USER_EXTRA_GROUPS $USR
 done
-set +x
-
-read -p "[Press enter to continue]" ignored
-
 
 ###########################
 ##### Compute LAN Adresses
