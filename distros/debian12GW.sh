@@ -135,12 +135,15 @@ DHCPRANGESTOPIP=$(echo ${LANNETADDRESS} | cut -d'.' -f1-3).${HOSTRANGEMAX}
 ##### Setup interfaces
 ###########################
 
+cp /etc/network/interfaces /etc/network/interfaces_bk
+
 ## set lan iface IP
 cat >> /etc/network/interfaces << EOF
 auto ${WEBIFACE}
 allow-hotplug ${WEBIFACE}
 iface ${WEBIFACE} inet dhcp
 
+auto ${LANIFACE}
 iface ${LANIFACE} inet static
   address ${SERVERLANIP}
   netmask ${LANMASK}
