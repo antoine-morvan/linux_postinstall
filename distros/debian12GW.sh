@@ -66,7 +66,7 @@ WEBCACHE_PATH="/mnt/squidcache/"
 echo " -- Check user"
 [ "$(whoami)" != "root" ] && echo "Error: need to be executed as root" && exit 1
 # extra groups to add normal users to
-GROUPS=sudo
+USER_EXTRA_GROUPS=sudo
 
 ###########################
 ##### Update && Install
@@ -95,7 +95,7 @@ echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.
   $(. /etc/os-release && echo "$VERSION_CODENAME") stable" > /etc/apt/sources.list.d/docker.list
 apt-get update
 apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
-GROUPS+=",docker"
+USER_EXTRA_GROUPS+=",docker"
 
 ###########################
 ##### Setup Users
@@ -106,9 +106,14 @@ echo " -- Fix permissions"
 l=$(grep "^UID_MIN" /etc/login.defs)
 l1=$(grep "^UID_MAX" /etc/login.defs)
 USERS=$(awk -F':' -v "min=${l##UID_MIN}" -v "max=${l1##UID_MAX}" '{ if ( $3 >= min && $3 <= max ) print $1}' /etc/passwd)
+set -x
 for USR in $USERS; do
-  usermod -a -G $GROUPS $USR
+  usermod -a -G $USER_EXTRA_GROUPS $USR
 done
+set +x
+
+read -p "[Press enter to continue]" ignored
+
 
 ###########################
 ##### Compute LAN Adresses
