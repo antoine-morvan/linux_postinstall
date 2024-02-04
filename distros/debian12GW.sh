@@ -137,9 +137,9 @@ DHCPRANGESTOPIP=$(echo ${LANNETADDRESS} | cut -d'.' -f1-3).${HOSTRANGEMAX}
 
 ## set lan iface IP
 cat >> /etc/network/interfaces << EOF
-auto ${LANIFACE}
-allow-hotplug ${LANIFACE}
-iface ${LANIFACE} inet dhcp
+auto ${WEBIFACE}
+allow-hotplug ${WEBIFACE}
+iface ${WEBIFACE} inet dhcp
 
 iface ${LANIFACE} inet static
   address ${SERVERLANIP}
