@@ -43,12 +43,10 @@ QUAD9_LIST="9.9.9.9 149.112.112.112"
 EXTERNALDNSLIST="$OPENDNS_LIST $GOOGLE_LIST $CLOUDFARE_LIST $VERISIGN_LIST $QUAD9_LIST"
 
 # Format hostname:ip:mac
-# example: rockytest:172.31.250.7:08:00:27:1c:15:35
+# example: 08:00:27:1c:15:35:172.31.250.7:rockytest
 # if address file fixed_hosts.list exists, will be read.
-[ -f fixed_hosts.list ] && FIXED_IPS=$(cat fixed_hosts.list)
-FIXED_IPS=${FIXED_IPS:-" \
-  rockytest:172.31.250.7:08:00:27:1c:15:35
-"}
+[ -f fixed_hosts.list ] && FIXED_IPS=$(cat fixed_hosts.list | grep -v "^#\|^\s*$" | sed 's/\r/\n/g' | xargs)
+FIXED_IPS=${FIXED_IPS:-""}
 
 # Squid settings
 WEBCACHE_PORT=3128
@@ -180,9 +178,9 @@ subnet ${LANNETADDRESS} netmask ${LANMASK} {
 EOF
 
 for FixedIP in $FIXED_IPS; do
-  NAME=$(echo $FixedIP | cut -d':' -f1)
-  IP=$(echo $FixedIP | cut -d':' -f2)
-  MAC=$(echo $FixedIP | cut -d':' -f3-)
+  MAC=$(echo $FixedIP | rev | cut -d':' -f3- | rev )
+  IP=$(echo $FixedIP | rev | cut -d':' -f2 | rev )
+  NAME=$(echo $FixedIP | rev | cut -d':' -f1 | rev )
   cat >> /etc/dhcp/dhcpd.conf << EOF
 host $NAME {
         hardware ethernet $MAC;
@@ -281,9 +279,9 @@ echo "$LAST_DIGIT PTR $HOSTNAME.$DOMAIN_NAME." >> $ZONE_FILE
 
 # Add reverse for fixed hosts
 for FixedIP in $FIXED_IPS; do
-  NAME=$(echo $FixedIP | cut -d':' -f1)
-  IP=$(echo $FixedIP | cut -d':' -f2)
-  MAC=$(echo $FixedIP | cut -d':' -f3-)
+  MAC=$(echo $FixedIP | rev | cut -d':' -f3- | rev )
+  IP=$(echo $FixedIP | rev | cut -d':' -f2 | rev )
+  NAME=$(echo $FixedIP | rev | cut -d':' -f1 | rev )
   echo "$NAME.$DOMAIN_NAME. IN A $IP" >> /etc/bind/db.${DOMAIN_NAME}
 
   IP_ZONE=$(echo $IP |cut -d'.' -f-3)
