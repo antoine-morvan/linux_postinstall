@@ -78,7 +78,7 @@ apt autoremove -y
 apt clean
 
 echo " -- Install required packages"
-apt install -y bind9 isc-dhcp-server squid ipcalc bwm-ng iptraf nethogs byobu sudo htop iptables ca-certificates curl
+apt install -y bind9 isc-dhcp-server squid ipcalc bwm-ng iptraf nethogs byobu sudo htop iptables ca-certificates curl tree rsync vim
 
 ## Warning: docker setup seems to produce unbootable VM...
 
