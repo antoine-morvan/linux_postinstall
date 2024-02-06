@@ -3,7 +3,8 @@ set -eu -o pipefail
 
 ###################################################################################
 ##### TODO
-##  * cleanup squid config (no HTTPS cache, see note)
+##  * Switch back to script for iptables (more tedious to change rules with restore/save)
+##  * Add network interfaces check early in the script ...
 ###################################################################################
 ## Sample post install script to configure a debian gateway with an ISC DHCP,
 ## bind9 DNS, IPTables with NAT and firewall, and transparent Squid proxy caching
