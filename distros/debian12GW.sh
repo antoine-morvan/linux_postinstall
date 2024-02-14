@@ -81,8 +81,6 @@ apt clean
 echo " -- Install required packages"
 apt install -y bind9 isc-dhcp-server squid ipcalc bwm-ng iptraf nethogs byobu sudo htop iptables ca-certificates curl tree rsync vim
 
-## Warning: docker setup seems to produce unbootable VM...
-
 echo " -- Install docker"
 # from https://docs.docker.com/engine/install/debian/
 install -m 0755 -d /etc/apt/keyrings
@@ -95,6 +93,11 @@ echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.
 apt-get update
 apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 USER_EXTRA_GROUPS+=",docker"
+
+# Config system settings
+
+# See https://docs.syncthing.net/users/faq.html#inotify-limits
+echo "fs.inotify.max_user_watches=204800" > /etc/sysctl.d/90-max_user_watches.conf
 
 ###########################
 ##### Setup Users
