@@ -233,10 +233,6 @@ cat >> /etc/bind/named.conf.options << EOF
 };
 EOF
 
-cat >> /etc/resolv.conf << EOF
-search ${DOMAIN_NAME}
-EOF
-
 cat >> /etc/bind/named.conf.local  << EOF
 
 zone "${DOMAIN_NAME}" {
