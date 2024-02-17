@@ -43,7 +43,6 @@ VERISIGN_LIST="64.6.64.6 64.6.65.6"
 QUAD9_LIST="9.9.9.9 149.112.112.112"
 EXTERNALDNSLIST="$OPENDNS_LIST $GOOGLE_LIST $CLOUDFARE_LIST $VERISIGN_LIST $QUAD9_LIST"
 
-
 # Format hostname:ip:mac
 # example: 08:00:27:1c:15:35:172.31.250.7:rockytest
 # if address file fixed_hosts.list exists, will be read.
@@ -63,8 +62,13 @@ WEBCACHE_PATH="/mnt/squidcache/"
 ##### System Setup
 ###################################################################################
 
+GEN_CONFIG=NO
+[ "${1:-}" == "--local-config-gen" ] && echo "[INFO] Generating configuration locally" && GEN_CONFIG=YES
+
 echo " -- Check user"
-[ "$(whoami)" != "root" ] && echo "Error: need to be executed as root" && exit 1
+if [ "$GEN_CONFIG" != "YES" ]; then
+  [ "$(whoami)" != "root" ] && echo "Error: need to be executed as root" && exit 1
+fi
 # extra groups to add normal users to
 USER_EXTRA_GROUPS=sudo
 
@@ -73,32 +77,42 @@ USER_EXTRA_GROUPS=sudo
 ###########################
 
 echo " -- Update system"
-apt update
-apt upgrade -y
-apt dist-upgrade -y
-apt autoremove -y
-apt clean
+if [ "$GEN_CONFIG" != "YES" ]; then
+  apt update
+  apt upgrade -y
+  apt dist-upgrade -y
+  apt autoremove -y
+  apt clean
+fi
 
-echo " -- Install required packages"
-apt install -y bind9 isc-dhcp-server squid ipcalc bwm-ng iptraf nethogs byobu sudo htop iptables ca-certificates curl tree rsync vim
+  echo " -- Install required packages"
+if [ "$GEN_CONFIG" != "YES" ]; then
+  apt install -y bind9 isc-dhcp-server squid ipcalc bwm-ng iptraf nethogs byobu sudo htop iptables ca-certificates curl tree rsync vim
+fi
 
 echo " -- Install docker"
-# from https://docs.docker.com/engine/install/debian/
-install -m 0755 -d /etc/apt/keyrings
-curl -fsSL https://download.docker.com/linux/debian/gpg -o /etc/apt/keyrings/docker.asc
-chmod a+r /etc/apt/keyrings/docker.asc
+if [ "$GEN_CONFIG" != "YES" ]; then
+  # from https://docs.docker.com/engine/install/debian/
+  install -m 0755 -d /etc/apt/keyrings
+  curl -fsSL https://download.docker.com/linux/debian/gpg -o /etc/apt/keyrings/docker.asc
+  chmod a+r /etc/apt/keyrings/docker.asc
 
-# Add the repository to Apt sources:
-echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/debian \
-  $(. /etc/os-release && echo "$VERSION_CODENAME") stable" > /etc/apt/sources.list.d/docker.list
-apt-get update
-apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+  # Add the repository to Apt sources:
+  echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/debian \
+    $(. /etc/os-release && echo "$VERSION_CODENAME") stable" > /etc/apt/sources.list.d/docker.list
+  apt-get update
+  apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+fi
 USER_EXTRA_GROUPS+=",docker"
 
 # Config system settings
+case $GEN_CONFIG in
+  YES) SYSCONFIG_FILE=./90-max_user_watches.conf              ;;
+  *)   SYSCONFIG_FILE=/etc/sysctl.d/90-max_user_watches.conf  ;;
+esac
 
 # See https://docs.syncthing.net/users/faq.html#inotify-limits
-echo "fs.inotify.max_user_watches=204800" > /etc/sysctl.d/90-max_user_watches.conf
+echo "fs.inotify.max_user_watches=204800" > $SYSCONFIG_FILE
 
 ###########################
 ##### Setup Users
@@ -110,7 +124,10 @@ l=$(grep "^UID_MIN" /etc/login.defs)
 l1=$(grep "^UID_MAX" /etc/login.defs)
 USERS=$(awk -F':' -v "min=${l##UID_MIN}" -v "max=${l1##UID_MAX}" '{ if ( $3 >= min && $3 <= max ) print $1}' /etc/passwd)
 for USR in $USERS; do
-  usermod -a -G $USER_EXTRA_GROUPS $USR
+  echo " --  - add $USER_EXTRA_GROUPS to $USR"
+  if [ "$GEN_CONFIG" != "YES" ]; then
+    usermod -a -G $USER_EXTRA_GROUPS $USR
+  fi
 done
 
 ###########################
@@ -138,10 +155,12 @@ DHCPRANGESTOPIP=$(echo ${LANNETADDRESS} | cut -d'.' -f1-3).${HOSTRANGEMAX}
 ##### Setup interfaces
 ###########################
 
-cp /etc/network/interfaces /etc/network/interfaces_bk
-
 ## set lan iface IP
-cat >> /etc/network/interfaces << EOF
+case $GEN_CONFIG in
+  YES) INTERFACES_FILE=./interfaces             ;;
+  *)   INTERFACES_FILE=/etc/network/interfaces  ;;
+esac
+cat >> ${INTERFACES_FILE} << EOF
 auto ${WEBIFACE}
 allow-hotplug ${WEBIFACE}
 iface ${WEBIFACE} inet dhcp
@@ -155,7 +174,11 @@ iface ${LANIFACE} inet static
 EOF
 
 ## Set dhclient to use proper domain & name server
-cat >> /etc/dhcp/dhclient.conf << EOF
+case $GEN_CONFIG in
+  YES) DHCLIENT_FILE=./dhclient.conf          ;;
+  *)   DHCLIENT_FILE=/etc/dhcp/dhclient.conf  ;;
+esac
+cat >> ${DHCLIENT_FILE} << EOF
 supersede domain-name "$DOMAIN_NAME";
 prepend domain-name-servers 127.0.0.1;
 EOF
@@ -164,17 +187,41 @@ EOF
 ##### DHCP Setup
 ###################################################################################
 
-## enable DHCPd on lan iface
-sed -i -r "s/^(INTERFACESv4=).*/\1\"${LANIFACE}\"/g" /etc/default/isc-dhcp-server
+case $GEN_CONFIG in
+  YES) 
+    DHCPD_FILE=./dhcpd.conf
+    DHCPD_DEFAULT=./isc-dhcp-server
+    ;;
+  *)   
+    DHCPD_FILE=/etc/dhcp/dhcpd.conf
+    DHCPD_DEFAULT=/etc/default/isc-dhcp-server
+    ;;
+esac
 
-## set DHCPd config
-sed -i -r "s/^(option domain-name )(.*)/\1${DOMAIN_NAME};/g" /etc/dhcp/dhcpd.conf
-sed -i -r "s/^(option domain-name-servers )(.*)/\1${SERVERLANIP};/g" /etc/dhcp/dhcpd.conf
+case $GEN_CONFIG in
+  YES)
+    cat > ${DHCPD_DEFAULT} << EOF
+INTERFACESv4="${LANIFACE}"
+EOF
+    cat > ${DHCPD_FILE} << EOF
+option domain-name ${DOMAIN_NAME};
+option domain-name-servers ${SERVERLANIP};
+authoritative;
+EOF
+    ;;
+  *)
+    ## enable DHCPd on lan iface
+    sed -i -r "s/^(INTERFACESv4=).*/\1\"${LANIFACE}\"/g" ${DHCPD_DEFAULT}
 
-sed -i -r "s/^#authoritative;/authoritative;/g" /etc/dhcp/dhcpd.conf
+    ## set DHCPd config
+    sed -i -r "s/^(option domain-name )(.*)/\1${DOMAIN_NAME};/g" ${DHCPD_FILE}
+    sed -i -r "s/^(option domain-name-servers )(.*)/\1${SERVERLANIP};/g" ${DHCPD_FILE}
+    sed -i -r "s/^#authoritative;/authoritative;/g" ${DHCPD_FILE}
+    ;;
+esac
 
 
-cat >> /etc/dhcp/dhcpd.conf << EOF
+cat >> ${DHCPD_FILE} << EOF
 subnet ${LANNETADDRESS} netmask ${LANMASK} {
   range ${DHCPRANGESTARTIP} ${DHCPRANGESTOPIP};
   option routers ${SERVERLANIP};
@@ -186,7 +233,7 @@ for FixedIP in $FIXED_IPS; do
   MAC=$(echo $FixedIP | rev | cut -d':' -f3- | rev )
   IP=$(echo $FixedIP | rev | cut -d':' -f2 | rev )
   NAME=$(echo $FixedIP | rev | cut -d':' -f1 | rev )
-  cat >> /etc/dhcp/dhcpd.conf << EOF
+  cat >> ${DHCPD_FILE} << EOF
 host $NAME {
         hardware ethernet $MAC;
         fixed-address $IP;
@@ -201,7 +248,12 @@ done
 echo "Setup DNS"
 ## setup DNS
 
-cat > /etc/bind/named.conf.options << EOF
+case $GEN_CONFIG in
+  YES) BIND_FOLDER=./         ;;
+  *)   BIND_FOLDER=/etc/bind/ ;;
+esac
+
+cat > ${BIND_FOLDER}/named.conf.options << EOF
 options {
   directory "/var/cache/bind";
 
@@ -218,11 +270,11 @@ set +eu +o pipefail
 CURRENT_DNS=$(cat /etc/resolv.conf | grep nameserver | cut -d' ' -f2 | xargs)
 set -eu -o pipefail
 for dns in $EXTERNALDNSLIST $CURRENT_DNS; do
-cat >> /etc/bind/named.conf.options << EOF
+cat >> ${BIND_FOLDER}/named.conf.options << EOF
     $dns;
 EOF
 done
-cat >> /etc/bind/named.conf.options << EOF
+cat >> ${BIND_FOLDER}/named.conf.options << EOF
   };
 
   dnssec-validation auto;
@@ -233,15 +285,15 @@ cat >> /etc/bind/named.conf.options << EOF
 };
 EOF
 
-cat >> /etc/bind/named.conf.local  << EOF
+cat >> ${BIND_FOLDER}/named.conf.local  << EOF
 
 zone "${DOMAIN_NAME}" {
     type master;
-    file "/etc/bind/db.${DOMAIN_NAME}";
+    file "${BIND_FOLDER}/db.${DOMAIN_NAME}";
 };
 
 EOF
-cat >> /etc/bind/db.${DOMAIN_NAME} << EOF
+cat >> ${BIND_FOLDER}/db.${DOMAIN_NAME} << EOF
 \$TTL    604800
 @       IN      SOA     $HOSTNAME.$DOMAIN_NAME. root.$HOSTNAME.$DOMAIN_NAME. (
                               2         ; Serial
@@ -262,7 +314,7 @@ ZONES=""
 # Add reverse for router
 IP_ZONE=$(echo $SERVERLANIP |cut -d'.' -f-3)
 LAST_DIGIT=$(echo $SERVERLANIP |cut -d'.' -f4)
-ZONE_FILE=/etc/bind/db.$IP_ZONE
+ZONE_FILE=${BIND_FOLDER}/db.$IP_ZONE
 if [ ! -f $ZONE_FILE ]; then
   ZONES+=" $IP_ZONE"
   cat > $ZONE_FILE << EOF
@@ -283,11 +335,11 @@ for FixedIP in $FIXED_IPS; do
   MAC=$(echo $FixedIP | rev | cut -d':' -f3- | rev )
   IP=$(echo $FixedIP | rev | cut -d':' -f2 | rev )
   NAME=$(echo $FixedIP | rev | cut -d':' -f1 | rev )
-  echo "$NAME.$DOMAIN_NAME. IN A $IP" >> /etc/bind/db.${DOMAIN_NAME}
+  echo "$NAME.$DOMAIN_NAME. IN A $IP" >> ${BIND_FOLDER}/db.${DOMAIN_NAME}
 
   IP_ZONE=$(echo $IP |cut -d'.' -f-3)
   LAST_DIGIT=$(echo $IP |cut -d'.' -f4)
-  ZONE_FILE=/etc/bind/db.$IP_ZONE
+  ZONE_FILE=${BIND_FOLDER}/db.$IP_ZONE
   if [ ! -f $ZONE_FILE ]; then
     ZONES+=" $IP_ZONE"
     cat > $ZONE_FILE << EOF
@@ -305,9 +357,9 @@ EOF
 done
 
 for ZONE in $ZONES; do
-  ZONE_FILE=/etc/bind/db.$IP_ZONE
+  ZONE_FILE=${BIND_FOLDER}/db.$IP_ZONE
   REV_ZONE=$(echo $ZONE | cut -d'.' -f3).$(echo $ZONE | cut -d'.' -f2).$(echo $ZONE | cut -d'.' -f1)
-  cat >> /etc/bind/named.conf.local  << EOF
+  cat >> ${BIND_FOLDER}/named.conf.local  << EOF
 zone "${REV_ZONE}.in-addr.arpa" {
     type master;
     file "${ZONE_FILE}";
@@ -319,6 +371,10 @@ done
 ##### Proxy Setup
 ###################################################################################
 
+case $GEN_CONFIG in
+  YES) SQUID_FILE=./squid.conf          ;;
+  *)   SQUID_FILE=/etc/squid/squid.conf ;;
+esac
 # Note: cannot cache HTTPS objects: that's a man in the middle attack ...
 
 ##  * https://wiki.squid-cache.org/ConfigExamples/index
@@ -326,9 +382,9 @@ done
 
 echo " -- Stop squid"
 # stop squid before updating config
-systemctl stop squid
+[ "$GEN_CONFIG" != "YES" ] && systemctl stop squid
 
-cat > /etc/squid/squid.conf << EOF
+cat > ${SQUID_FILE} << EOF
 ## General configuration
 
 acl manager proto cache_object
@@ -454,27 +510,40 @@ EOF
 
 echo " -- Clear squid cache"
 # clear cache path
-rm -rf ${WEBCACHE_PATH}/*
-mkdir -p ${WEBCACHE_PATH}
-chown proxy:proxy ${WEBCACHE_PATH}
+if [ "$GEN_CONFIG" != "YES" ]; then
+  rm -rf ${WEBCACHE_PATH}/*
+  mkdir -p ${WEBCACHE_PATH}
+  chown proxy:proxy ${WEBCACHE_PATH}
+fi
 echo " -- Init squid cache && sleep 5s"
 # init cache structure
-squid -z
-
-sleep 5
+if [ "$GEN_CONFIG" != "YES" ]; then
+  squid -z
+  sleep 5
+fi
 
 echo " -- Start squid"
-systemctl start squid
+[ "$GEN_CONFIG" != "YES" ] && systemctl start squid
 
 echo " -- Check squid"
-squid -k check
-
+[ "$GEN_CONFIG" != "YES" ] && squid -k check
 
 ###################################################################################
 ##### Firewall Setup
 ###################################################################################
 
-cat > /usr/sbin/firewall_router.down.sh << EOF
+case $GEN_CONFIG in
+  YES) 
+    FIREWALL_FOLDER=./
+    SYSTEMD_LIBRARY=./
+    ;;
+  *)
+    FIREWALL_FOLDER=/usr/sbin/
+    SYSTEMD_LIBRARY=/usr/lib/systemd/system
+    ;;
+esac
+
+cat > ${FIREWALL_FOLDER}/firewall_router.down.sh << EOF
 #!/usr/bin/env bash
 set -eu -o pipefail
 
@@ -507,7 +576,7 @@ fi
 # Keep security tuning if set
 
 EOF
-cat > /usr/sbin/firewall_router.up.sh << EOF
+cat > ${FIREWALL_FOLDER}/firewall_router.up.sh << EOF
 #!/usr/bin/env bash
 set -eu -o pipefail
 
@@ -562,7 +631,7 @@ echo 0 > /proc/sys/net/ipv4/conf/all/accept_source_route
 
 EOF
 
-cat > /usr/lib/systemd/system/firewall_router.service << EOF
+cat > ${SYSTEMD_LIBRARY}/firewall_router.service << EOF
 [Unit]
 Description=Firewall
 After=network.target
@@ -577,7 +646,7 @@ ExecStop=/usr/sbin/firewall_router.down.sh
 WantedBy=multi-user.target
 EOF
 
-cat > /usr/sbin/firewall_router.iptables_gen.sh << EOF
+cat > ${FIREWALL_FOLDER}/firewall_router.iptables_gen.sh << EOF
 #!/usr/bin/env bash
 set -eu -o pipefail
 
@@ -678,26 +747,30 @@ IPWAN=\$(ip addr show \$IWAN | grep -Po 'inet \K[\d.]+')
 
 EOF
 
-chmod +x /usr/sbin/firewall_router.iptables_gen.sh
-chmod +x /usr/sbin/firewall_router.down.sh
-chmod +x /usr/sbin/firewall_router.up.sh
+if [ "$GEN_CONFIG" != "YES" ]; then
+  chmod +x /usr/sbin/firewall_router.iptables_gen.sh
+  chmod +x /usr/sbin/firewall_router.down.sh
+  chmod +x /usr/sbin/firewall_router.up.sh
 
-# save default rules
-/usr/sbin/iptables-save > /etc/iptables.defaults.rules
-# configure iptables
-/usr/sbin/firewall_router.iptables_gen.sh
-# save rules
-/usr/sbin/iptables-save > /etc/iptables.rules
+  # save default rules
+  /usr/sbin/iptables-save > /etc/iptables.defaults.rules
+  # configure iptables
+  /usr/sbin/firewall_router.iptables_gen.sh
+  # save rules
+  /usr/sbin/iptables-save > /etc/iptables.rules
 
-systemctl enable firewall_router
+  systemctl enable firewall_router
+fi
 
 ###################################################################################
 ##### Cleanup
 ###################################################################################
 
-SLEEP_TIME=5
-echo -n "Rebooting in $SLEEP_TIME s "
-for i in $(seq 1 $SLEEP_TIME); do echo -n "."; sleep 1; done
-echo ""
-echo "Rebooting"
-reboot
+if [ "$GEN_CONFIG" != "YES" ]; then
+  SLEEP_TIME=5
+  echo -n "Rebooting in $SLEEP_TIME s "
+  for i in $(seq 1 $SLEEP_TIME); do echo -n "."; sleep 1; done
+  echo ""
+  echo "Rebooting"
+  reboot
+fi
