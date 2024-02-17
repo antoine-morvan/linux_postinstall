@@ -11,6 +11,7 @@ set -eu -o pipefail
 ## big files.
 ## 
 ## Tested on debian 12 x86-64
+## Will not work on redhat: ipcalc implementation differs.
 ###################################################################################
 
 ###################################################################################
@@ -33,7 +34,7 @@ WEBIFACE=enp0s3
 LANIFACE=enp0s8
 
 # network and mask of the LAN
-DOMAIN_NAME=diablan
+DOMAIN_NAME=test
 LANNET=172.31.250.0/24
 # list of DNS IPs to use when forwarding DNS requests from LAN
 OPENDNS_LIST="208.67.222.222 208.67.220.220"
@@ -87,7 +88,7 @@ fi
 
   echo " -- Install required packages"
 if [ "$GEN_CONFIG" != "YES" ]; then
-  apt install -y bind9 isc-dhcp-server squid ipcalc bwm-ng iptraf nethogs byobu sudo htop iptables ca-certificates curl tree rsync vim
+  apt install -y bind9 isc-dhcp-server squid ipcalc grepcidr bwm-ng iptraf nethogs byobu sudo htop iptables ca-certificates curl tree rsync vim
 fi
 
 echo " -- Install docker"
@@ -133,6 +134,17 @@ done
 ###########################
 ##### Compute LAN Adresses
 ###########################
+
+for FixedIP in $FIXED_IPS; do
+  MAC=$(echo $FixedIP | rev | cut -d':' -f3- | rev )
+  IP=$(echo $FixedIP | rev | cut -d':' -f2 | rev )
+  NAME=$(echo $FixedIP | rev | cut -d':' -f1 | rev )
+  set +e
+  echo $IP | grepcidr ${LANNET} &> /dev/null
+  RES=$?
+  set -e
+  [ $RES != 0 ] && echo "ERROR: $IP (for host $NAME) does not belong to subnet ${LANNET}" && exit 1
+done
 
 ## calculate LAN addresses
 LANMINIP=$(ipcalc -n -b ${LANNET} | grep HostMin | xargs | cut -d" " -f2)
@@ -249,7 +261,7 @@ echo "Setup DNS"
 ## setup DNS
 
 case $GEN_CONFIG in
-  YES) BIND_FOLDER=./         ;;
+  YES) BIND_FOLDER=.          ;;
   *)   BIND_FOLDER=/etc/bind/ ;;
 esac
 
@@ -534,8 +546,8 @@ echo " -- Check squid"
 
 case $GEN_CONFIG in
   YES) 
-    FIREWALL_FOLDER=./
-    SYSTEMD_LIBRARY=./
+    FIREWALL_FOLDER=.
+    SYSTEMD_LIBRARY=.
     ;;
   *)
     FIREWALL_FOLDER=/usr/sbin/
