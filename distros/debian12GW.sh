@@ -43,10 +43,11 @@ VERISIGN_LIST="64.6.64.6 64.6.65.6"
 QUAD9_LIST="9.9.9.9 149.112.112.112"
 EXTERNALDNSLIST="$OPENDNS_LIST $GOOGLE_LIST $CLOUDFARE_LIST $VERISIGN_LIST $QUAD9_LIST"
 
+
 # Format hostname:ip:mac
 # example: 08:00:27:1c:15:35:172.31.250.7:rockytest
 # if address file fixed_hosts.list exists, will be read.
-[ -f fixed_hosts.list ] && FIXED_IPS=$(cat fixed_hosts.list | grep -v "^#\|^\s*$" | sed 's/\r/\n/g' | xargs)
+[ -f fixed_hosts.list ] && FIXED_IPS=$(cat fixed_hosts.list | sed -r 's/#.*//g' | sed -r 's/\s+$//g' | grep -v "^#\|^\s*$" | sed -r 's/\s+/:/g' | sed 's/\r/\n/g')
 FIXED_IPS=${FIXED_IPS:-""}
 
 # Squid settings
