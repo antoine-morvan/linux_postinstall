@@ -135,17 +135,6 @@ done
 ##### Compute LAN Adresses
 ###########################
 
-for FixedIP in $FIXED_IPS; do
-  MAC=$(echo $FixedIP | rev | cut -d':' -f3- | rev )
-  IP=$(echo $FixedIP | rev | cut -d':' -f2 | rev )
-  NAME=$(echo $FixedIP | rev | cut -d':' -f1 | rev )
-  set +e
-  echo $IP | grepcidr ${LANNET} &> /dev/null
-  RES=$?
-  set -e
-  [ $RES != 0 ] && echo "ERROR: $IP (for host $NAME) does not belong to subnet ${LANNET}" && exit 1
-done
-
 ## calculate LAN addresses
 LANMINIP=$(ipcalc -n -b ${LANNET} | grep HostMin | xargs | cut -d" " -f2)
 LANMAXIP=$(ipcalc -n -b ${LANNET} | grep HostMax | xargs | cut -d" " -f2)
@@ -162,6 +151,21 @@ HOSTRANGEMAX=$(echo ${LANMAXIP} | cut -d'.' -f4)
 HOSTRANGEMAX=$((HOSTRANGEMAX - 1))
 DHCPRANGESTARTIP=$(echo ${LANNETADDRESS} | cut -d'.' -f1-3).${HOSTRANGEMIN}
 DHCPRANGESTOPIP=$(echo ${LANNETADDRESS} | cut -d'.' -f1-3).${HOSTRANGEMAX}
+
+###########################
+##### Check configuration
+###########################
+
+for FixedIP in $FIXED_IPS; do
+  MAC=$(echo $FixedIP | rev | cut -d':' -f3- | rev )
+  IP=$(echo $FixedIP | rev | cut -d':' -f2 | rev )
+  NAME=$(echo $FixedIP | rev | cut -d':' -f1 | rev )
+  set +e
+  echo $IP | grepcidr ${LANNET} &> /dev/null
+  RES=$?
+  set -e
+  [ $RES != 0 ] && echo "ERROR: $IP (for host $NAME) does not belong to subnet ${LANNET}" && exit 1
+done
 
 ###########################
 ##### Setup interfaces
