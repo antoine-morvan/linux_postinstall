@@ -35,7 +35,7 @@ LANIFACE=enp0s8
 
 # network and mask of the LAN
 DOMAIN_NAME=test
-LANNET=172.31.250.0/24
+LANNET=172.30.255.0/24
 # list of DNS IPs to use when forwarding DNS requests from LAN
 OPENDNS_LIST="208.67.222.222 208.67.220.220"
 GOOGLE_LIST="8.8.8.8 8.8.4.4"
@@ -66,7 +66,7 @@ WEBCACHE_PATH="/mnt/squidcache/"
 GEN_CONFIG=NO
 [ "${1:-}" == "--local-config-gen" ] && echo "[INFO] Generating configuration locally" && GEN_CONFIG=YES
 
-echo " -- Check user"
+echo "[INFO] Check user"
 if [ "$GEN_CONFIG" != "YES" ]; then
   [ "$(whoami)" != "root" ] && echo "Error: need to be executed as root" && exit 1
 fi
@@ -77,7 +77,7 @@ USER_EXTRA_GROUPS=sudo
 ##### Update && Install
 ###########################
 
-echo " -- Update system"
+echo "[INFO] Update system"
 if [ "$GEN_CONFIG" != "YES" ]; then
   apt update
   apt upgrade -y
@@ -86,12 +86,12 @@ if [ "$GEN_CONFIG" != "YES" ]; then
   apt clean
 fi
 
-  echo " -- Install required packages"
+  echo "[INFO] Install required packages"
 if [ "$GEN_CONFIG" != "YES" ]; then
   apt install -y bind9 isc-dhcp-server squid ipcalc grepcidr bwm-ng iptraf nethogs byobu sudo htop iptables ca-certificates curl tree rsync vim
 fi
 
-echo " -- Install docker"
+echo "[INFO] Install docker"
 if [ "$GEN_CONFIG" != "YES" ]; then
   # from https://docs.docker.com/engine/install/debian/
   install -m 0755 -d /etc/apt/keyrings
@@ -119,13 +119,13 @@ echo "fs.inotify.max_user_watches=204800" > $SYSCONFIG_FILE
 ##### Setup Users
 ###########################
 
-echo " -- Fix permissions"
+echo "[INFO] Fix permissions"
 ## make general users (usually just the user added during setup) part of sudo and docker groups
 l=$(grep "^UID_MIN" /etc/login.defs)
 l1=$(grep "^UID_MAX" /etc/login.defs)
 USERS=$(awk -F':' -v "min=${l##UID_MIN}" -v "max=${l1##UID_MAX}" '{ if ( $3 >= min && $3 <= max ) print $1}' /etc/passwd)
 for USR in $USERS; do
-  echo " --  - add $USER_EXTRA_GROUPS to $USR"
+  echo "[INFO]  - add $USER_EXTRA_GROUPS to $USR"
   if [ "$GEN_CONFIG" != "YES" ]; then
     usermod -a -G $USER_EXTRA_GROUPS $USR
   fi
@@ -134,6 +134,8 @@ done
 ###########################
 ##### Compute LAN Adresses
 ###########################
+
+FIXEDADDRCOUNT=$(echo $FIXED_IPS | wc -w)
 
 ## calculate LAN addresses
 LANMINIP=$(ipcalc -n -b ${LANNET} | grep HostMin | xargs | cut -d" " -f2)
@@ -152,9 +154,28 @@ HOSTRANGEMAX=$((HOSTRANGEMAX - 1))
 DHCPRANGESTARTIP=$(echo ${LANNETADDRESS} | cut -d'.' -f1-3).${HOSTRANGEMIN}
 DHCPRANGESTOPIP=$(echo ${LANNETADDRESS} | cut -d'.' -f1-3).${HOSTRANGEMAX}
 
+echo "[INFO] Configuration"
+echo "[INFO] min IP         : $LANMINIP"
+echo "[INFO] max IP         : $LANMAXIP"
+echo "[INFO] netmask        : $LANMASK"
+echo "[INFO] broadcast      : $LANBROADCAST"
+echo "[INFO] net address    : $LANNETADDRESS"
+echo "[INFO] net host count : $LANHOSTCOUNT"
+
+echo "[INFO] server IP      : $SERVERLANIP"
+echo "[INFO] DHCP start     : $DHCPRANGESTARTIP"
+echo "[INFO] DHCP stop      : $DHCPRANGESTOPIP"
+
 ###########################
 ##### Check configuration
 ###########################
+
+echo "[INFO] Check configuration"
+
+# arbitrary free addresses required
+MINGUESTIPS=5
+MINREQHOSTS=$((FIXEDADDRCOUNT + MINGUESTIPS + 1))
+[ $LANHOSTCOUNT -le $MINREQHOSTS ] && echo "Error : network size is too small." && exit 1
 
 for FixedIP in $FIXED_IPS; do
   MAC=$(echo $FixedIP | rev | cut -d':' -f3- | rev )
@@ -166,6 +187,10 @@ for FixedIP in $FIXED_IPS; do
   set -e
   [ $RES != 0 ] && echo "ERROR: $IP (for host $NAME) does not belong to subnet ${LANNET}" && exit 1
 done
+
+
+[ ! -d /sys/class/net/$WEBIFACE ] && echo "[ERROR] Interface $WEBIFACE does not exist." && exit 1
+[ ! -d /sys/class/net/$LANIFACE ] && echo "[ERROR] Interface $LANIFACE does not exist." && exit 1
 
 ###########################
 ##### Setup interfaces
@@ -253,6 +278,8 @@ for FixedIP in $FIXED_IPS; do
 host $NAME {
         hardware ethernet $MAC;
         fixed-address $IP;
+        option dhcp-client-identifier "$NAME";
+        option host-name "$NAME";
 }
 EOF
 done
@@ -261,7 +288,7 @@ done
 ##### DNS Setup
 ###################################################################################
 
-echo "Setup DNS"
+echo "[INFO] Setup DNS"
 ## setup DNS
 
 case $GEN_CONFIG in
@@ -396,7 +423,7 @@ esac
 ##  * https://wiki.squid-cache.org/ConfigExamples/index
 ##  * http://server1.sharewiz.net/doku.php?id=pfsense:squid:refresh_patterns
 
-echo " -- Stop squid"
+echo "[INFO] Stop squid"
 # stop squid before updating config
 [ "$GEN_CONFIG" != "YES" ] && systemctl stop squid
 
@@ -524,24 +551,24 @@ refresh_pattern . 0 0% 0
 
 EOF
 
-echo " -- Clear squid cache"
+echo "[INFO] Clear squid cache"
 # clear cache path
 if [ "$GEN_CONFIG" != "YES" ]; then
   rm -rf ${WEBCACHE_PATH}/*
   mkdir -p ${WEBCACHE_PATH}
   chown proxy:proxy ${WEBCACHE_PATH}
 fi
-echo " -- Init squid cache && sleep 5s"
+echo "[INFO] Init squid cache && sleep 5s"
 # init cache structure
 if [ "$GEN_CONFIG" != "YES" ]; then
   squid -z
   sleep 5
 fi
 
-echo " -- Start squid"
+echo "[INFO] Start squid"
 [ "$GEN_CONFIG" != "YES" ] && systemctl start squid
 
-echo " -- Check squid"
+echo "[INFO] Check squid"
 [ "$GEN_CONFIG" != "YES" ] && squid -k check
 
 ###################################################################################
