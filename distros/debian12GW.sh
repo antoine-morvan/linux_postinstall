@@ -64,6 +64,10 @@ WEBCACHE_PATH="/mnt/squidcache/"
 ##### System Setup
 ###################################################################################
 
+# early check
+[ ! -d /sys/class/net/$WEBIFACE ] && echo "[ERROR] Interface $WEBIFACE does not exist." && exit 1
+[ ! -d /sys/class/net/$LANIFACE ] && echo "[ERROR] Interface $LANIFACE does not exist." && exit 1
+
 GEN_CONFIG=NO
 [ "${1:-}" == "--local-config-gen" ] && echo "[INFO] Generating configuration locally" && GEN_CONFIG=YES
 
@@ -183,9 +187,6 @@ for FixedIP in $FIXED_IPS; do
   set -e
   [ $RES != 0 ] && echo "ERROR: $IP (for host $NAME) does not belong to subnet ${LANNET}" && exit 1
 done
-
-[ ! -d /sys/class/net/$WEBIFACE ] && echo "[ERROR] Interface $WEBIFACE does not exist." && exit 1
-[ ! -d /sys/class/net/$LANIFACE ] && echo "[ERROR] Interface $LANIFACE does not exist." && exit 1
 
 ###########################
 ##### Setup interfaces
