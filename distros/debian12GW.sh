@@ -44,9 +44,10 @@ VERISIGN_LIST="64.6.64.6 64.6.65.6"
 QUAD9_LIST="9.9.9.9 149.112.112.112"
 EXTERNALDNSLIST="$OPENDNS_LIST $GOOGLE_LIST $CLOUDFARE_LIST $VERISIGN_LIST $QUAD9_LIST"
 
-# Format hostname:ip:mac
-# example: 08:00:27:1c:15:35:172.31.250.7:rockytest
 # if address file fixed_hosts.list exists, will be read.
+# example:
+# 00:1c:bf:36:f9:5a	172.30.255.10	vostro-wifi
+# 00:1c:23:ad:ee:8d	172.30.255.11	vostro-lan
 [ -f fixed_hosts.list ] && FIXED_IPS=$(cat fixed_hosts.list | sed -r 's/#.*//g' | sed -r 's/\s+$//g' | grep -v "^#\|^\s*$" | sed -r 's/\s+/:/g' | sed 's/\r/\n/g')
 FIXED_IPS=${FIXED_IPS:-""}
 
@@ -148,9 +149,9 @@ LANHOSTCOUNT=$(ipcalc -n -b ${LANNET} | grep Hosts | xargs | cut -d" " -f2)
 SERVERLANIP=${LANMAXIP}
 
 HOSTRANGEMIN=$(echo ${LANMINIP} | cut -d'.' -f4)
-HOSTRANGEMIN=$((HOSTRANGEMIN))
 HOSTRANGEMAX=$(echo ${LANMAXIP} | cut -d'.' -f4)
-HOSTRANGEMAX=$((HOSTRANGEMAX - 1))
+HOSTRANGEMIN=$(( (HOSTRANGEMAX + HOSTRANGEMIN) / 2)) # keep half the subnet for static IPs
+HOSTRANGEMAX=$((HOSTRANGEMAX - 5)) # keep 5 addresses at the end of the range for static services
 DHCPRANGESTARTIP=$(echo ${LANNETADDRESS} | cut -d'.' -f1-3).${HOSTRANGEMIN}
 DHCPRANGESTOPIP=$(echo ${LANNETADDRESS} | cut -d'.' -f1-3).${HOSTRANGEMAX}
 
@@ -172,11 +173,6 @@ echo "[INFO] DHCP stop      : $DHCPRANGESTOPIP"
 
 echo "[INFO] Check configuration"
 
-# arbitrary free addresses required
-MINGUESTIPS=5
-MINREQHOSTS=$((FIXEDADDRCOUNT + MINGUESTIPS + 1))
-[ $LANHOSTCOUNT -le $MINREQHOSTS ] && echo "Error : network size is too small." && exit 1
-
 for FixedIP in $FIXED_IPS; do
   MAC=$(echo $FixedIP | rev | cut -d':' -f3- | rev )
   IP=$(echo $FixedIP | rev | cut -d':' -f2 | rev )
@@ -187,7 +183,6 @@ for FixedIP in $FIXED_IPS; do
   set -e
   [ $RES != 0 ] && echo "ERROR: $IP (for host $NAME) does not belong to subnet ${LANNET}" && exit 1
 done
-
 
 [ ! -d /sys/class/net/$WEBIFACE ] && echo "[ERROR] Interface $WEBIFACE does not exist." && exit 1
 [ ! -d /sys/class/net/$LANIFACE ] && echo "[ERROR] Interface $LANIFACE does not exist." && exit 1
