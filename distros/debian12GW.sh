@@ -111,8 +111,61 @@ fi
 
   echo "[INFO] Install required packages"
 if [ "$GEN_CONFIG" != "YES" ]; then
-  apt install -y bind9 isc-dhcp-server squid ipcalc grepcidr bwm-ng iptraf nethogs byobu sudo htop iptables ca-certificates curl tree rsync vim
+  apt install -y bind9 isc-dhcp-server squid ipcalc prips grepcidr bwm-ng iptraf nethogs byobu sudo htop iptables ca-certificates curl tree rsync vim
 fi
+
+###########################
+##### Compute LAN Adresses
+###########################
+
+FIXEDADDRCOUNT=$(echo $FIXED_IPS | wc -w)
+
+## calculate LAN addresses
+LANMINIP=$(ipcalc -n -b ${LANNET} | grep HostMin | xargs | cut -d" " -f2)
+LANMAXIP=$(ipcalc -n -b ${LANNET} | grep HostMax | xargs | cut -d" " -f2)
+LANMASK=$(ipcalc -n -b ${LANNET} | grep Netmask | xargs | cut -d" " -f2)
+LANBROADCAST=$(ipcalc -n -b ${LANNET} | grep Broadcast | xargs | cut -d" " -f2)
+LANNETADDRESS=$(ipcalc -n -b ${LANNET} | grep Network | xargs | cut -d" " -f2 | cut -d"/" -f1)
+LANHOSTCOUNT=$(ipcalc -n -b ${LANNET} | grep Hosts | xargs | cut -d" " -f2)
+
+SERVERLANIP=${LANMAXIP}
+
+HOSTRANGEMIN=$(echo ${LANMINIP} | cut -d'.' -f4)
+HOSTRANGEMAX=$(echo ${LANMAXIP} | cut -d'.' -f4)
+HOSTRANGEMIN=$(( (HOSTRANGEMAX + HOSTRANGEMIN) / 2)) # keep half the subnet for static IPs
+HOSTRANGEMAX=$((HOSTRANGEMAX - 5)) # keep 5 addresses at the end of the range for static services
+DHCPRANGESTARTIP=$(echo ${LANNETADDRESS} | cut -d'.' -f1-3).${HOSTRANGEMIN}
+DHCPRANGESTOPIP=$(echo ${LANNETADDRESS} | cut -d'.' -f1-3).${HOSTRANGEMAX}
+
+echo "[INFO] Configuration"
+echo "[INFO] min IP         : $LANMINIP"
+echo "[INFO] max IP         : $LANMAXIP"
+echo "[INFO] netmask        : $LANMASK"
+echo "[INFO] broadcast      : $LANBROADCAST"
+echo "[INFO] net address    : $LANNETADDRESS"
+echo "[INFO] net host count : $LANHOSTCOUNT"
+
+echo "[INFO] server IP      : $SERVERLANIP"
+echo "[INFO] DHCP start     : $DHCPRANGESTARTIP"
+echo "[INFO] DHCP stop      : $DHCPRANGESTOPIP"
+
+# sanity check : verify that the new network does not overlap WAN network
+IPWANMASK=$(ip addr show $WEBIFACE | grep -Po 'inet \K[\d./]+')
+WANMINIP=$(ipcalc -n -b ${IPWANMASK} | grep HostMin | xargs | cut -d" " -f2)
+WANMAXIP=$(ipcalc -n -b ${IPWANMASK} | grep HostMax | xargs | cut -d" " -f2)
+WANIPLIST=$(mktemp)
+LANIPLIST=$(mktemp)
+prips $WANMINIP $WANMAXIP | sort > $WANIPLIST
+prips $LANMINIP $LANMAXIP | sort > $LANIPLIST
+CONFLICTING_IPs=$(comm -12 $WANIPLIST $LANIPLIST | wc -l)
+[ $CONFLICTING_IPs -gt 0 ] && \
+  comm -12 $WANIPLIST $LANIPLIST && \
+  echo "[ERROR] Web network and Lan network have conflicting IPs." && \
+  exit 1
+
+###########################
+##### Install docker
+###########################
 
 echo "[INFO] Install docker"
 if [ "$GEN_CONFIG" != "YES" ]; then
@@ -153,41 +206,6 @@ for USR in $USERS; do
     usermod -a -G $USER_EXTRA_GROUPS $USR
   fi
 done
-
-###########################
-##### Compute LAN Adresses
-###########################
-
-FIXEDADDRCOUNT=$(echo $FIXED_IPS | wc -w)
-
-## calculate LAN addresses
-LANMINIP=$(ipcalc -n -b ${LANNET} | grep HostMin | xargs | cut -d" " -f2)
-LANMAXIP=$(ipcalc -n -b ${LANNET} | grep HostMax | xargs | cut -d" " -f2)
-LANMASK=$(ipcalc -n -b ${LANNET} | grep Netmask | xargs | cut -d" " -f2)
-LANBROADCAST=$(ipcalc -n -b ${LANNET} | grep Broadcast | xargs | cut -d" " -f2)
-LANNETADDRESS=$(ipcalc -n -b ${LANNET} | grep Network | xargs | cut -d" " -f2 | cut -d"/" -f1)
-LANHOSTCOUNT=$(ipcalc -n -b ${LANNET} | grep Hosts | xargs | cut -d" " -f2)
-
-SERVERLANIP=${LANMAXIP}
-
-HOSTRANGEMIN=$(echo ${LANMINIP} | cut -d'.' -f4)
-HOSTRANGEMAX=$(echo ${LANMAXIP} | cut -d'.' -f4)
-HOSTRANGEMIN=$(( (HOSTRANGEMAX + HOSTRANGEMIN) / 2)) # keep half the subnet for static IPs
-HOSTRANGEMAX=$((HOSTRANGEMAX - 5)) # keep 5 addresses at the end of the range for static services
-DHCPRANGESTARTIP=$(echo ${LANNETADDRESS} | cut -d'.' -f1-3).${HOSTRANGEMIN}
-DHCPRANGESTOPIP=$(echo ${LANNETADDRESS} | cut -d'.' -f1-3).${HOSTRANGEMAX}
-
-echo "[INFO] Configuration"
-echo "[INFO] min IP         : $LANMINIP"
-echo "[INFO] max IP         : $LANMAXIP"
-echo "[INFO] netmask        : $LANMASK"
-echo "[INFO] broadcast      : $LANBROADCAST"
-echo "[INFO] net address    : $LANNETADDRESS"
-echo "[INFO] net host count : $LANHOSTCOUNT"
-
-echo "[INFO] server IP      : $SERVERLANIP"
-echo "[INFO] DHCP start     : $DHCPRANGESTARTIP"
-echo "[INFO] DHCP stop      : $DHCPRANGESTOPIP"
 
 ###########################
 ##### Check configuration
