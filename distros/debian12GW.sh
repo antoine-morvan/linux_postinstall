@@ -29,9 +29,9 @@ set -eu -o pipefail
 ###################################################################################
 
 # the iface of the "outside"
-WEBIFACE=enp0s3
+WEBIFACE=enp2s0
 # the iface of the LAN it will serve
-LANIFACE=enp0s8
+LANIFACE=enp3s0
 
 # network and mask of the LAN
 DOMAIN_NAME=test
@@ -55,7 +55,7 @@ FIXED_IPS=${FIXED_IPS:-""}
 WEBCACHE_PORT=3128
 WEBCACHE_PORT_INTERCEPT=3127
 WEBCACHE_OBJMAXSIZE=$((20*1024)) #MB
-WEBCACHE_SIZE=$((310*1024)) #MB
+WEBCACHE_SIZE=$((100*1024)) #MB
 # WEBCACHE_OBJMAXSIZE=512 #MB
 # WEBCACHE_SIZE=20000 #MB
 WEBCACHE_PATH="/mnt/squidcache/"
