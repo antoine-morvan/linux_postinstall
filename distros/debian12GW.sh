@@ -55,7 +55,10 @@ GOOGLE_LIST="8.8.8.8 8.8.4.4"
 CLOUDFARE_LIST="1.1.1.1 1.0.0.1"
 VERISIGN_LIST="64.6.64.6 64.6.65.6"
 QUAD9_LIST="9.9.9.9 149.112.112.112"
-EXTERNALDNSLIST="$OPENDNS_LIST $GOOGLE_LIST $CLOUDFARE_LIST $VERISIGN_LIST $QUAD9_LIST"
+set +eu +o pipefail
+CURRENT_DNS=$(cat /etc/resolv.conf | grep nameserver | cut -d' ' -f2 | xargs)
+set -eu -o pipefail
+EXTERNALDNSLIST="$OPENDNS_LIST $GOOGLE_LIST $CLOUDFARE_LIST $VERISIGN_LIST $QUAD9_LIST $CURRENT_DNS"
 
 # if address file fixed_hosts.list exists, will be read.
 # example:
@@ -319,11 +322,7 @@ options {
   forwarders {
 EOF
 
-# Use DNS servers specified in the list, as well as the one given by current DHCP (if present)
-set +eu +o pipefail
-CURRENT_DNS=$(cat /etc/resolv.conf | grep nameserver | cut -d' ' -f2 | xargs)
-set -eu -o pipefail
-for dns in $EXTERNALDNSLIST $CURRENT_DNS; do
+for dns in $EXTERNALDNSLIST; do
 cat >> ${BIND_FOLDER}/named.conf.options << EOF
     $dns;
 EOF
