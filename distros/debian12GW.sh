@@ -34,8 +34,21 @@ WEBIFACE=enp2s0
 LANIFACE=enp3s0
 
 # network and mask of the LAN
-DOMAIN_NAME=test
+DOMAIN_NAME=diablan
 LANNET=172.30.255.0/24
+
+# Squid settings
+WEBCACHE_OBJMAXSIZE=$((20*1024)) #MB
+WEBCACHE_SIZE=$((100*1024)) #MB
+WEBCACHE_PATH="/mnt/squidcache/"
+
+# overide hostname: if set, change hostname
+# HOSTNAME_OVERRIDE="gwtest"
+
+###################################################################################
+##### Static Configuration
+###################################################################################
+
 # list of DNS IPs to use when forwarding DNS requests from LAN
 OPENDNS_LIST="208.67.222.222 208.67.220.220"
 GOOGLE_LIST="8.8.8.8 8.8.4.4"
@@ -51,14 +64,8 @@ EXTERNALDNSLIST="$OPENDNS_LIST $GOOGLE_LIST $CLOUDFARE_LIST $VERISIGN_LIST $QUAD
 [ -f fixed_hosts.list ] && FIXED_IPS=$(cat fixed_hosts.list | sed -r 's/#.*//g' | sed -r 's/\s+$//g' | grep -v "^#\|^\s*$" | sed -r 's/\s+/:/g' | sed 's/\r/\n/g')
 FIXED_IPS=${FIXED_IPS:-""}
 
-# Squid settings
 WEBCACHE_PORT=3128
 WEBCACHE_PORT_INTERCEPT=3127
-WEBCACHE_OBJMAXSIZE=$((20*1024)) #MB
-WEBCACHE_SIZE=$((100*1024)) #MB
-# WEBCACHE_OBJMAXSIZE=512 #MB
-# WEBCACHE_SIZE=20000 #MB
-WEBCACHE_PATH="/mnt/squidcache/"
 
 ###################################################################################
 ##### System Setup
@@ -81,6 +88,14 @@ USER_EXTRA_GROUPS=sudo
 ###########################
 ##### Update && Install
 ###########################
+
+if [ "$GEN_CONFIG" != "YES" ] && [ "${HOSTNAME_OVERRIDE:-}" != "" ]; then
+	PREV_HOSTNAME=$(hostname)
+	echo "Override hostname from '$PREV_HOSTNAME' to '$HOSTNAME_OVERRIDE'"
+	hostnamectl set-hostname $HOSTNAME_OVERRIDE
+	sed -i "s/$PREV_HOSTNAME/$HOSTNAME_OVERRIDE/g" /etc/hosts
+	export HOSTNAME=$HOSTNAME_OVERRIDE
+fi
 
 echo "[INFO] Update system"
 if [ "$GEN_CONFIG" != "YES" ]; then
