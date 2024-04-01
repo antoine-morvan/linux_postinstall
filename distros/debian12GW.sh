@@ -628,23 +628,66 @@ modprobe -r ip_nat_ftp
 modprobe -r ip_conntrack_ftp
 
 ###
-### IPTable restore
-###
-
-# sets defaults
-RULES_FILE=/etc/iptables.defaults.rules
-if [ -f \$RULES_FILE ]; then
-  /usr/sbin/iptables -F
-  /usr/sbin/iptables-restore  < \$RULES_FILE
-else
-  echo "Warning: no iptable rules were found under '\$RULES_FILE'"
-fi
-
-###
 ### Security Tuning
 ###
 
 # Keep security tuning if set
+
+###
+### IPTable setup
+###
+
+IPTABLES=/usr/sbin/iptables
+ILAN=$LANIFACE
+IWAN=$WEBIFACE
+ILO=lo
+LAN=$LANNET
+IPWAN=\$(ip addr show \$IWAN | grep -Po 'inet \K[\d.]+')
+
+# Purge
+\$IPTABLES -F
+\$IPTABLES -X
+\$IPTABLES -Z
+
+\$IPTABLES -t filter -F INPUT
+\$IPTABLES -t filter -F FORWARD
+\$IPTABLES -t filter -F OUTPUT
+
+\$IPTABLES -t nat -F PREROUTING
+\$IPTABLES -t nat -F OUTPUT
+\$IPTABLES -t nat -F POSTROUTING
+
+# Default: drop
+\$IPTABLES -t filter -P INPUT   DROP
+\$IPTABLES -t filter -P FORWARD DROP
+\$IPTABLES -t filter -P OUTPUT  DROP
+\$IPTABLES -t nat -P PREROUTING  ACCEPT
+\$IPTABLES -t nat -P OUTPUT      ACCEPT
+\$IPTABLES -t nat -P POSTROUTING ACCEPT
+
+# Allow loopback
+\$IPTABLES -A INPUT -i \$ILO -j ACCEPT
+\$IPTABLES -A OUTPUT -o \$ILO -j ACCEPT
+
+# Drop invalid packets
+\$IPTABLES -A INPUT   -m state --state INVALID -j DROP
+\$IPTABLES -A OUTPUT  -m state --state INVALID -j DROP
+\$IPTABLES -A FORWARD -m state --state INVALID -j DROP
+
+# Allow answers
+\$IPTABLES -A INPUT   -m state --state ESTABLISHED,RELATED -j ACCEPT
+\$IPTABLES -A FORWARD -m state --state ESTABLISHED,RELATED -j ACCEPT
+\$IPTABLES -A OUTPUT  -m state --state ESTABLISHED,RELATED -j ACCEPT
+
+# Allow outgoing trafic from the router
+\$IPTABLES -A OUTPUT -j ACCEPT
+
+# Allow ping (in & out)
+\$IPTABLES -A INPUT -p icmp --icmp-type echo-request -j ACCEPT
+\$IPTABLES -A OUTPUT -p icmp --icmp-type echo-reply -j ACCEPT
+
+# Allow SSH only, from anywhere
+\$IPTABLES -A INPUT -m state --state NEW -p Tcp --dport 22 -j ACCEPT
 
 EOF
 cat > ${FIREWALL_FOLDER}/firewall_router.up.sh << EOF
@@ -659,19 +702,6 @@ echo 1 > /proc/sys/net/ipv4/ip_forward
 
 modprobe ip_nat_ftp
 modprobe ip_conntrack_ftp
-
-###
-### IPTable restore
-###
-
-# sets firewall rules, enables NAT, transparent ftp/http redirect to proxy
-RULES_FILE=/etc/iptables.rules
-if [ -f \$RULES_FILE ]; then
-  /usr/sbin/iptables -F
-  /usr/sbin/iptables-restore  < \$RULES_FILE
-else
-  echo "Warning: no iptable rules were found under '\$RULES_FILE'"
-fi
 
 ###
 ### Security Tuning
@@ -700,26 +730,9 @@ echo 0 > /proc/sys/net/ipv4/conf/all/send_redirects
 # Disable Source Routed
 echo 0 > /proc/sys/net/ipv4/conf/all/accept_source_route
 
-EOF
-
-cat > ${SYSTEMD_LIBRARY}/firewall_router.service << EOF
-[Unit]
-Description=Firewall
-After=network.target
-
-[Service]
-Type=oneshot
-RemainAfterExit=yes
-ExecStart=/usr/sbin/firewall_router.up.sh
-ExecStop=/usr/sbin/firewall_router.down.sh
-
-[Install]
-WantedBy=multi-user.target
-EOF
-
-cat > ${FIREWALL_FOLDER}/firewall_router.iptables_gen.sh << EOF
-#!/usr/bin/env bash
-set -eu -o pipefail
+###
+### IPTable setup
+###
 
 IPTABLES=/usr/sbin/iptables
 ILAN=$LANIFACE
@@ -815,20 +828,27 @@ IPWAN=\$(ip addr show \$IWAN | grep -Po 'inet \K[\d.]+')
 # \$IPTABLES -t nat -A PREROUTING -d \$IPWAN -p tcp --dport \$PORT_WAN -j DNAT --to-destination \$IP
 # \$IPTABLES -t nat -A PREROUTING -d \$IPWAN -p tcp --dport \$PORT_WAN -j DNAT --to-destination \$IP
 
+EOF
 
+
+cat > ${SYSTEMD_LIBRARY}/firewall_router.service << EOF
+[Unit]
+Description=Firewall
+After=network.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/sbin/firewall_router.up.sh
+ExecStop=/usr/sbin/firewall_router.down.sh
+
+[Install]
+WantedBy=multi-user.target
 EOF
 
 if [ "$GEN_CONFIG" != "YES" ]; then
-  chmod +x /usr/sbin/firewall_router.iptables_gen.sh
   chmod +x /usr/sbin/firewall_router.down.sh
   chmod +x /usr/sbin/firewall_router.up.sh
-
-  # save default rules
-  /usr/sbin/iptables-save > /etc/iptables.defaults.rules
-  # configure iptables
-  /usr/sbin/firewall_router.iptables_gen.sh
-  # save rules
-  /usr/sbin/iptables-save > /etc/iptables.rules
 
   systemctl enable firewall_router
 fi
