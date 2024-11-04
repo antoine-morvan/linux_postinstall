@@ -29,13 +29,13 @@ set -eu -o pipefail
 ###################################################################################
 
 # the iface of the "outside"
-WEBIFACE=enp2s0
+WEBIFACE=eth0
 # the iface of the LAN it will serve
-LANIFACE=enp3s0
+LANIFACE=eth1
 
 # network and mask of the LAN
 DOMAIN_NAME=diablan
-LANNET=172.30.255.0/24
+LANNET=172.29.255.0/24
 
 # overide hostname: if set, change hostname
 # HOSTNAME_OVERRIDE="gwtest"
