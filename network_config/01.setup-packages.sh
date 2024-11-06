@@ -38,7 +38,8 @@ case ${ID_LIKE:-${ID}} in
 esac
 
 mkdir -p /opt
-git clone https://github.com/antoine-morvan/ovhDynDnsUpdate.git /opt/ovhDynDnsUpdate
+[ ! -d /opt/ovhDynDnsUpdate ] && git clone https://github.com/antoine-morvan/ovhDynDnsUpdate.git /opt/ovhDynDnsUpdate
+(cd /opt/ovhDynDnsUpdate && git clean -xdff && git checkout . && git pull)
 
 ############################################################################################
 ## Done
