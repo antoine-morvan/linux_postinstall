@@ -7,6 +7,7 @@ set -eu -o pipefail
 ## Setup packages
 ############################################################################################
 
+[ ! -f /etc/os-release ] && echo "[NETCONF] ERROR: could not locate '/etc/os-release'" && exit 1
 . /etc/os-release
 case ${ID_LIKE:-${ID}} in
     *debian*|*ubuntu*)

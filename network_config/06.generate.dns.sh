@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
 set -eu -o pipefail
 
+############################################################################################
+## Load config
+############################################################################################
+
 # source config
 [ -f config.sh ] && source config.sh
 SUDOUSER=${SUDOUSER:-"admin"}
@@ -8,6 +12,9 @@ DOMAIN_NAME=${DOMAIN_NAME:-"mydomain"}
 LANNET=${LANNET:-"192.168.30.0/24"}
 SERVERLANIP=${SERVERLANIP:-"192.168.30.254"}
 DHCP_RANGE=${DHCP_RANGE:-"192.168.30.100:192.168.30.200"}
+
+[ ! -f /etc/os-release ] && echo "[NETCONF] ERROR: could not locate '/etc/os-release'" && exit 1
+. /etc/os-release
 
 [ -f config.fixed_hosts.list ] && FIXED_IPS=$(cat config.fixed_hosts.list \
   | sed -r 's/#.*//g' | sed -r 's/\s+$//g' | grep -v "^#\|^\s*$" \
@@ -17,6 +24,10 @@ FIXED_IPS=${FIXED_IPS:-""}
 [ -f config.dns.list ] && DNS_LIST=$(cat config.dns.list \
   | sed -r 's/#.*//g' | sed -r 's/\s+$//g' | grep -v "^#\|^\s*$" | xargs)
 DNS_LIST=${DNS_LIST:-""}
+
+############################################################################################
+## TODO
+############################################################################################
 
 
 echo "[INFO] Setup DNS"
