@@ -65,7 +65,7 @@ if [ $RES == 0 ]; then
   fi
 
   nmcli con add \
-    con-name "static-gw-$LANIFACE" \
+    con-name $CONNECTION_NAME \
     ifname $LANIFACE \
     type ethernet \
     ip4 $SERVERLANIP/$(echo $LANNET | cut -d'/' -f2)
