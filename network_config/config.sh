@@ -2,14 +2,14 @@
 # the iface of the "outside"
 WEBIFACE=eth0
 # the iface of the LAN it will serve
-LANIFACE=lo
+LANIFACE=eth1
 
 # network and mask of the LAN
 DOMAIN_NAME=diablan
 
-LANNET=172.30.255.0/24
-SERVERLANIP=172.30.255.254
-DHCP_RANGE=172.30.255.10:172.30.255.200
+LANNET=172.29.0.0/24
+SERVERLANIP=172.29.255.254
+DHCP_RANGE=172.29.255.10:172.29.255.200
 
 SUDOUSER=koubi
 
