@@ -34,6 +34,37 @@ passwd -l root
 ## Setup interfaces
 ############################################################################################
 
+set +e
+type -f nmcli &> /dev/null
+RES=$?
+set -e
+if [ $RES == 0 ]; then
+  nmcli con add \
+    con-name "static-$LANIFACE" \
+    ifname $LANIFACE \
+    type ethernet \
+    ip4 $SERVERLANIP/$(echo $LANNET | cut -d'/' -f2)
+else
+  case ${ID_LIKE:-${ID}} in
+      *debian*|*ubuntu*)
+        # TODO : edit /etc/network/interfaces
+        perl -0777 -i.original -pe 's///g' /etc/network/interfaces
+        cat > /etc/network/interfaces.d/$LANIFACE << EOF
+auto $LANIFACE
+allow-hotplug $LANIFACE
+iface $LANIFACE inet static
+        address $SERVERLANIP/$(echo $LANNET | cut -d'/' -f2)
+EOF
+          ;;
+      *fedora*|*rhel*)
+          # TODO : edit /etc/sysconfig/network-scripts/ifcfg-$LANIFACE
+          echo "ERROR: unsupported yet"
+          exit 1
+          ;;
+  esac
+
+
+
 ## set lan iface IP
 case $GEN_CONFIG in
   YES) INTERFACES_FILE=./interfaces             ;;
