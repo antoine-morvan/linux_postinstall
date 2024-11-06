@@ -36,7 +36,7 @@ source config.sh
 # 1.1.1.1 # cloudflare
 # 8.8.8.8 # google
 [ ! -f config.dns.list ] && echo "[NETCONF] WARNING: Could not locate 'config.dns.list'"
-DNS_LIST=$(cat config.dns.list \
+[ -f config.dns.list ] && DNS_LIST=$(cat config.dns.list \
   | sed -r 's/#.*//g' | sed -r 's/\s+$//g' | grep -v "^#\|^\s*$" | xargs)
 DNS_LIST=${DNS_LIST:-""}
 
