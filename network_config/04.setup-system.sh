@@ -34,6 +34,18 @@ esac
 passwd -l root
 
 ############################################################################################
+## Overide hostname
+############################################################################################
+
+PREV_HOSTNAME=$(hostname)
+if [ "${HOSTNAME_OVERRIDE:-}" != "" ] && [ "${HOSTNAME_OVERRIDE:-}" != "${PREV_HOSTNAME}" ]; then
+	echo "Override hostname from '$PREV_HOSTNAME' to '$HOSTNAME_OVERRIDE'"
+	hostnamectl set-hostname $HOSTNAME_OVERRIDE
+	sed -i "s/$PREV_HOSTNAME/$HOSTNAME_OVERRIDE/g" /etc/hosts
+	export HOSTNAME=$HOSTNAME_OVERRIDE
+fi
+
+############################################################################################
 ## Setup interfaces
 ############################################################################################
 
@@ -42,10 +54,18 @@ type -f nmcli &> /dev/null
 RES=$?
 set -e
 if [ $RES == 0 ]; then
+  CONNECTION_NAME="static-$HOSTNAME-$LANIFACE"
+  set +e
+  nmcli con show $CONNECTION_NAME &> /dev/null
+  RES=$?
+  set -e
+  # delete connection if existing
+  if [ $RES == 0 ]; then
+    nmcli con del $CONNECTION_NAME
+  fi
 
-  # TODO : check existing connection
   nmcli con add \
-    con-name "static-$LANIFACE" \
+    con-name "static-gw-$LANIFACE" \
     ifname $LANIFACE \
     type ethernet \
     ip4 $SERVERLANIP/$(echo $LANNET | cut -d'/' -f2)
@@ -71,7 +91,7 @@ EOF
           ;;
       *fedora*|*rhel*)
           # TODO : edit /etc/sysconfig/network-scripts/ifcfg-$LANIFACE
-          echo "ERROR: unsupported yet"
+          echo "ERROR: unsupported yet : non nmcli static ip settings"
           exit 1
           ;;
   esac
@@ -85,25 +105,7 @@ exit 0
 ## Archive
 ############################################################################################
 
-## set lan iface IP
-case $GEN_CONFIG in
-  YES) INTERFACES_FILE=./interfaces             ;;
-  *)   INTERFACES_FILE=/etc/network/interfaces  ;;
-esac
-cat >> ${INTERFACES_FILE} << EOF
-auto ${WEBIFACE}
-allow-hotplug ${WEBIFACE}
-iface ${WEBIFACE} inet dhcp
 
-auto ${LANIFACE}
-iface ${LANIFACE} inet static
-  address ${SERVERLANIP}
-  netmask ${LANMASK}
-  network ${LANNETADDRESS}
-  broadcast ${LANBROADCAST}
-EOF
-
-## Set dhclient to use proper domain & name server
 case $GEN_CONFIG in
   YES) DHCLIENT_FILE=./dhclient.conf          ;;
   *)   DHCLIENT_FILE=/etc/dhcp/dhclient.conf  ;;
