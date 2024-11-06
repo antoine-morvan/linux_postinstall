@@ -5,16 +5,7 @@ set -eu -o pipefail
 ## Load config
 ############################################################################################
 
-# source config
-[ -f config.sh ] && source config.sh
-SUDOUSER=${SUDOUSER:-"admin"}
-DOMAIN_NAME=${DOMAIN_NAME:-"mydomain"}
-LANNET=${LANNET:-"192.168.30.0/24"}
-SERVERLANIP=${SERVERLANIP:-"192.168.30.254"}
-DHCP_RANGE=${DHCP_RANGE:-"192.168.30.100:192.168.30.200"}
-
-[ ! -f /etc/os-release ] && echo "[NETCONF] ERROR: could not locate '/etc/os-release'" && exit 1
-. /etc/os-release
+source config.sh
 
 ############################################################################################
 ## Setup users

@@ -5,63 +5,39 @@ set -eu -o pipefail
 ## Load config
 ############################################################################################
 
-# source config
-[ -f config.sh ] && source config.sh
-SUDOUSER=${SUDOUSER:-"admin"}
-DOMAIN_NAME=${DOMAIN_NAME:-"mydomain"}
-LANNET=${LANNET:-"192.168.30.0/24"}
-SERVERLANIP=${SERVERLANIP:-"192.168.30.254"}
-DHCP_RANGE=${DHCP_RANGE:-"192.168.30.100:192.168.30.200"}
-
-[ ! -f /etc/os-release ] && echo "[NETCONF] ERROR: could not locate '/etc/os-release'" && exit 1
-. /etc/os-release
-
-[ -f config.fixed_hosts.list ] && FIXED_IPS=$(cat config.fixed_hosts.list \
-  | sed -r 's/#.*//g' | sed -r 's/\s+$//g' | grep -v "^#\|^\s*$" \
-  | sed -r 's/\s+/:/g' | sed 's/\r/\n/g')
-FIXED_IPS=${FIXED_IPS:-""}
+source config.sh
 
 ############################################################################################
-## TODO
+## Generate DHCP config files
 ############################################################################################
 
-case $GEN_CONFIG in
-  YES) 
-    DHCPD_FILE=./dhcpd.conf
-    DHCPD_DEFAULT=./isc-dhcp-server
-    ;;
-  *)   
-    DHCPD_FILE=/etc/dhcp/dhcpd.conf
-    DHCPD_DEFAULT=/etc/default/isc-dhcp-server
-    ;;
-esac
+DHCPD_FILE=./dhcpd.conf
+DHCPD_DEFAULT=./isc-dhcp-server
 
-case $GEN_CONFIG in
-  YES)
-    cat > ${DHCPD_DEFAULT} << EOF
+# case $GEN_CONFIG in
+#   YES) 
+#     DHCPD_FILE=./dhcpd.conf
+#     DHCPD_DEFAULT=./isc-dhcp-server
+#     ;;
+#   *)   
+#     DHCPD_FILE=/etc/dhcp/dhcpd.conf
+#     DHCPD_DEFAULT=/etc/default/isc-dhcp-server
+#     ;;
+# esac
+
+cat > ${DHCPD_DEFAULT} << EOF
 INTERFACESv4="${LANIFACE}"
 EOF
-    cat > ${DHCPD_FILE} << EOF
+cat > ${DHCPD_FILE} << EOF
 option domain-name ${DOMAIN_NAME};
 option domain-name-servers ${SERVERLANIP};
+default-lease-time 3600;
+max-lease-time 48000;
 authoritative;
-EOF
-    ;;
-  *)
-    ## enable DHCPd on lan iface
-    sed -i -r "s/^(INTERFACESv4=).*/\1\"${LANIFACE}\"/g" ${DHCPD_DEFAULT}
+ddns-update-style none;
 
-    ## set DHCPd config
-    sed -i -r "s/^(option domain-name )(.*)/\1${DOMAIN_NAME};/g" ${DHCPD_FILE}
-    sed -i -r "s/^(option domain-name-servers )(.*)/\1${SERVERLANIP};/g" ${DHCPD_FILE}
-    sed -i -r "s/^#authoritative;/authoritative;/g" ${DHCPD_FILE}
-    ;;
-esac
-
-
-cat >> ${DHCPD_FILE} << EOF
-subnet ${LANNETADDRESS} netmask ${LANMASK} {
-  range ${DHCPRANGESTARTIP} ${DHCPRANGESTOPIP};
+subnet ${LANNET%/*} netmask ${LANMASK} {
+  range ${DHCP_RANGE_START} ${DHCP_RANGE_END};
   option routers ${SERVERLANIP};
 }
 

@@ -4,8 +4,7 @@ set -eu -o pipefail
 [ "$(whoami)" != root ] && echo "[NETCONF] ERROR: must run as root" && exit 1
 
 # source config
-[ -f config.sh ] && source config.sh
-SUDOUSER=${SUDOUSER:-"admin"}
+source config.sh
 
 set +e
 cat /etc/passwd | grep ^${SUDOUSER}: &> /dev/null
