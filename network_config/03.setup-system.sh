@@ -4,7 +4,7 @@ set -eu -o pipefail
 # Check that we can source config
 source config.sh
 
-case $ID_LIKE in
+case ${ID_LIKE:-${ID}} in
     *debian*|*ubuntu*)
         usermod -aG sudo ${SUDOUSER}
         ;;
