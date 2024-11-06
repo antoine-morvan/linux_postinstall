@@ -28,6 +28,7 @@ SUDOUSER=koubi
 [ ! -f /etc/os-release ] && echo "[NETCONF] ERROR: could not locate '/etc/os-release'" && exit 1
 . /etc/os-release
 
+echo "[NETCONF] INFO: init defaults."
 SUDOUSER=${SUDOUSER:-"admin"}
 DOMAIN_NAME=${DOMAIN_NAME:-"mydomain"}
 LANNET=${LANNET:-"192.168.30.0/24"}
@@ -44,6 +45,8 @@ function portableIPcalc() {
 LANMASK=$(portableIPcalc Netmask)
 LANBROADCAST=$(portableIPcalc Broadcast)
 
+set +e
+echo "[NETCONF] INFO: read DNS config files."
 # Check DNS list parsability
 # Format : IP # COMMENT
 # example
@@ -54,6 +57,7 @@ LANBROADCAST=$(portableIPcalc Broadcast)
   | sed -r 's/#.*//g' | sed -r 's/\s+$//g' | grep -v "^#\|^\s*$" | xargs)
 DNS_LIST=${DNS_LIST:-""}
 
+echo "[NETCONF] INFO: read Fixed host config files."
 # Check fixed host list parsability
 # Format : MAC IP HOSTNAME # comments
 # example
@@ -66,6 +70,7 @@ DNS_LIST=${DNS_LIST:-""}
   | sed -r 's/\s+/:/g' | sed 's/\r/\n/g')
 FIXED_IPS=${FIXED_IPS:-""}
 
+echo "[NETCONF] INFO: read NAT config files."
 # Check NAT list parsability
 # Format : IP/Hostname port-list # COMMENT
 # example
@@ -80,3 +85,4 @@ NAT_LIST=${NAT_LIST:-""}
 ############################################################################################
 ## Return
 ############################################################################################
+set -e
