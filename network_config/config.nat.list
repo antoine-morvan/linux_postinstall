@@ -1,30 +1,4 @@
 
-########################
-# Favor these 3
-########################
-
-# QUAD9_DNS_LIST
-9.9.9.9
-9.9.9.10
-# CLOUDFARE_DNS_LIST
-1.1.1.1
-1.0.0.1
-# OPENDNS_LIST
-208.67.222.222
-208.67.220.220
-
-########################
-# Can fallback on these
-########################
-# CLOUDFARE_DNS_MALWARE_LIST
-# 1.1.1.2
-# 1.0.0.2
-# CLOUDFARE_DNS_MALWARE_ADULT_LIST
-# 1.1.1.3
-# 1.0.0.3
-# GOOGLE_PUBLIC_DNSLIST
-# 8.8.8.8
-# 8.8.4.4
-# VERISIGN_DNS_LIST
-# 64.6.64.6
-# 64.6.65.6
+PC1         22:22 54321-54329:54321-54329 # 
+# PC2       # should not be connected
+server1     80:80 443:443 # 

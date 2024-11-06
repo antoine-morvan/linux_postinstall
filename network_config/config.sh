@@ -11,7 +11,7 @@ LANNET=172.30.255.0/24
 SERVERLANIP=172.30.255.254
 DHCP_RANGE=172.30.255.10:172.30.255.200
 
-SUDOUSERS=koubi
+SUDOUSER=koubi
 
 # overide hostname: if set, change hostname
 # HOSTNAME_OVERRIDE="gwtest"
