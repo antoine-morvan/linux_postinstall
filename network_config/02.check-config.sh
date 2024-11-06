@@ -116,6 +116,14 @@ for FixedIP in $FIXED_IPS; do
 done
 
 # Check that DNS are reachable
+case $DNS_LIST in
+  "")
+    echo "[NETCONF] WARNING: No DNS specified, falling back to system default"
+    set +eu +o pipefail
+    DNS_LIST=$(cat /etc/resolv.conf | grep nameserver | cut -d' ' -f2 | xargs)
+    set -eu -o pipefail
+    ;;
+esac
 for dns in $DNS_LIST; do
   set +e
   ping -c 1 $dns &> /dev/null
