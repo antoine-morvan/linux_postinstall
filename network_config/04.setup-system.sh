@@ -1,9 +1,23 @@
 #!/usr/bin/env bash
 set -eu -o pipefail
 
-# Check that we can source config
-source config.sh
+############################################################################################
+## Load config
+############################################################################################
 
+# source config
+[ -f config.sh ] && source config.sh
+SUDOUSER=${SUDOUSER:-"admin"}
+DOMAIN_NAME=${DOMAIN_NAME:-"mydomain"}
+LANNET=${LANNET:-"192.168.30.0/24"}
+SERVERLANIP=${SERVERLANIP:-"192.168.30.254"}
+DHCP_RANGE=${DHCP_RANGE:-"192.168.30.100:192.168.30.200"}
+
+############################################################################################
+## Setup users
+############################################################################################
+
+# Make user soduer
 case ${ID_LIKE:-${ID}} in
     *debian*|*ubuntu*)
         usermod -aG sudo ${SUDOUSER}
@@ -12,6 +26,13 @@ case ${ID_LIKE:-${ID}} in
         usermod -aG wheel ${SUDOUSER}
         ;;
 esac
+
+# Lock root account
+passwd -l root
+
+############################################################################################
+## Setup interfaces
+############################################################################################
 
 ## set lan iface IP
 case $GEN_CONFIG in

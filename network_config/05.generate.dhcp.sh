@@ -1,8 +1,13 @@
 #!/usr/bin/env bash
 set -eu -o pipefail
 
-# Check that we can source config
-source config.sh
+# source config
+[ -f config.sh ] && source config.sh
+SUDOUSER=${SUDOUSER:-"admin"}
+DOMAIN_NAME=${DOMAIN_NAME:-"mydomain"}
+LANNET=${LANNET:-"192.168.30.0/24"}
+SERVERLANIP=${SERVERLANIP:-"192.168.30.254"}
+DHCP_RANGE=${DHCP_RANGE:-"192.168.30.100:192.168.30.200"}
 
 [ -f config.fixed_hosts.list ] && FIXED_IPS=$(cat config.fixed_hosts.list \
   | sed -r 's/#.*//g' | sed -r 's/\s+$//g' | grep -v "^#\|^\s*$" \

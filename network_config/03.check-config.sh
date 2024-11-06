@@ -26,9 +26,14 @@ esac
 ## Config file checks
 ############################################################################################
 
-# Check that we can source config
-[ ! -f config.sh ] && echo "[NETCONF] ERROR: Could not locate 'config.sh'" && exit 1
-source config.sh
+# source config
+[ ! -f config.sh ] && echo "[NETCONF] WARNING: Could not locate 'config.sh'; using defaults."
+[ -f config.sh ] && source config.sh
+SUDOUSER=${SUDOUSER:-"admin"}
+DOMAIN_NAME=${DOMAIN_NAME:-"mydomain"}
+LANNET=${LANNET:-"192.168.30.0/24"}
+SERVERLANIP=${SERVERLANIP:-"192.168.30.254"}
+DHCP_RANGE=${DHCP_RANGE:-"192.168.30.100:192.168.30.200"}
 
 # Check DNS list parsability
 # Format : IP # COMMENT

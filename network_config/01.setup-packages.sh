@@ -3,6 +3,10 @@ set -eu -o pipefail
 
 [ "$(whoami)" != root ] && echo "[NETCONF] ERROR: must run as root" && exit 1
 
+############################################################################################
+## Setup packages
+############################################################################################
+
 . /etc/os-release
 case ${ID_LIKE:-${ID}} in
     *debian*|*ubuntu*)
@@ -35,4 +39,7 @@ esac
 mkdir -p /opt
 git clone https://github.com/antoine-morvan/ovhDynDnsUpdate.git /opt/ovhDynDnsUpdate
 
+############################################################################################
+## Done
+############################################################################################
 exit 0
