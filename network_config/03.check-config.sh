@@ -7,8 +7,10 @@ ERROR_COUNT=0
 ## Config file checks
 ############################################################################################
 
+echo "[NETCONF] INFO: Load config."
 source config.sh
 
+echo "[NETCONF] INFO: Load config."
 ############################################################################################
 ## System Checks
 ############################################################################################
@@ -156,10 +158,10 @@ done
 
 case $ERROR_COUNT in
   0)
-    echo "[NETCONF] Checks passed."
+    echo "[NETCONF] INFO: Checks passed."
     ;;
   *)
-    echo "[NETCONF] Detected $ERROR_COUNT errors, aborting."
+    echo "[NETCONF] ERROR: Detected $ERROR_COUNT errors, aborting."
     exit 1
     ;;
 esac
