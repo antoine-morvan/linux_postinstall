@@ -42,6 +42,7 @@ passwd -l root
 PREV_HOSTNAME=$(hostname)
 if [ "${HOSTNAME_OVERRIDE:-}" != "" ] && [ "${HOSTNAME_OVERRIDE:-}" != "${PREV_HOSTNAME}" ]; then
   echo "[NETCONF] INFO: Overide hostname (from $PREV_HOSTNAME to $HOSTNAME_OVERRIDE)"
+  echo "[NETCONF] WARNING: This option has not been tested..."
 	echo "Override hostname from '$PREV_HOSTNAME' to '$HOSTNAME_OVERRIDE'"
 	hostnamectl set-hostname $HOSTNAME_OVERRIDE
 	sed -i "s/$PREV_HOSTNAME/$HOSTNAME_OVERRIDE/g" /etc/hosts
@@ -118,4 +119,7 @@ prepend domain-search "$DOMAIN_NAME";
 prepend domain-name-servers 127.0.0.1;
 EOF
 
+############################################################################################
+## Exit
+############################################################################################
 exit 0
