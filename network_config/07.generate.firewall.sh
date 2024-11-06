@@ -8,23 +8,18 @@ set -eu -o pipefail
 source config.sh
 
 ############################################################################################
-## TODO
+## Generate Firewall config
 ############################################################################################
 
-echo todo
-exit 1
+echo "[NETCONF] INFO: Generate firewall rules"
 
-case $GEN_CONFIG in
-  YES) 
-    FIREWALL_FOLDER=.
-    SYSTEMD_LIBRARY=.
-    ;;
-  *)
-    FIREWALL_FOLDER=/usr/sbin/
-    SYSTEMD_LIBRARY=/usr/lib/systemd/system
-    ;;
-esac
+PREFIX=./gen.firewall/
 
+FIREWALL_FOLDER=$PREFIX/sbin/
+SYSTEMD_LIBRARY=$PREFIX/lib/systemd/system
+
+mkdir -p $SYSTEMD_LIBRARY $FIREWALL_FOLDER
+    
 cat > ${FIREWALL_FOLDER}/firewall_router.down.sh << EOF
 #!/usr/bin/env bash
 set -eu -o pipefail
@@ -35,8 +30,16 @@ set -eu -o pipefail
 
 echo 0 > /proc/sys/net/ipv4/ip_forward
 
-modprobe -r ip_nat_ftp
-modprobe -r ip_conntrack_ftp
+# keep ip_ for old distros ...
+# note: will fail on LXC, need to run this on host
+set +e
+(
+  modprobe -r ip_nat_ftp
+  modprobe -r ip_conntrack_ftp
+  modprobe -r nf_nat_ftp
+  modprobe -r nf_conntrack_ftp
+) &> /dev/null
+set -e
 
 ###
 ### Security Tuning
@@ -111,8 +114,16 @@ set -eu -o pipefail
 
 echo 1 > /proc/sys/net/ipv4/ip_forward
 
-modprobe ip_nat_ftp
-modprobe ip_conntrack_ftp
+# keep ip_ for old distros ..
+# note: will fail on LXC, need to run this on host
+set +e
+(
+  modprobe ip_nat_ftp
+  modprobe ip_conntrack_ftp
+  modprobe nf_nat_ftp
+  modprobe nf_conntrack_ftp
+) &> /dev/null
+set -e
 
 ###
 ### Security Tuning
@@ -204,16 +215,6 @@ IPWAN=\$(ip addr show \$IWAN | grep -Po 'inet \K[\d.]+')
 # Allow FORWARD from LAN to LAN
 \$IPTABLES -A FORWARD -m state --state NEW -i \$ILAN -o \$ILAN -j ACCEPT
 
-# Transparent redirect HTTP to proxy
-\$IPTABLES -t nat -A PREROUTING -p tcp -i \$ILAN --dport 80 -j REDIRECT --to-port $WEBCACHE_PORT_INTERCEPT
-\$IPTABLES -t nat -A OUTPUT -p tcp --dport 80 -m owner --uid-owner proxy -j ACCEPT
-\$IPTABLES -t nat -A OUTPUT -p tcp --dport 80 -j REDIRECT --to-ports $WEBCACHE_PORT_INTERCEPT
-
-# Transparent redirect FTP to proxy
-\$IPTABLES -t nat -A PREROUTING -p tcp -i \$ILAN --dport 21 -j REDIRECT --to-port $WEBCACHE_PORT_INTERCEPT
-\$IPTABLES -t nat -A OUTPUT -p tcp --dport 21 -m owner --uid-owner proxy -j ACCEPT
-\$IPTABLES -t nat -A OUTPUT -p tcp --dport 21 -j REDIRECT --to-ports $WEBCACHE_PORT_INTERCEPT
-
 # Allow ping (in & out)
 \$IPTABLES -A INPUT -p icmp --icmp-type echo-request -j ACCEPT
 \$IPTABLES -A OUTPUT -p icmp --icmp-type echo-reply -j ACCEPT
@@ -257,9 +258,15 @@ ExecStop=/usr/sbin/firewall_router.down.sh
 WantedBy=multi-user.target
 EOF
 
-if [ "$GEN_CONFIG" != "YES" ]; then
-  chmod +x /usr/sbin/firewall_router.down.sh
-  chmod +x /usr/sbin/firewall_router.up.sh
+# if [ "$GEN_CONFIG" != "YES" ]; then
+#   chmod +x /usr/sbin/firewall_router.down.sh
+#   chmod +x /usr/sbin/firewall_router.up.sh
 
-  systemctl enable firewall_router
-fi
+#   systemctl enable firewall_router
+# fi
+
+############################################################################################
+## Exit
+############################################################################################
+echo "[NETCONF] INFO: Generate firewall Done."
+exit 0
