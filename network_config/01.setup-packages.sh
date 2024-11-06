@@ -4,7 +4,7 @@ set -eu -o pipefail
 [ "$(whoami)" != root ] && echo "[NETCONF] ERROR: must run as root" && exit 1
 
 . /etc/os-release
-case $ID_LIKE in
+case ${ID_LIKE:-${ID}} in
     *debian*|*ubuntu*)
         apt-get update
         apt-get upgrade -y
