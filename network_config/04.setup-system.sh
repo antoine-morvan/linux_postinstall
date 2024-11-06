@@ -62,7 +62,7 @@ else
         rm $tmpfile
 
         # Add interface definition
-        cat > /etc/network/interfaces.d/$LANIFACE << EOF
+        cat >> /etc/network/interfaces << EOF
 auto $LANIFACE
 allow-hotplug $LANIFACE
 iface $LANIFACE inet static
