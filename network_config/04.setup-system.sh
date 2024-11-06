@@ -20,6 +20,7 @@ DHCP_RANGE=${DHCP_RANGE:-"192.168.30.100:192.168.30.200"}
 ## Setup users
 ############################################################################################
 
+echo "[NETCONF] INFO: setup user group"
 # Make user soduer
 case ${ID_LIKE:-${ID}} in
     *debian*|*ubuntu*)
@@ -30,6 +31,7 @@ case ${ID_LIKE:-${ID}} in
         ;;
 esac
 
+echo "[NETCONF] INFO: lock root"
 # Lock root account
 passwd -l root
 
@@ -39,6 +41,7 @@ passwd -l root
 
 PREV_HOSTNAME=$(hostname)
 if [ "${HOSTNAME_OVERRIDE:-}" != "" ] && [ "${HOSTNAME_OVERRIDE:-}" != "${PREV_HOSTNAME}" ]; then
+  echo "[NETCONF] INFO: Overide hostname (from $PREV_HOSTNAME to $HOSTNAME_OVERRIDE)"
 	echo "Override hostname from '$PREV_HOSTNAME' to '$HOSTNAME_OVERRIDE'"
 	hostnamectl set-hostname $HOSTNAME_OVERRIDE
 	sed -i "s/$PREV_HOSTNAME/$HOSTNAME_OVERRIDE/g" /etc/hosts
@@ -49,11 +52,15 @@ fi
 ## Setup interfaces
 ############################################################################################
 
+echo "[NETCONF] INFO: Setup lan interface"
 set +e
 type -f nmcli &> /dev/null
 RES=$?
 set -e
 if [ $RES == 0 ]; then
+  echo "[NETCONF] INFO:  - using nmcli"
+  # Restart network manager in case it was updated
+  systemctl restart NetworkManager
   CONNECTION_NAME="static-$HOSTNAME-$LANIFACE"
   set +e
   nmcli con show $CONNECTION_NAME &> /dev/null
@@ -65,13 +72,14 @@ if [ $RES == 0 ]; then
   fi
 
   nmcli con add \
-    con-name $CONNECTION_NAME \
+    con-name "$CONNECTION_NAME" \
     ifname $LANIFACE \
     type ethernet \
     ip4 $SERVERLANIP/$(echo $LANNET | cut -d'/' -f2)
 else
   case ${ID_LIKE:-${ID}} in
       *debian*|*ubuntu*)
+        echo "[NETCONF] INFO:  - using /etc/network/interfaces"
         # Remove interface definition from /etc/network/interfaces
         tmpfile=$(mktemp)
         cp /etc/network/interfaces $tmpfile
@@ -91,6 +99,7 @@ EOF
           ;;
       *fedora*|*rhel*)
           # TODO : edit /etc/sysconfig/network-scripts/ifcfg-$LANIFACE
+          echo "[NETCONF] INFO:  - using /etc/sysconfig/network-scripts/ifcfg-$LANIFACE"
           echo "ERROR: unsupported yet : non nmcli static ip settings"
           exit 1
           ;;
