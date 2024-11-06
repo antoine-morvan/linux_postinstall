@@ -10,10 +10,12 @@ set +e
 cat /etc/passwd | grep ^${SUDOUSER}: &> /dev/null
 RES=$?
 set -e
-[ $RES == 0 ] && echo "[NETCONF] WARNING: user '${SUDOUSER}' already exists in '/etc/passwd'." && exit 0
+[ $RES == 0 ] && echo "[NETCONF] WARNING: user '${SUDOUSER}' already exists in '/etc/passwd'."
 [ $RES != 0 ] && useradd \
     -d /home/${SUDOUSER} \
     -m \
     ${SUDOUSER}
+
+echo -en "${SUDOUSER}\n${SUDOUSER}\n" | passwd ${SUDOUSER}
 
 exit 0
