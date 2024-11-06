@@ -39,6 +39,8 @@ type -f nmcli &> /dev/null
 RES=$?
 set -e
 if [ $RES == 0 ]; then
+
+  # TODO : check existing connection
   nmcli con add \
     con-name "static-$LANIFACE" \
     ifname $LANIFACE \
@@ -47,8 +49,16 @@ if [ $RES == 0 ]; then
 else
   case ${ID_LIKE:-${ID}} in
       *debian*|*ubuntu*)
-        # TODO : edit /etc/network/interfaces
-        perl -0777 -i.original -pe 's///g' /etc/network/interfaces
+        # Remove interface definition from /etc/network/interfaces
+        tmpfile=$(mktemp)
+        cp /etc/network/interfaces $tmpfile
+        cat $tmpfile | \
+            perl -0777 -pe "s/((allow-hotplug $LANIFACE\n)|(auto $LANIFACE\n))*iface $LANIFACE.*static.*\n((\s*address.*(\n)?)|(\s*netmask.*(\n)?)|(\s*gateway.*(\n)?)|(\s*network.*(\n)?)|(\s*broadcast.*(\n)?))*/# deleted $LANIFACE config\n/g" | \
+            perl -0777 -pe "s/((allow-hotplug $LANIFACE\n)|(auto $LANIFACE\n))*iface $LANIFACE.*dhcp.*\n/# deleted $LANIFACE config\n/g" \
+            > /etc/network/interfaces
+        rm $tmpfile
+
+        # Add interface definition
         cat > /etc/network/interfaces.d/$LANIFACE << EOF
 auto $LANIFACE
 allow-hotplug $LANIFACE
