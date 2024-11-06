@@ -8,18 +8,26 @@ set -eu -o pipefail
 source config.sh
 
 ############################################################################################
-## TODO
+## Generate DNS config
 ############################################################################################
 
+echo "[NETCONF] INFO: Generate DNS"
 
-echo "[INFO] Setup DNS"
 ## setup DNS
 
-case $GEN_CONFIG in
-  YES) BIND_FOLDER=.          ;;
-  *)   BIND_FOLDER=/etc/bind/ ;;
-esac
+# case $GEN_CONFIG in
+#   YES) BIND_FOLDER=.          ;;
+#   *)   BIND_FOLDER=/etc/bind/ ;;
+# esac
 
+BIND_FOLDER=./gen.bind/
+mkdir -p $BIND_FOLDER
+
+###########################
+## named.conf.options
+###########################
+
+echo "[NETCONF] INFO:  - named.conf.options"
 cat > ${BIND_FOLDER}/named.conf.options << EOF
 options {
   directory "/var/cache/bind";
@@ -32,7 +40,7 @@ options {
   forwarders {
 EOF
 
-for dns in $EXTERNALDNSLIST; do
+for dns in $DNS_LIST; do
 cat >> ${BIND_FOLDER}/named.conf.options << EOF
     $dns;
 EOF
@@ -48,15 +56,14 @@ cat >> ${BIND_FOLDER}/named.conf.options << EOF
 };
 EOF
 
-cat >> ${BIND_FOLDER}/named.conf.local  << EOF
 
-zone "${DOMAIN_NAME}" {
-    type master;
-    file "${BIND_FOLDER}/db.${DOMAIN_NAME}";
-};
 
-EOF
-cat >> ${BIND_FOLDER}/db.${DOMAIN_NAME} << EOF
+###########################
+## db.domain init
+###########################
+
+echo "[NETCONF] INFO:  - init db.${DOMAIN_NAME}"
+cat > ${BIND_FOLDER}/db.${DOMAIN_NAME} << EOF
 \$TTL    604800
 @       IN      SOA     $HOSTNAME.$DOMAIN_NAME. root.$HOSTNAME.$DOMAIN_NAME. (
                               2         ; Serial
@@ -70,17 +77,24 @@ cat >> ${BIND_FOLDER}/db.${DOMAIN_NAME} << EOF
 
 localhost.$DOMAIN_NAME. IN A 127.0.0.1
 $HOSTNAME.$DOMAIN_NAME. IN A ${SERVERLANIP}
-;your sites
+
 EOF
 
-ZONES=""
-# Add reverse for router
-IP_ZONE=$(echo $SERVERLANIP |cut -d'.' -f-3)
-LAST_DIGIT=$(echo $SERVERLANIP |cut -d'.' -f4)
-ZONE_FILE=${BIND_FOLDER}/db.$IP_ZONE
-if [ ! -f $ZONE_FILE ]; then
-  ZONES+=" $IP_ZONE"
-  cat > $ZONE_FILE << EOF
+###########################
+## zone files init
+###########################
+
+echo "[NETCONF] INFO:  - init reverse zones"
+ZONES="%"
+for FixedIP in "NAME:$SERVERLANIP:MAC" $FIXED_IPS; do
+  IP=$(echo $FixedIP | rev | cut -d':' -f2 | rev )
+  IP_ZONE=$(echo $IP |cut -d'.' -f-3)
+  case $ZONES in
+    *%${IP_ZONE}%*) : ;; # zone alredy listed & initialized
+    *)
+      ZONE_FILE=${BIND_FOLDER}/db.$IP_ZONE
+      echo "[NETCONF] INFO:    > db.$IP_ZONE"
+      cat > $ZONE_FILE << EOF
 \$TTL    604800
 @       IN      SOA     $HOSTNAME.$DOMAIN_NAME. root.$HOSTNAME.$DOMAIN_NAME. (
                             2         ; Serial
@@ -90,34 +104,51 @@ if [ ! -f $ZONE_FILE ]; then
                         604800 )       ; Negative Cache TTL
       NS      $HOSTNAME.$DOMAIN_NAME.
 EOF
-fi
+      ZONES+="${IP_ZONE}%"
+      ;;
+  esac
+done
+ZONES=${ZONES//%/ }
+
+###########################
+## gen db
+###########################
+
+echo "[NETCONF] INFO:  - Add names and reverse"
+
+# Add reverse for router
+IP_ZONE=$(echo $SERVERLANIP |cut -d'.' -f-3)
+LAST_DIGIT=$(echo $SERVERLANIP |cut -d'.' -f4)
+ZONE_FILE=${BIND_FOLDER}/db.$IP_ZONE
 echo "$LAST_DIGIT PTR $HOSTNAME.$DOMAIN_NAME." >> $ZONE_FILE
 
-# Add reverse for fixed hosts
 for FixedIP in $FIXED_IPS; do
+  # Add name for fixed hosts
   MAC=$(echo $FixedIP | rev | cut -d':' -f3- | rev )
   IP=$(echo $FixedIP | rev | cut -d':' -f2 | rev )
   NAME=$(echo $FixedIP | rev | cut -d':' -f1 | rev )
   echo "$NAME.$DOMAIN_NAME. IN A $IP" >> ${BIND_FOLDER}/db.${DOMAIN_NAME}
 
+  # Add reverse for fixed hosts
   IP_ZONE=$(echo $IP |cut -d'.' -f-3)
   LAST_DIGIT=$(echo $IP |cut -d'.' -f4)
   ZONE_FILE=${BIND_FOLDER}/db.$IP_ZONE
-  if [ ! -f $ZONE_FILE ]; then
-    ZONES+=" $IP_ZONE"
-    cat > $ZONE_FILE << EOF
-\$TTL    604800
-@       IN      SOA     $HOSTNAME.$DOMAIN_NAME. root.$HOSTNAME.$DOMAIN_NAME. (
-                              2         ; Serial
-                         604800         ; Refresh
-                          86400         ; Retry
-                        2419200         ; Expire
-                         604800 )       ; Negative Cache TTL
-        NS      $HOSTNAME.$DOMAIN_NAME.
-EOF
-  fi
   echo "$LAST_DIGIT PTR $NAME.$DOMAIN_NAME." >> $ZONE_FILE
 done
+
+###########################
+## named.conf.local
+###########################
+
+echo "[NETCONF] INFO:  - named.conf.local"
+cat > ${BIND_FOLDER}/named.conf.local  << EOF
+
+zone "${DOMAIN_NAME}" {
+    type master;
+    file "${BIND_FOLDER}/db.${DOMAIN_NAME}";
+};
+
+EOF
 
 for ZONE in $ZONES; do
   ZONE_FILE=${BIND_FOLDER}/db.$IP_ZONE
@@ -129,3 +160,9 @@ zone "${REV_ZONE}.in-addr.arpa" {
 };
 EOF
 done
+
+############################################################################################
+## Exit
+############################################################################################
+echo "[NETCONF] INFO: Generate DNS Done."
+exit 0
