@@ -1,7 +1,7 @@
 
 
-00:1c:bf:36:f9:5a	172.30.255.10	PC1 # comment
-00:1c:23:ad:ee:8d	172.30.255.11	PC2
-#00:1c:23:ad:ee:8d	172.30.255.12	PC2
-00:1c:ab:ad:ee:dd	172.30.255.16	server1 # web server
-#00:1c:ab:ad:ee:dd	172.30.255.16	server2 # web server
+00:1c:bf:36:f9:5a	172.29.255.10	PC1 # comment
+00:1c:23:ad:ee:8d	172.29.255.11	PC2
+#00:1c:23:ad:ee:8d	172.29.255.12	PC2
+00:1c:ab:ad:ee:dd	172.29.255.16	server1 # web server
+#00:1c:ab:ad:ee:dd	172.29.255.16	server2 # web server
