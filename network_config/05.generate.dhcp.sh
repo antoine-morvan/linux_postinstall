@@ -11,8 +11,10 @@ source config.sh
 ## Generate DHCP config files
 ############################################################################################
 
-DHCPD_FILE=./dhcpd.conf
-DHCPD_DEFAULT=./isc-dhcp-server
+DHCP_FOLDER=./gen.dhcp/
+mkdir -p $DHCP_FOLDER
+DHCPD_FILE=${DHCP_FOLDER}/dhcpd.conf
+DHCPD_DEFAULT=${DHCP_FOLDER}/isc-dhcp-server
 
 # case $GEN_CONFIG in
 #   YES) 
@@ -56,3 +58,6 @@ host $NAME {
 }
 EOF
 done
+
+echo "[NETCONF] INFO: Generate DHCP Done."
+exit 0
