@@ -60,6 +60,7 @@ set -e
 if [ $RES == 0 ]; then
   echo "[NETCONF] INFO:  - using nmcli"
   # Restart network manager in case it was updated
+  echo "[NETCONF] INFO:  - restarting NetworkManager"
   systemctl restart NetworkManager
   CONNECTION_NAME="static-$HOSTNAME-$LANIFACE"
   set +e
@@ -68,9 +69,11 @@ if [ $RES == 0 ]; then
   set -e
   # delete connection if existing
   if [ $RES == 0 ]; then
+    echo "[NETCONF] INFO:  - delete existing connection"
     nmcli con del $CONNECTION_NAME
   fi
 
+  echo "[NETCONF] INFO:  - add new connection"
   nmcli con add \
     con-name "$CONNECTION_NAME" \
     ifname $LANIFACE \
@@ -81,6 +84,7 @@ else
       *debian*|*ubuntu*)
         echo "[NETCONF] INFO:  - using /etc/network/interfaces"
         # Remove interface definition from /etc/network/interfaces
+        echo "[NETCONF] INFO:  - Remove existing interface definition"
         tmpfile=$(mktemp)
         cp /etc/network/interfaces $tmpfile
         cat $tmpfile | \
@@ -90,6 +94,7 @@ else
         rm $tmpfile
 
         # Add interface definition
+        echo "[NETCONF] INFO:  - Add interface definition"
         cat >> /etc/network/interfaces << EOF
 auto $LANIFACE
 allow-hotplug $LANIFACE
@@ -100,27 +105,16 @@ EOF
       *fedora*|*rhel*)
           # TODO : edit /etc/sysconfig/network-scripts/ifcfg-$LANIFACE
           echo "[NETCONF] INFO:  - using /etc/sysconfig/network-scripts/ifcfg-$LANIFACE"
-          echo "ERROR: unsupported yet : non nmcli static ip settings"
+          echo "[NETCONF] ERROR: unsupported yet : non nmcli static ip settings"
           exit 1
           ;;
   esac
 fi
 
-
-
-exit 0
-
-############################################################################################
-## Archive
-############################################################################################
-
-
-case $GEN_CONFIG in
-  YES) DHCLIENT_FILE=./dhclient.conf          ;;
-  *)   DHCLIENT_FILE=/etc/dhcp/dhclient.conf  ;;
-esac
-cat >> ${DHCLIENT_FILE} << EOF
+echo "[NETCONF] INFO:  - Fix DHCP client settings for DNS to search in new domain"
+cat > /etc/dhcp/dhclient.conf << EOF
 supersede domain-name "$DOMAIN_NAME";
+prepend domain-search "$DOMAIN_NAME";
 prepend domain-name-servers 127.0.0.1;
 EOF
 
