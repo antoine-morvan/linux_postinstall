@@ -56,8 +56,6 @@ cat >> ${BIND_FOLDER}/named.conf.options << EOF
 };
 EOF
 
-
-
 ###########################
 ## db.domain init
 ###########################
