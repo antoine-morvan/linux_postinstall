@@ -157,7 +157,7 @@ done
 ############################################################################################
 
 echo "[NETCONF] INFO: Testing nat_ftp modules"
-# Test for ip_nat_ftp or nf_nat_ftp modules
+# Test for nf_nat_ftp modules
 set +e
 lsmod | grep "nf_nat_ftp" &> /dev/null
 RES=$?
