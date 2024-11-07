@@ -159,18 +159,16 @@ done
 echo "[NETCONF] INFO: Testing nat_ftp modules"
 # Test for ip_nat_ftp or nf_nat_ftp modules
 set +e
-lsmod | grep "ip_nat_ftp\|nf_nat_ftp" &> /dev/null
+lsmod | grep "nf_nat_ftp" &> /dev/null
 RES=$?
 set -e
 if [ $RES != 0 ]; then
   # if not loaded, try to load them
   set +e
-  modprobe ip_nat_ftp
-  RES1=$?
   modprobe nf_nat_ftp
-  RES2=$?
+  RES=$?
   set -e
-  if [ $((RES1 + RES2)) != 2 ]; then
+  if [ $RES != 0 ]; then
     echo "[NETCONF] ERROR: module not loaded with current setup and not loadable."
   else
     echo "[NETCONF] INFO: module not loaded with current setup but loadable."
