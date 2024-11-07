@@ -30,17 +30,6 @@ set -eu -o pipefail
 
 echo 0 > /proc/sys/net/ipv4/ip_forward
 
-# keep ip_ for old distros ...
-# note: will fail on LXC, need to run this on host
-set +e
-(
-  modprobe -r ip_nat_ftp
-  modprobe -r ip_conntrack_ftp
-  modprobe -r nf_nat_ftp
-  modprobe -r nf_conntrack_ftp
-) &> /dev/null
-set -e
-
 ###
 ### Security Tuning
 ###
@@ -114,16 +103,22 @@ set -eu -o pipefail
 
 echo 1 > /proc/sys/net/ipv4/ip_forward
 
-# keep ip_ for old distros ..
-# note: will fail on LXC, need to run this on host
 set +e
-(
-  modprobe ip_nat_ftp
-  modprobe ip_conntrack_ftp
-  modprobe nf_nat_ftp
-  modprobe nf_conntrack_ftp
-) &> /dev/null
+lsmod | grep "ip_nat_ftp\|nf_nat_ftp" &> /dev/null
+RES=\$?
 set -e
+if [ \$RES != 0 ]; then
+  # keep ip_ for old distros ..
+  # note: will fail on LXC, need to run this on host
+  set +e
+  (
+    modprobe ip_nat_ftp
+    modprobe ip_conntrack_ftp
+    modprobe nf_nat_ftp
+    modprobe nf_conntrack_ftp
+  ) &> /dev/null
+  set -e
+fi
 
 ###
 ### Security Tuning
