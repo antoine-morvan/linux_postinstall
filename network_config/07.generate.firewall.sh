@@ -40,10 +40,10 @@ echo 0 > /proc/sys/net/ipv4/ip_forward
 ### IPTable setup
 ###
 NFTABLES="/usr/sbin/nft"
-ILAN="eth1"
-IWAN="eth0"
-ILO="lo"
-LAN="172.30.0.0/16"
+ILAN=$LANIFACE
+IWAN=$WEBIFACE
+ILO=lo
+LAN=$LANNET
 IPWAN=\$(ip addr show \$IWAN | grep -Po 'inet \K[\d.]+')
 
 # Suppression de toutes les règles existantes (nettoyage)
