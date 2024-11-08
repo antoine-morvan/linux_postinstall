@@ -37,7 +37,7 @@ echo 0 > /proc/sys/net/ipv4/ip_forward
 # Keep security tuning if set
 
 ###
-### IPTable setup
+### NFTable setup
 ###
 NFTABLES="/usr/sbin/nft"
 ILAN=$LANIFACE
@@ -135,95 +135,70 @@ echo 0 > /proc/sys/net/ipv4/conf/all/send_redirects
 echo 0 > /proc/sys/net/ipv4/conf/all/accept_source_route
 
 ###
-### IPTable setup
+### NFTable setup
 ###
-
-IPTABLES=/usr/sbin/iptables
+NFTABLES="/usr/sbin/nft"
 ILAN=$LANIFACE
 IWAN=$WEBIFACE
 ILO=lo
 LAN=$LANNET
 IPWAN=\$(ip addr show \$IWAN | grep -Po 'inet \K[\d.]+')
 
-# Purge
-\$IPTABLES -F
-\$IPTABLES -X
-\$IPTABLES -Z
+# Suppression de toutes les règles existantes (nettoyage)
+\$NFTABLES flush ruleset
 
-\$IPTABLES -t filter -F INPUT
-\$IPTABLES -t filter -F FORWARD
-\$IPTABLES -t filter -F OUTPUT
+# Création des tables et chaînes
+\$NFTABLES add table inet filter
+\$NFTABLES add table ip nat
 
-\$IPTABLES -t nat -F PREROUTING
-\$IPTABLES -t nat -F OUTPUT
-\$IPTABLES -t nat -F POSTROUTING
+# Définition des chaînes
+\$NFTABLES add chain inet filter input { type filter hook input priority 0 \; policy drop \; }
+\$NFTABLES add chain inet filter forward { type filter hook forward priority 0 \; policy drop \; }
+\$NFTABLES add chain inet filter output { type filter hook output priority 0 \; policy drop \; }
 
-# Default: drop
-\$IPTABLES -t filter -P INPUT   DROP
-\$IPTABLES -t filter -P FORWARD DROP
-\$IPTABLES -t filter -P OUTPUT  DROP
-\$IPTABLES -t nat -P PREROUTING  ACCEPT
-\$IPTABLES -t nat -P OUTPUT      ACCEPT
-\$IPTABLES -t nat -P POSTROUTING ACCEPT
+\$NFTABLES add chain ip nat postrouting { type nat hook postrouting priority 100 \; policy drop \; }
 
-# Enable NAT
-\$IPTABLES -t nat -A POSTROUTING -s \$LAN -o \$IWAN -j MASQUERADE
+# Activation du NAT avec filtrage par source
+\$NFTABLES add rule ip nat postrouting ip saddr \$LAN oifname "\$IWAN" masquerade
 
-# Allow loopback
-\$IPTABLES -A INPUT -i \$ILO -j ACCEPT
-\$IPTABLES -A OUTPUT -o \$ILO -j ACCEPT
+# Autorisation du loopback
+\$NFTABLES add rule inet filter input iifname "\$ILO" accept
+\$NFTABLES add rule inet filter output oifname "\$ILO" accept
 
-# Drop invalid packets
-\$IPTABLES -A INPUT   -m state --state INVALID -j DROP
-\$IPTABLES -A OUTPUT  -m state --state INVALID -j DROP
-\$IPTABLES -A FORWARD -m state --state INVALID -j DROP
 
-# Allow answers
-\$IPTABLES -A INPUT   -m state --state ESTABLISHED,RELATED -j ACCEPT
-\$IPTABLES -A FORWARD -m state --state ESTABLISHED,RELATED -j ACCEPT
-\$IPTABLES -A OUTPUT  -m state --state ESTABLISHED,RELATED -j ACCEPT
+# Bloquer les paquets invalides
+\$NFTABLES add rule inet filter input ct state invalid drop
+\$NFTABLES add rule inet filter output ct state invalid drop
+\$NFTABLES add rule inet filter forward ct state invalid drop
 
-# Allow outgoing trafic from the router
-\$IPTABLES -A OUTPUT -j ACCEPT
-\$IPTABLES -t nat -A OUTPUT -j ACCEPT
+# Autoriser les paquets établis ou liés (réponses et connexions déjà ouvertes)
+\$NFTABLES add rule inet filter input ct state established,related accept
+\$NFTABLES add rule inet filter forward ct state established,related accept
+\$NFTABLES add rule inet filter output ct state established,related accept
 
-# Allow from LAN to routeur
-\$IPTABLES -A INPUT -m state --state NEW -i \$ILAN -j ACCEPT
-\$IPTABLES -A OUTPUT -m state --state NEW -o \$ILAN -j ACCEPT
+# Autoriser tout le trafic sortant
+\$NFTABLES add rule inet filter output accept
+\$NFTABLES add rule ip nat output accept
 
-# Allow FORWARD from LAN to WAN
-\$IPTABLES -A FORWARD -m state --state NEW -i \$ILAN -o \$IWAN -j ACCEPT
+# Autoriser les connexions du LAN vers le routeur
+\$NFTABLES add rule inet filter input iifname "\$ILAN" ct state new accept
+\$NFTABLES add rule inet filter output oifname "\$ILAN" ct state new accept
 
-# Allow FORWARD from LAN to LAN
-\$IPTABLES -A FORWARD -m state --state NEW -i \$ILAN -o \$ILAN -j ACCEPT
+# Autoriser les paquets FORWARD du LAN vers le WAN
+\$NFTABLES add rule inet filter forward iifname "\$ILAN" oifname "\$IWAN" ct state new accept
 
-# Allow ping (in & out)
-\$IPTABLES -A INPUT -p icmp --icmp-type echo-request -j ACCEPT
-\$IPTABLES -A OUTPUT -p icmp --icmp-type echo-reply -j ACCEPT
+# Autoriser les paquets FORWARD du LAN vers le LAN
+\$NFTABLES add rule inet filter forward iifname "\$ILAN" oifname "\$ILAN" ct state new accept
 
-### GW bindings ###
-\$IPTABLES -A INPUT -m state --state NEW -i \$IWAN -p Tcp --dport 22 -j ACCEPT # allow ssh
-# \$IPTABLES -A INPUT -m state --state NEW -i \$IWAN -p Tcp --dport 2222 -j ACCEPT
-# \$IPTABLES -A INPUT -m state --state NEW -i \$IWAN -p Tcp --dport 8080 -j ACCEPT
+# Autoriser le ping (ICMP)
+\$NFTABLES add rule inet filter input ip protocol icmp icmp type echo-request accept
+\$NFTABLES add rule inet filter output ip protocol icmp icmp type echo-reply accept
 
-### NAT bindings ###
-
-## Comment: Allow WAN on port \$PORT_WAN to reach \$IP on port \$PORT_LAN
-## TODO: check if working ...
-# IP=172.30.255.209
-# PORT_WAN=49612
-# PORT_LAN=49612
-# \$IPTABLES -A FORWARD -d \$IP -p tcp --dport \$PORT_LAN -j ACCEPT
-# \$IPTABLES -t nat -A PREROUTING -d \$IPWAN -p tcp --dport \$PORT_WAN -j DNAT --to-destination \$IP:\$PORT_LAN
-
-## Comment: example with multiple ports/protocols
-# \$IPTABLES -A FORWARD -d \$IP -p tcp --dport 27015:27032 -j ACCEPT
-# \$IPTABLES -A FORWARD -d \$IP -p udp --dport 27015:27032 -j ACCEPT
-# \$IPTABLES -t nat -A PREROUTING -d \$IPWAN -p tcp --dport \$PORT_WAN -j DNAT --to-destination \$IP
-# \$IPTABLES -t nat -A PREROUTING -d \$IPWAN -p tcp --dport \$PORT_WAN -j DNAT --to-destination \$IP
+# Autoriser SSH (port 22) depuis le WAN
+\$NFTABLES add rule inet filter input iifname "\$IWAN" tcp dport 22 ct state new accept
 
 EOF
-
+# TODO: nat bindings from file
 
 cat > ${SYSTEMD_LIBRARY}/firewall_router.service << EOF
 [Unit]
