@@ -13,10 +13,10 @@ source config.sh
 
 echo "[NETCONF] INFO: Generate firewall rules"
 
-PREFIX=./gen.firewall/
+FIREWALL_FOLDER=./gen.firewall/
 
-FIREWALL_FOLDER=$PREFIX/sbin/
-SYSTEMD_LIBRARY=$PREFIX/lib/systemd/system
+FIREWALL_FOLDER=$FIREWALL_FOLDER/sbin/
+SYSTEMD_LIBRARY=$FIREWALL_FOLDER/lib/systemd/system
 
 mkdir -p $SYSTEMD_LIBRARY $FIREWALL_FOLDER
     
