@@ -31,7 +31,7 @@ TARGET_FIREWALL=/usr/
     cp $BIND_FOLDER/db.[0-9]* ${TARGET_BIND}
 )
 [ -d $FIREWALL_FOLDER ] && (
-    cp $FIREWALL_FOLDER/* $TARGET_FIREWALL
+    cp -R $FIREWALL_FOLDER/* $TARGET_FIREWALL
 )
 
 ############################################################################################
