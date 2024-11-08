@@ -170,6 +170,13 @@ if [ $RES != 0 ]; then
   set -e
   if [ $RES != 0 ]; then
     echo "[NETCONF] ERROR: module not loaded with current setup and not loadable."
+    echo "[NETCONF] INFO: Consider adding this to /etc/modules :"
+cat << EOF2
+cat >> /etc/modules << EOF
+nf_nat_ftp
+nf_conntrack_ftp
+EOF
+EOF2
   else
     echo "[NETCONF] INFO: module not loaded with current setup but loadable."
   fi
