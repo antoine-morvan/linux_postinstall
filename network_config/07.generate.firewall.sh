@@ -156,6 +156,7 @@ IPWAN=\$(ip addr show \$IWAN | grep -Po 'inet \K[\d.]+')
 \$NFTABLES add chain inet filter forward { type filter hook forward priority 0 \; policy drop \; }
 \$NFTABLES add chain inet filter output { type filter hook output priority 0 \; policy drop \; }
 
+\$NFTABLES add chain ip nat output { type filter hook output priority 0 \; policy drop \; }
 \$NFTABLES add chain ip nat postrouting { type nat hook postrouting priority 100 \; policy drop \; }
 
 # Activation du NAT avec filtrage par source
