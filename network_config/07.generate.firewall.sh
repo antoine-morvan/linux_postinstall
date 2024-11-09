@@ -203,6 +203,19 @@ IPWAN=\$(ip addr show \$IWAN | grep -Po 'inet \K[\d.]+')
 EOF
 # TODO: nat bindings from file
 
+# nft add rule inet filter forward ip daddr 172.30.255.209 tcp dport 49612 counter accept
+
+
+#                 ip daddr 172.30.255.209 tcp dport 49612 counter accept
+#                 ip daddr 172.30.0.179 tcp dport 49612 counter dnat to 172.30.255.209:49612
+
+#                 ip daddr 172.30.255.209 tcp dport 27015-27032 counter accept
+#                 ip daddr 172.30.255.209 udp dport 27015-27032 counter accept
+
+#                 ip daddr 172.30.0.179 tcp dport 49612 counter dnat to 172.30.255.209
+#                 ip daddr 172.30.0.179 tcp dport 49612 counter dnat to 172.30.255.209
+
+
 cat > ${SYSTEMD_LIBRARY}/firewall_router.service << EOF
 [Unit]
 Description=Firewall
