@@ -16,7 +16,7 @@ case ${ID_LIKE:-${ID}} in
         apt-get install -y \
             net-tools bind9 isc-dhcp-server ipcalc iptraf \
             sudo iptables nftables ca-certificates curl tree rsync vim git dnsutils \
-            grepcidr bwm-ng htop nethogs byobu openssh-server
+            grepcidr bwm-ng htop nethogs byobu openssh-server bc
         apt-get autoremove -y
         apt-get clean
         ;;
@@ -29,7 +29,7 @@ case ${ID_LIKE:-${ID}} in
         yum install -y \
             net-tools bind dhcp-server ipcalc iptraf \
             sudo iptables nftables ca-certificates curl tree rsync vim git dnsutils \
-            grepcidr bwm-ng htop nethogs byobu openssh-server
+            grepcidr bwm-ng htop nethogs byobu openssh-server bc
         ;;
     *)
         echo "[NETCONF] ERROR: unsupported distribution family $ID_LIKE"
