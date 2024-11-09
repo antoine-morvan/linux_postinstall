@@ -8,7 +8,6 @@ set -eu -o pipefail
 # [ "$(whoami)" != root ] && echo "[NETCONF] ERROR: must run as root" && exit 1
 source config.sh
 
-
 FIREWALL_FOLDER=./gen.firewall
 BIND_FOLDER=./gen.bind
 DHCP_FOLDER=./gen.dhcp
@@ -32,6 +31,7 @@ TARGET_FIREWALL=/usr/
 )
 [ -d $FIREWALL_FOLDER ] && (
     cp -R $FIREWALL_FOLDER/* $TARGET_FIREWALL
+    chmod +x ${TARGET_FIREWALL}/sbin/firewall_router.*.sh
 )
 
 ############################################################################################
