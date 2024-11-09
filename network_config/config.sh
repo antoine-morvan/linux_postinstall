@@ -82,6 +82,20 @@ echo "[NETCONF] INFO: read NAT config files."
   | sed -r 's/\s+/#/g' | sed 's/\r/\n/g')
 NAT_LIST=${NAT_LIST:-""}
 
+function lookup_ip() {
+  HOST=$1
+  for FixedIP in $FIXED_IPS; do
+    IP=$(echo $FixedIP | rev | cut -d':' -f2 | rev )
+    NAME=$(echo $FixedIP | rev | cut -d':' -f1 | rev )
+    case $HOST in
+      $IP) echo $IP ; return;;
+      $NAME) echo $IP ; return;;
+    esac
+  done
+  # Assume it's an IP that's not in the fixed list.
+  echo $HOST
+}
+
 ############################################################################################
 ## Return
 ############################################################################################
