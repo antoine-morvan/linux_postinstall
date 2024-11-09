@@ -215,8 +215,8 @@ PORT_LAN=49612
 # Comment: example with multiple ports/protocols
 \$IPTABLES -A FORWARD -d \$IP -p tcp --dport 27015:27032 -j ACCEPT
 \$IPTABLES -A FORWARD -d \$IP -p udp --dport 27015:27032 -j ACCEPT
-\$IPTABLES -t nat -A PREROUTING -d \$IPWAN -p tcp --dport \$PORT_WAN -j DNAT --to-destination \$IP
-\$IPTABLES -t nat -A PREROUTING -d \$IPWAN -p tcp --dport \$PORT_WAN -j DNAT --to-destination \$IP
+\$IPTABLES -t nat -A PREROUTING -d \$IPWAN -p tcp --dport 27015:27032 -j DNAT --to-destination \$IP
+\$IPTABLES -t nat -A PREROUTING -d \$IPWAN -p tcp --dport 27015:27032 -j DNAT --to-destination \$IP
 
 EOF
 # TODO: nat bindings from file
