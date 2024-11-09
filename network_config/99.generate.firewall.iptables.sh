@@ -45,7 +45,12 @@ ILAN=$LANIFACE
 IWAN=$WEBIFACE
 ILO=lo
 LAN=$LANNET
-IPWAN=\$(ip addr show \$IWAN | grep -Po 'inet \K[\d.]+')
+# IPWAN=\$(ip addr show \$IWAN | grep -Po 'inet \K[\d.]+')
+IPWAN=\$(ip -4 addr show \$IWAN | awk '/inet / {print \$2}' | cut -d'/' -f1)
+
+set +e
+nft flush ruleset &> /dev/null
+set -e
 
 # Purge
 \$IPTABLES -F
@@ -154,7 +159,12 @@ ILAN=$LANIFACE
 IWAN=$WEBIFACE
 ILO=lo
 LAN=$LANNET
-IPWAN=\$(ip addr show \$IWAN | grep -Po 'inet \K[\d.]+')
+# IPWAN=\$(ip addr show \$IWAN | grep -Po 'inet \K[\d.]+')
+IPWAN=\$(ip -4 addr show \$IWAN | awk '/inet / {print \$2}' | cut -d'/' -f1)
+
+set +e
+nft flush ruleset &> /dev/null
+set -e
 
 # Purge
 \$IPTABLES -F

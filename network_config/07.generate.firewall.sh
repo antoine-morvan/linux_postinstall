@@ -44,7 +44,8 @@ ILAN=$LANIFACE
 IWAN=$WEBIFACE
 ILO=lo
 LAN=$LANNET
-IPWAN=\$(ip addr show \$IWAN | grep -Po 'inet \K[\d.]+')
+# IPWAN=\$(ip addr show \$IWAN | grep -Po 'inet \K[\d.]+')
+IPWAN=\$(ip -4 addr show \$IWAN | awk '/inet / {print \$2}' | cut -d'/' -f1)
 
 # Suppression de toutes les règles existantes (nettoyage)
 \$NFTABLES flush ruleset
@@ -142,7 +143,8 @@ ILAN=$LANIFACE
 IWAN=$WEBIFACE
 ILO=lo
 LAN=$LANNET
-IPWAN=\$(ip addr show \$IWAN | grep -Po 'inet \K[\d.]+')
+# IPWAN=\$(ip addr show \$IWAN | grep -Po 'inet \K[\d.]+')
+IPWAN=\$(ip -4 addr show \$IWAN | awk '/inet / {print \$2}' | cut -d'/' -f1)
 
 # Suppression de toutes les règles existantes (nettoyage)
 \$NFTABLES flush ruleset
