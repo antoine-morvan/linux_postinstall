@@ -180,14 +180,14 @@ IPWAN=\$(ip addr show \$IWAN | grep -Po 'inet \K[\d.]+')
 \$NFTABLES add rule inet filter input tcp dport 22 ct state new accept
 
 # Ajout de la table NAT
-\$NFTABLES add table ip nat
+\$NFTABLES add table inet nat
 
-\$NFTABLES add chain ip nat output { type filter hook output priority -100 \; policy accept \; }
-\$NFTABLES add chain ip nat prerouting { type nat hook prerouting priority 0 \; policy accept \; }
-\$NFTABLES add chain ip nat postrouting { type nat hook postrouting priority 0 \; policy accept \; }
+\$NFTABLES add chain inet nat output { type filter hook output priority -100 \; policy accept \; }
+\$NFTABLES add chain inet nat prerouting { type nat hook prerouting priority 0 \; policy accept \; }
+\$NFTABLES add chain inet nat postrouting { type nat hook postrouting priority 0 \; policy accept \; }
 
 # Activation du NAT avec filtrage par source
-\$NFTABLES add rule ip nat postrouting ip saddr \$LAN oifname "\$IWAN" masquerade
+\$NFTABLES add rule inet nat postrouting ip saddr \$LAN oifname "\$IWAN" masquerade
 
 # Autoriser les connexions du LAN vers le routeur
 \$NFTABLES add rule inet filter input iifname "\$ILAN" ct state new accept
@@ -202,13 +202,14 @@ IPWAN=\$(ip addr show \$IWAN | grep -Po 'inet \K[\d.]+')
 
 EOF
 # TODO: nat bindings from file
-# IP=172.30.255.209
-# PORT_WAN=49612
-# PORT_LAN=49612
-# PROTO=tcp
+IP=172.30.255.209
+PORT_WAN=49612
+PORT_LAN=49612
+PROTO=tcp
 
-# nft add rule inet filter forward ip daddr $IP $PROTO dport $PORT_WAN accept
-# nft add rule inet nat prerouting ip daddr $IPWAN $PROTO dport $PORT_WAN dnat to $IP
+nft add rule inet filter forward ip daddr $IP $PROTO dport $PORT_WAN accept
+nft add rule inet nat prerouting ip daddr $IPWAN $PROTO dport $PORT_WAN dnat to $IP
+nft add rule inet nat prerouting ip daddr $IPWAN $PROTO dport $PORT_WAN dnat to $IP
 
 
 # nft add rule inet filter forward ip daddr 172.30.255.209 tcp dport 49612 counter accept
