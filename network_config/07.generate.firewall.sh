@@ -216,13 +216,6 @@ ExecStop=/usr/sbin/firewall_router.down.sh
 WantedBy=multi-user.target
 EOF
 
-# if [ "$GEN_CONFIG" != "YES" ]; then
-#   chmod +x /usr/sbin/firewall_router.down.sh
-#   chmod +x /usr/sbin/firewall_router.up.sh
-
-#   systemctl enable firewall_router
-# fi
-
 ############################################################################################
 ## Exit
 ############################################################################################
