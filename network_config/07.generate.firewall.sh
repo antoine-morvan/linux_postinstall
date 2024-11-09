@@ -182,7 +182,7 @@ IPWAN=\$(ip addr show \$IWAN | grep -Po 'inet \K[\d.]+')
 # Ajout de la table NAT
 \$NFTABLES add table inet nat
 
-\$NFTABLES add chain inet nat output { type filter hook output priority -100 \; policy accept \; }
+\$NFTABLES add chain inet nat output { type filter hook output priority 0 \; policy accept \; }
 \$NFTABLES add chain inet nat prerouting { type nat hook prerouting priority 0 \; policy accept \; }
 \$NFTABLES add chain inet nat postrouting { type nat hook postrouting priority 0 \; policy accept \; }
 
