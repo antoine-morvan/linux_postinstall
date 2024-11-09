@@ -269,9 +269,9 @@ PORT_WAN="$(echo $OUTSIDE_RANGE | tr '-' ':')"
 PORT_LAN=$INSIDE_RANGE
 PORT_LAN2="$(echo $INSIDE_RANGE | tr '-' ':')"
 PROTO="$PROTO"
-
 \$IPTABLES -A FORWARD -d \$HOST -p \$PROTO --dport \$PORT_LAN2 -j ACCEPT
 \$IPTABLES -t nat -A PREROUTING -d \$IPWAN -p \$PROTO --dport \$PORT_WAN -j DNAT --to-destination \${HOST}:\${PORT_LAN}
+
 EOF
   done
 done
