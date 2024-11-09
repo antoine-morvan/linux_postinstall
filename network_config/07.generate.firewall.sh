@@ -177,7 +177,7 @@ IPWAN=\$(ip addr show \$IWAN | grep -Po 'inet \K[\d.]+')
 \$NFTABLES add rule inet filter output ip protocol icmp icmp type echo-reply accept
 
 # Autoriser SSH (port 22)
-\$NFTABLES add rule inet filter input tcp dport 22 ct state new accept
+\$NFTABLES add rule inet filter input iif \$IWAN tcp dport 22 ct state new accept
 
 # Ajout de la table NAT
 \$NFTABLES add table inet nat
