@@ -271,7 +271,7 @@ PORT_LAN=$INSIDE_RANGE
 PROTO="$PROTO"
 
 \$IPTABLES -A FORWARD -d \$HOST -p \$PROTO --dport \$PORT_WAN -j ACCEPT
-\$IPTABLES -t nat -A PREROUTING -d \$IPWAN -p \$PROTO --dport \$PORT_WAN -j DNAT --to-destination \$HOST
+\$IPTABLES -t nat -A PREROUTING -d \$IPWAN -p \$PROTO --dport \$PORT_WAN -j DNAT --to-destination \${HOST}:\${PORT_LAN}
 EOF
   done
 done
