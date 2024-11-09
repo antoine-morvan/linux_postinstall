@@ -36,6 +36,9 @@ echo "[NETCONF] INFO:  - Firewall"
 [ -d $FIREWALL_FOLDER ] && (
     cp -R $FIREWALL_FOLDER/* $TARGET_FIREWALL
     chmod +x ${TARGET_FIREWALL}/sbin/firewall_router.*.sh
+
+    systemctl daemon-reload
+    systemctl enable firewall_router
 )
 
 ############################################################################################
