@@ -129,6 +129,15 @@ for NAT_RULE in $NAT_LIST; do
       ;;
   esac
   for portmap in $(echo $NAT_RULE | cut -d'#' -f2- | tr "#" "\n"); do
+    PROTO=$(echo $portmap | cut -d'/' -f2)
+    case $PROTO in
+      [0-9]*) : ;; # no proto specified, cut returns the port
+      u|udp|U|UDP|Udp) PROTO=udp ;;
+      t|tcp|T|TCP|Tcp) PROTO=tcp ;;
+      *)
+        echo "[NETCONF] ERROR: Unknown protocol '$PROTO' for host $HOST NAT rule '$portmap'" && ERROR_COUNT=$((ERROR_COUNT + 1))
+        ;;
+    esac
     OUTSIDE_RANGE=$(echo $portmap | cut -d':' -f1)
     case $OUTSIDE_RANGE in
       *[0-9]-[0-9]*) : ;;
@@ -149,7 +158,7 @@ for NAT_RULE in $NAT_LIST; do
     done
     OUTSIDE_PORTS_USED+="$(seq $(echo $OUTSIDE_RANGE | tr '-' ' ') | xargs | sed 's/ /%/g')%"
 
-    INSIDE_RANGE=$(echo $portmap | cut -d':' -f2)
+    INSIDE_RANGE=$(echo $portmap | cut -d':' -f2 | cut -d'/' -f1)
     case $INSIDE_RANGE in
       "") INSIDE_RANGE=$OUTSIDE_RANGE ;;
       *[0-9]-[0-9]*) : ;;
