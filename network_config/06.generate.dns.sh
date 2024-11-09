@@ -138,6 +138,12 @@ done
 ## named.conf.local
 ###########################
 
+case ${ID_LIKE:-${ID}} in
+    *fedora*|*rhel*)*
+      echo "[NETCONF] ERROR: unsupported DNS server on rhel like systems"
+      exit 1
+      ;;
+esac
 SYSTEM_BIND_FOLDER=/etc/bind
 
 echo "[NETCONF] INFO:  - named.conf.local"
