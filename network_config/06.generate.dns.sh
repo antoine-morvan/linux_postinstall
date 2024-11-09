@@ -138,18 +138,20 @@ done
 ## named.conf.local
 ###########################
 
+SYSTEM_BIND_FOLDER=/etc/bind
+
 echo "[NETCONF] INFO:  - named.conf.local"
 cat > ${BIND_FOLDER}/named.conf.local  << EOF
 
 zone "${DOMAIN_NAME}" {
     type master;
-    file "${BIND_FOLDER}/db.${DOMAIN_NAME}";
+    file "${SYSTEM_BIND_FOLDER}/db.${DOMAIN_NAME}";
 };
 
 EOF
 
 for ZONE in $ZONES; do
-  ZONE_FILE=${BIND_FOLDER}/db.$IP_ZONE
+  ZONE_FILE=${SYSTEM_BIND_FOLDER}/db.$IP_ZONE
   REV_ZONE=$(echo $ZONE | cut -d'.' -f3).$(echo $ZONE | cut -d'.' -f2).$(echo $ZONE | cut -d'.' -f1)
   cat >> ${BIND_FOLDER}/named.conf.local  << EOF
 zone "${REV_ZONE}.in-addr.arpa" {
