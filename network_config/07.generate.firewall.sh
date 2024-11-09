@@ -233,9 +233,14 @@ HOST="$HOST"
 PORT_WAN="$OUTSIDE_RANGE"
 PORT_LAN="$INSIDE_RANGE"
 PROTO="$PROTO"
-nft add rule inet filter forward ip daddr \$HOST \$PROTO dport \$PORT_WAN accept
-nft add rule inet nat prerouting ip daddr \$IPWAN \$PROTO dport \$PORT_WAN dnat to \${HOST}:\$PORT_LAN
+\$NFTABLES add rule inet filter forward ip daddr \$HOST \$PROTO dport \$PORT_WAN accept
+\$NFTABLES add rule inet nat prerouting ip daddr \$IPWAN \$PROTO dport \$PORT_WAN dnat to \${HOST}:\$PORT_LAN
 
+# \$NFTABLES add rule inet nat prerouting iif "\$IWAN" \$PROTO dport \$PORT_WAN dnat to \${HOST} redirect to \$PORT_LAN
+
+# \$NFTABLES add rule inet nat prerouting iif "\$IWAN" \$PROTO dport \$PORT_WAN dnat 192.168.240.131:21
+
+# \$NFTABLES add rule nat prerouting iif eth0 tcp dport { 80, 443 } dnat to 192.168.1.120
 EOF
   done
 done
