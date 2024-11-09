@@ -13,7 +13,7 @@ source config.sh
 
 echo "[NETCONF] INFO: Generate firewall rules"
 
-FIREWALL_FOLDER=./gen.firewall/
+FIREWALL_FOLDER=./gen.firewall.iptables/
 
 FIREWALL_FOLDER=$FIREWALL_FOLDER/sbin/
 SYSTEMD_LIBRARY=$FIREWALL_FOLDER/lib/systemd/system
@@ -29,9 +29,6 @@ set -eu -o pipefail
 ###
 
 echo 0 > /proc/sys/net/ipv4/ip_forward
-
-modprobe -r ip_nat_ftp
-modprobe -r ip_conntrack_ftp
 
 ###
 ### Security Tuning
@@ -105,9 +102,6 @@ set -eu -o pipefail
 ###
 
 echo 1 > /proc/sys/net/ipv4/ip_forward
-
-modprobe ip_nat_ftp
-modprobe ip_conntrack_ftp
 
 ###
 ### Security Tuning
@@ -210,19 +204,19 @@ IPWAN=\$(ip addr show \$IWAN | grep -Po 'inet \K[\d.]+')
 
 ### NAT bindings ###
 
-## Comment: Allow WAN on port \$PORT_WAN to reach \$IP on port \$PORT_LAN
-## TODO: check if working ...
-# IP=172.30.255.209
-# PORT_WAN=49612
-# PORT_LAN=49612
-# \$IPTABLES -A FORWARD -d \$IP -p tcp --dport \$PORT_LAN -j ACCEPT
-# \$IPTABLES -t nat -A PREROUTING -d \$IPWAN -p tcp --dport \$PORT_WAN -j DNAT --to-destination \$IP:\$PORT_LAN
+# Comment: Allow WAN on port \$PORT_WAN to reach \$IP on port \$PORT_LAN
+# TODO: check if working ...
+IP=172.30.255.209
+PORT_WAN=49612
+PORT_LAN=49612
+\$IPTABLES -A FORWARD -d \$IP -p tcp --dport \$PORT_LAN -j ACCEPT
+\$IPTABLES -t nat -A PREROUTING -d \$IPWAN -p tcp --dport \$PORT_WAN -j DNAT --to-destination \$IP:\$PORT_LAN
 
-## Comment: example with multiple ports/protocols
-# \$IPTABLES -A FORWARD -d \$IP -p tcp --dport 27015:27032 -j ACCEPT
-# \$IPTABLES -A FORWARD -d \$IP -p udp --dport 27015:27032 -j ACCEPT
-# \$IPTABLES -t nat -A PREROUTING -d \$IPWAN -p tcp --dport \$PORT_WAN -j DNAT --to-destination \$IP
-# \$IPTABLES -t nat -A PREROUTING -d \$IPWAN -p tcp --dport \$PORT_WAN -j DNAT --to-destination \$IP
+# Comment: example with multiple ports/protocols
+\$IPTABLES -A FORWARD -d \$IP -p tcp --dport 27015:27032 -j ACCEPT
+\$IPTABLES -A FORWARD -d \$IP -p udp --dport 27015:27032 -j ACCEPT
+\$IPTABLES -t nat -A PREROUTING -d \$IPWAN -p tcp --dport \$PORT_WAN -j DNAT --to-destination \$IP
+\$IPTABLES -t nat -A PREROUTING -d \$IPWAN -p tcp --dport \$PORT_WAN -j DNAT --to-destination \$IP
 
 EOF
 # TODO: nat bindings from file
