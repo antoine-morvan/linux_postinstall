@@ -103,6 +103,21 @@ set -eu -o pipefail
 
 echo 1 > /proc/sys/net/ipv4/ip_forward
 
+set +e
+lsmod | grep "nf_nat_ftp" &> /dev/null
+RES=\$?
+set -e
+if [ \$RES != 0 ]; then
+  # note: will fail on LXC, need to run this on host
+  set +e
+  (
+    modprobe nf_nat_ftp
+    modprobe nf_conntrack_ftp
+  ) &> /dev/null
+  set -e
+  # silently fail to keep main functionalities up
+fi
+
 ###
 ### Security Tuning
 ###
@@ -220,6 +235,46 @@ PORT_LAN=49612
 
 EOF
 # TODO: nat bindings from file
+
+for NAT_RULE in $NAT_LIST; do
+  HOST=$(echo $NAT_RULE | cut -d'#' -f1)
+  HOST=$(lookup_ip $HOST)
+
+  # echo $HOST
+  for portmap in $(echo $NAT_RULE | cut -d'#' -f2- | tr "#" "\n"); do
+    PROTO=$(echo $portmap | cut -d'/' -f2)
+    case $PROTO in
+      u|udp|U|UDP|Udp) PROTO=udp ;;
+      *) PROTO=tcp ;;
+    esac
+    OUTSIDE_RANGE=$(echo $portmap | cut -d':' -f1)
+    case $OUTSIDE_RANGE in
+      *[0-9]-[0-9]*) : ;;
+      *)
+        OUTSIDE_RANGE="${OUTSIDE_RANGE}-${OUTSIDE_RANGE}"
+        ;;
+    esac
+    INSIDE_RANGE=$(echo $portmap | cut -d':' -f2 | cut -d'/' -f1)
+    case $INSIDE_RANGE in
+      "") INSIDE_RANGE=$OUTSIDE_RANGE ;;
+      *[0-9]-[0-9]*) : ;;
+      *)
+        INSIDE_RANGE="${INSIDE_RANGE}-${INSIDE_RANGE}"
+        ;;
+    esac
+    # echo " - $OUTSIDE_RANGE - $INSIDE_RANGE /$PROTO"
+    cat >> ${FIREWALL_FOLDER}/firewall_router.up.sh << EOF
+HOST="$HOST"
+PORT_WAN="$(echo $OUTSIDE_RANGE | tr '-' ':')"
+# PORT_LAN="$(echo $INSIDE_RANGE | tr '-' ':')"
+PORT_LAN=$INSIDE_RANGE
+PROTO="$PROTO"
+
+\$IPTABLES -A FORWARD -d \$HOST -p \$PROTO --dport \$PORT_WAN -j ACCEPT
+\$IPTABLES -t nat -A PREROUTING -d \$IPWAN -p \$PROTO --dport \$PORT_WAN -j DNAT --to-destination \$HOST
+EOF
+  done
+done
 
 cat > ${SYSTEMD_LIBRARY}/firewall_router.service << EOF
 [Unit]
