@@ -203,6 +203,7 @@ EOF
 
 for NAT_RULE in $NAT_LIST; do
   HOST=$(echo $NAT_RULE | cut -d'#' -f1)
+  HOST=$(lookup_ip $HOST)
 
   # echo $HOST
   for portmap in $(echo $NAT_RULE | cut -d'#' -f2- | tr "#" "\n"); do
