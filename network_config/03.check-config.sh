@@ -82,7 +82,7 @@ for FixedIP in $FIXED_IPS; do
 
 
   IP_VALUE=$(int_ip $IP)
-  if [ $IP_VALUE -ge $DHCP_RANGE_MIN ] && [ $IP_VALUE -ge $DHCP_RANGE_MIN ]; then
+  if [ $IP_VALUE -ge $DHCP_RANGE_MIN ] && [ $IP_VALUE -le $DHCP_RANGE_MAX ]; then
     echo "[NETCONF] ERROR: Fixed IP '$IP' is within the DHCP range ${DHCP_RANGE_START}-${DHCP_RANGE_END} (for host '$NAME')" && ERROR_COUNT=$((ERROR_COUNT + 1))
   fi
 
