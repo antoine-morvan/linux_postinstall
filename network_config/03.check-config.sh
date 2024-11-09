@@ -56,6 +56,19 @@ echo $DHCP_RANGE_START | grepcidr ${LANNET} &> /dev/null
 echo $DHCP_RANGE_END | grepcidr ${LANNET} &> /dev/null
 [ $? != 0 ] && echo "[NETCONF] ERROR: DHCP range end '$DHCP_RANGE_END' does not belong to subnet '${LANNET}'" && ERROR_COUNT=$((ERROR_COUNT + 1))
 
+# function to convert an IP address to an integer*
+# from https://unix.stackexchange.com/a/563674
+function int_ip() {
+    OIFS=$IFS
+    IFS='.'
+    ip=($1)
+    IFS=$OIFS
+    echo "${ip[0]} * 256 ^ 3 + ${ip[1]} * 256 ^2 + ${ip[2]} * 256 ^1 + ${ip[3]} * 256 ^ 0" | bc
+}
+
+DHCP_RANGE_MIN=$(int_ip $DHCP_RANGE_START)
+DHCP_RANGE_MAX=$(int_ip $DHCP_RANGE_END)
+
 # Check that the fixed IPs belong to the subnet and host/ip are not reused
 HOSTLIST="%"
 for FixedIP in $FIXED_IPS; do
@@ -64,8 +77,15 @@ for FixedIP in $FIXED_IPS; do
   NAME=$(echo $FixedIP | rev | cut -d':' -f1 | rev )
   set +e
   echo $IP | grepcidr ${LANNET} &> /dev/null
-  [ $? != 0 ] && echo "[NETCONF] ERROR: Fixed IP '$IP' (for host '$NAME') does not belong to subnet '${LANNET}'" && ERROR_COUNT=$((ERROR_COUNT + 1))
+  [ $? != 0 ] && echo "[NETCONF] ERROR: Fixed IP '$IP' does not belong to subnet '${LANNET}' (for host '$NAME')" && ERROR_COUNT=$((ERROR_COUNT + 1))
   set -e
+
+
+  IP_VALUE=$(int_ip $IP)
+  if [ $IP_VALUE -ge $DHCP_RANGE_MIN ] && [ $IP_VALUE -ge $DHCP_RANGE_MIN ]; then
+    echo "[NETCONF] ERROR: Fixed IP '$IP' is within the DHCP range ${DHCP_RANGE_START}-${DHCP_RANGE_END} (for host '$NAME')" && ERROR_COUNT=$((ERROR_COUNT + 1))
+  fi
+
   case $HOSTLIST in
     *"%$IP%"*)
       echo "[NETCONF] ERROR: IP '$IP' is already used (hostname : $NAME)" && ERROR_COUNT=$((ERROR_COUNT + 1))
