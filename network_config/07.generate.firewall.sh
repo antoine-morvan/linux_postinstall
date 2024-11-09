@@ -58,8 +58,8 @@ IPWAN=\$(ip addr show \$IWAN | grep -Po 'inet \K[\d.]+')
 \$NFTABLES add chain inet filter output { type filter hook output priority 0 \; policy drop \; }
 
 # Autorisation du loopback
-\$NFTABLES add rule inet filter input iifname "\$ILO" accept
-\$NFTABLES add rule inet filter output oifname "\$ILO" accept
+\$NFTABLES add rule inet filter input iif "\$ILO" accept
+\$NFTABLES add rule inet filter output oif "\$ILO" accept
 
 # Bloquer les paquets invalides
 \$NFTABLES add rule inet filter input ct state invalid drop
@@ -156,8 +156,8 @@ IPWAN=\$(ip addr show \$IWAN | grep -Po 'inet \K[\d.]+')
 \$NFTABLES add chain inet filter output { type filter hook output priority 0 \; policy drop \; }
 
 # Autorisation du loopback
-\$NFTABLES add rule inet filter input iifname "\$ILO" accept
-\$NFTABLES add rule inet filter output oifname "\$ILO" accept
+\$NFTABLES add rule inet filter input iif "\$ILO" accept
+\$NFTABLES add rule inet filter output oif "\$ILO" accept
 
 # Bloquer les paquets invalides
 \$NFTABLES add rule inet filter input ct state invalid drop
@@ -187,17 +187,17 @@ IPWAN=\$(ip addr show \$IWAN | grep -Po 'inet \K[\d.]+')
 \$NFTABLES add chain inet nat postrouting { type nat hook postrouting priority 0 \; policy accept \; }
 
 # Activation du NAT avec filtrage par source
-\$NFTABLES add rule inet nat postrouting ip saddr \$LAN oifname "\$IWAN" masquerade
+\$NFTABLES add rule inet nat postrouting ip saddr \$LAN oif "\$IWAN" masquerade
 
 # Autoriser les connexions du LAN vers le routeur
-\$NFTABLES add rule inet filter input iifname "\$ILAN" ct state new accept
-\$NFTABLES add rule inet filter output oifname "\$ILAN" ct state new accept
+\$NFTABLES add rule inet filter input iif "\$ILAN" ct state new accept
+\$NFTABLES add rule inet filter output oif "\$ILAN" ct state new accept
 
 # Autoriser les paquets FORWARD du LAN vers le WAN
-\$NFTABLES add rule inet filter forward iifname "\$ILAN" oifname "\$IWAN" ct state new accept
+\$NFTABLES add rule inet filter forward iif "\$ILAN" oif "\$IWAN" ct state new accept
 
 # Autoriser les paquets FORWARD du LAN vers le LAN
-\$NFTABLES add rule inet filter forward iifname "\$ILAN" oifname "\$ILAN" ct state new accept
+\$NFTABLES add rule inet filter forward iif "\$ILAN" oif "\$ILAN" ct state new accept
 
 EOF
 
