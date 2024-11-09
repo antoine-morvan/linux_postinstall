@@ -149,23 +149,15 @@ IPWAN=\$(ip addr show \$IWAN | grep -Po 'inet \K[\d.]+')
 
 # Création des tables et chaînes
 \$NFTABLES add table inet filter
-\$NFTABLES add table ip nat
 
 # Définition des chaînes
 \$NFTABLES add chain inet filter input { type filter hook input priority 0 \; policy drop \; }
 \$NFTABLES add chain inet filter forward { type filter hook forward priority 0 \; policy drop \; }
 \$NFTABLES add chain inet filter output { type filter hook output priority 0 \; policy drop \; }
 
-\$NFTABLES add chain ip nat output { type filter hook output priority 0 \; policy drop \; }
-\$NFTABLES add chain ip nat postrouting { type nat hook postrouting priority 100 \; policy drop \; }
-
-# Activation du NAT avec filtrage par source
-\$NFTABLES add rule ip nat postrouting ip saddr \$LAN oifname "\$IWAN" masquerade
-
 # Autorisation du loopback
 \$NFTABLES add rule inet filter input iifname "\$ILO" accept
 \$NFTABLES add rule inet filter output oifname "\$ILO" accept
-
 
 # Bloquer les paquets invalides
 \$NFTABLES add rule inet filter input ct state invalid drop
@@ -179,7 +171,23 @@ IPWAN=\$(ip addr show \$IWAN | grep -Po 'inet \K[\d.]+')
 
 # Autoriser tout le trafic sortant
 \$NFTABLES add rule inet filter output accept
-\$NFTABLES add rule ip nat output accept
+
+# Autoriser le ping (ICMP)
+\$NFTABLES add rule inet filter input ip protocol icmp icmp type echo-request accept
+\$NFTABLES add rule inet filter output ip protocol icmp icmp type echo-reply accept
+
+# Autoriser SSH (port 22)
+\$NFTABLES add rule inet filter input tcp dport 22 ct state new accept
+
+# Ajout de la table NAT
+\$NFTABLES add table ip nat
+
+\$NFTABLES add chain ip nat output { type filter hook output priority -100 \; policy accept \; }
+\$NFTABLES add chain ip nat prerouting { type nat hook prerouting priority 0 \; policy accept \; }
+\$NFTABLES add chain ip nat postrouting { type nat hook postrouting priority 0 \; policy accept \; }
+
+# Activation du NAT avec filtrage par source
+\$NFTABLES add rule ip nat postrouting ip saddr \$LAN oifname "\$IWAN" masquerade
 
 # Autoriser les connexions du LAN vers le routeur
 \$NFTABLES add rule inet filter input iifname "\$ILAN" ct state new accept
@@ -191,12 +199,6 @@ IPWAN=\$(ip addr show \$IWAN | grep -Po 'inet \K[\d.]+')
 # Autoriser les paquets FORWARD du LAN vers le LAN
 \$NFTABLES add rule inet filter forward iifname "\$ILAN" oifname "\$ILAN" ct state new accept
 
-# Autoriser le ping (ICMP)
-\$NFTABLES add rule inet filter input ip protocol icmp icmp type echo-request accept
-\$NFTABLES add rule inet filter output ip protocol icmp icmp type echo-reply accept
-
-# Autoriser SSH (port 22) depuis le WAN
-\$NFTABLES add rule inet filter input iifname "\$IWAN" tcp dport 22 ct state new accept
 
 EOF
 # TODO: nat bindings from file
