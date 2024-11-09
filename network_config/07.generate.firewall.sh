@@ -199,18 +199,57 @@ IPWAN=\$(ip addr show \$IWAN | grep -Po 'inet \K[\d.]+')
 # Autoriser les paquets FORWARD du LAN vers le LAN
 \$NFTABLES add rule inet filter forward iifname "\$ILAN" oifname "\$ILAN" ct state new accept
 
+EOF
+
+for NAT_RULE in $NAT_LIST; do
+  HOST=$(echo $NAT_RULE | cut -d'#' -f1)
+
+  # echo $HOST
+  for portmap in $(echo $NAT_RULE | cut -d'#' -f2- | tr "#" "\n"); do
+    PROTO=$(echo $portmap | cut -d'/' -f2)
+    case $PROTO in
+      u|udp|U|UDP|Udp) PROTO=udp ;;
+      *) PROTO=tcp ;;
+    esac
+    OUTSIDE_RANGE=$(echo $portmap | cut -d':' -f1)
+    case $OUTSIDE_RANGE in
+      *[0-9]-[0-9]*) : ;;
+      *)
+        OUTSIDE_RANGE="${OUTSIDE_RANGE}-${OUTSIDE_RANGE}"
+        ;;
+    esac
+    INSIDE_RANGE=$(echo $portmap | cut -d':' -f2 | cut -d'/' -f1)
+    case $INSIDE_RANGE in
+      "") INSIDE_RANGE=$OUTSIDE_RANGE ;;
+      *[0-9]-[0-9]*) : ;;
+      *)
+        INSIDE_RANGE="${INSIDE_RANGE}-${INSIDE_RANGE}"
+        ;;
+    esac
+    # echo " - $OUTSIDE_RANGE - $INSIDE_RANGE /$PROTO"
+    cat >> ${FIREWALL_FOLDER}/firewall_router.up.sh << EOF
+HOST="$HOST"
+PORT_WAN="$OUTSIDE_RANGE"
+PORT_LAN="$INSIDE_RANGE"
+PROTO="$PROTO"
+nft add rule inet filter forward ip daddr \$HOST \$PROTO dport \$PORT_WAN accept
+nft add rule inet nat prerouting ip daddr \$IPWAN \$PROTO dport \$PORT_WAN dnat to \${HOST}:\$PORT_LAN
 
 EOF
-# TODO: nat bindings from file
-IP=172.30.255.209
-PORT_WAN=49612
-PORT_LAN=49612
-PROTO=tcp
+  done
+done
+# # TODO: nat bindings from file
+# IP=172.29.255.10
+# PORT_WAN=18022
+# PORT_LAN=22
+# PROTO=tcp
 
-nft add rule inet filter forward ip daddr $IP $PROTO dport $PORT_WAN accept
-nft add rule inet nat prerouting ip daddr $IPWAN $PROTO dport $PORT_WAN dnat to $IP
-nft add rule inet nat prerouting ip daddr $IPWAN $PROTO dport $PORT_WAN dnat to $IP
+# nft add rule inet filter forward ip daddr $IP $PROTO dport $PORT_WAN accept
+# nft add rule inet nat prerouting ip daddr $IPWAN $PROTO dport { $PORT_WAN } dnat to $IP
 
+# nft add rule inet nat prerouting ip daddr $IPWAN $PROTO dport { $PORT_WAN } dnat to $IP
+
+# nft add rule inet nat prerouting iif eth0 tcp dport { 80, 443 } dnat to 192.168.1.120
 
 # nft add rule inet filter forward ip daddr 172.30.255.209 tcp dport 49612 counter accept
 # nft add chain inet daddr 172.30.0.179 tcp dport 49612 counter dnat to 172.30.255.209:49612
