@@ -155,6 +155,8 @@ for NAT_RULE in $NAT_LIST; do
       esac
       [ $port -gt 65535 ] && \
         echo "[NETCONF] ERROR: '$port' is outside TCP range for host $HOST" && ERROR_COUNT=$((ERROR_COUNT + 1)) && continue
+      [ $port -eq 22 ] && \
+        echo "[NETCONF] ERROR: '$port' is reserved" && ERROR_COUNT=$((ERROR_COUNT + 1)) && continue
     done
     OUTSIDE_PORTS_USED+="$(seq $(echo $OUTSIDE_RANGE | tr '-' ' ') | xargs | sed 's/ /%/g')%"
 
