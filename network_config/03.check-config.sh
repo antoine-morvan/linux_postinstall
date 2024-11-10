@@ -120,7 +120,7 @@ done
 # - ports are 1-65535
 OUTSIDE_PORTS_USED="%"
 for NAT_RULE in $NAT_LIST; do
-  HOST=$(echo $NAT_RULE | cut -d'#' -f1 )
+  HOST=$(echo $NAT_RULE | cut -d'#' -f1)
   # echo $HOST :
   case $HOSTLIST in
     *"%$HOST%"*) : ;;
@@ -138,7 +138,7 @@ for NAT_RULE in $NAT_LIST; do
         echo "[NETCONF] ERROR: Unknown protocol '$PROTO' for host $HOST NAT rule '$portmap'" && ERROR_COUNT=$((ERROR_COUNT + 1))
         ;;
     esac
-    OUTSIDE_RANGE=$(echo $portmap | cut -d':' -f1)
+    OUTSIDE_RANGE=$(echo $portmap | cut -d':' -f1 | cut -d'/' -f1)
     case $OUTSIDE_RANGE in
       *[0-9]-[0-9]*) : ;;
       *)

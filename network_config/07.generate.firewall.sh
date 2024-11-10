@@ -214,7 +214,7 @@ for NAT_RULE in $NAT_LIST; do
       u|udp|U|UDP|Udp) PROTO=udp ;;
       *) PROTO=tcp ;;
     esac
-    OUTSIDE_RANGE=$(echo $portmap | cut -d':' -f1)
+    OUTSIDE_RANGE=$(echo $portmap | cut -d':' -f1 | cut -d'/' -f1)
     case $OUTSIDE_RANGE in
       *[0-9]-[0-9]*) : ;;
       *)
