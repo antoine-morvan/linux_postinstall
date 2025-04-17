@@ -15,7 +15,7 @@ DHCP_FOLDER=./gen.dhcp
 
 TARGET_DHCP=/etc/dhcp/
 TARGET_BIND=/etc/bind/
-TARGET_FIREWALL=/usr/
+TARGET_FIREWALL=$(systemd-analyze --system unit-paths | grep lib/systemd | head -n 1)
 
 [ -d $DHCP_FOLDER ] && (
     echo "[NETCONF] INFO:  - DHCP"
