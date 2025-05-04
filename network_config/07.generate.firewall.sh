@@ -20,6 +20,12 @@ FIREWALL_FOLDER=$FIREWALL_FOLDER/scripts
 
 mkdir -p ${SYSTEMD_LIBRARY} ${FIREWALL_FOLDER}
 
+############################################################################################
+## Down
+############################################################################################
+## disable all NAT rules
+## only accept 22/tcp on host
+
 cat > ${FIREWALL_FOLDER}/firewall_router.down.sh << EOF
 #!/usr/bin/env bash
 set -eu -o pipefail
@@ -83,6 +89,17 @@ IPWAN=\$(ip -4 addr show \$IWAN | awk '/inet / {print \$2}' | cut -d'/' -f1)
 \$NFTABLES add rule inet filter input tcp dport 22 ct state new accept
 
 EOF
+
+############################################################################################
+## Up
+############################################################################################
+## 1. Apply default rules
+## 2. Accept Host ports from $HOST_OPEN_PORTS if declared
+## 3. Apply NAT rules as defined in config.nat.list if present
+## 4. Redirect everything to $DMZ_HOSTNAME if declared
+## Note: port 22/tcp will be dropped if not in the above rules.
+
+## 1. Apply default rules
 cat > ${FIREWALL_FOLDER}/firewall_router.up.sh << EOF
 #!/usr/bin/env bash
 set -eu -o pipefail
@@ -178,9 +195,6 @@ IPWAN=\$(ip -4 addr show \$IWAN | awk '/inet / {print \$2}' | cut -d'/' -f1)
 \$NFTABLES add rule inet filter input ip protocol icmp icmp type echo-request accept
 \$NFTABLES add rule inet filter output ip protocol icmp icmp type echo-reply accept
 
-# Autoriser SSH (port 22)
-\$NFTABLES add rule inet filter input iif \$IWAN tcp dport 22 ct state new accept
-
 # Ajout de la table NAT
 \$NFTABLES add table inet nat
 
@@ -203,12 +217,10 @@ IPWAN=\$(ip -4 addr show \$IWAN | awk '/inet / {print \$2}' | cut -d'/' -f1)
 
 EOF
 
-for NAT_RULE in $NAT_LIST; do
-  HOST=$(echo $NAT_RULE | cut -d'#' -f1)
-  HOST=$(lookup_ip $HOST)
-
-  # echo $HOST
-  for portmap in $(echo $NAT_RULE | cut -d'#' -f2- | tr "#" "\n"); do
+## 2. Accept Host ports from $HOST_OPEN_PORTS if declared
+if [ "${HOST_OPEN_PORTS:-}" != "" ]; then
+  echo "# 2. \${HOST_OPEN_PORTS} = '${HOST_OPEN_PORTS}'" >> ${FIREWALL_FOLDER}/firewall_router.up.sh
+  for portmap in ${HOST_OPEN_PORTS:-}; do
     PROTO=$(echo $portmap | cut -d'/' -f2)
     case $PROTO in
       u|udp|U|UDP|Udp) PROTO=udp ;;
@@ -221,16 +233,49 @@ for NAT_RULE in $NAT_LIST; do
         OUTSIDE_RANGE="${OUTSIDE_RANGE}-${OUTSIDE_RANGE}"
         ;;
     esac
-    INSIDE_RANGE=$(echo $portmap | cut -d':' -f2 | cut -d'/' -f1)
-    case $INSIDE_RANGE in
-      "") INSIDE_RANGE=$OUTSIDE_RANGE ;;
-      *[0-9]-[0-9]*) : ;;
-      *)
-        INSIDE_RANGE="${INSIDE_RANGE}-${INSIDE_RANGE}"
-        ;;
-    esac
-    # echo " - $OUTSIDE_RANGE - $INSIDE_RANGE /$PROTO"
     cat >> ${FIREWALL_FOLDER}/firewall_router.up.sh << EOF
+PORT_WAN="$OUTSIDE_RANGE"
+PROTO="$PROTO"
+\$NFTABLES add rule inet filter input iif \$IWAN \$PROTO dport \$PORT_WAN ct state new accept
+\$NFTABLES add rule inet nat prerouting ip daddr \$IPWAN \$PROTO dport \$PORT_WAN return
+
+EOF
+  done
+else
+  echo "# 2. no \${HOST_OPEN_PORTS} declared." >> ${FIREWALL_FOLDER}/firewall_router.up.sh
+fi
+
+## 3. Apply NAT rules as defined in config.nat.list if present
+if [ "${NAT_LIST:-}" != "" ]; then
+  echo "# 3. \${NAT_LIST} declared" >> ${FIREWALL_FOLDER}/firewall_router.up.sh
+  for NAT_RULE in $NAT_LIST; do
+    HOST=$(echo $NAT_RULE | cut -d'#' -f1)
+    HOST=$(lookup_ip $HOST)
+
+    # echo $HOST
+    for portmap in $(echo $NAT_RULE | cut -d'#' -f2- | tr "#" "\n"); do
+      PROTO=$(echo $portmap | cut -d'/' -f2)
+      case $PROTO in
+        u|udp|U|UDP|Udp) PROTO=udp ;;
+        *) PROTO=tcp ;;
+      esac
+      OUTSIDE_RANGE=$(echo $portmap | cut -d':' -f1 | cut -d'/' -f1)
+      case $OUTSIDE_RANGE in
+        *[0-9]-[0-9]*) : ;;
+        *)
+          OUTSIDE_RANGE="${OUTSIDE_RANGE}-${OUTSIDE_RANGE}"
+          ;;
+      esac
+      INSIDE_RANGE=$(echo $portmap | cut -d':' -f2 | cut -d'/' -f1)
+      case $INSIDE_RANGE in
+        "") INSIDE_RANGE=$OUTSIDE_RANGE ;;
+        *[0-9]-[0-9]*) : ;;
+        *)
+          INSIDE_RANGE="${INSIDE_RANGE}-${INSIDE_RANGE}"
+          ;;
+      esac
+      # echo " - $OUTSIDE_RANGE - $INSIDE_RANGE /$PROTO"
+      cat >> ${FIREWALL_FOLDER}/firewall_router.up.sh << EOF
 HOST="$HOST"
 PORT_WAN="$OUTSIDE_RANGE"
 PORT_LAN="$INSIDE_RANGE"
@@ -239,10 +284,31 @@ PROTO="$PROTO"
 \$NFTABLES add rule inet nat prerouting ip daddr \$IPWAN \$PROTO dport \$PORT_WAN dnat to \${HOST}:\$PORT_LAN
 
 EOF
+    done
   done
-done
+else
+  echo "# 3. no \${NAT_LIST} declared." >> ${FIREWALL_FOLDER}/firewall_router.up.sh
+fi
 
+## 4. Redirect everything to $DMZ_HOSTNAME if declared
 
+if [ "${DMZ_HOSTNAME:-}" != "" ]; then
+  echo "" >> ${FIREWALL_FOLDER}/firewall_router.up.sh
+  HOST=$(lookup_ip $DMZ_HOSTNAME)
+  cat >> ${FIREWALL_FOLDER}/firewall_router.up.sh << EOF
+# 4. \${DMZ_HOSTNAME} = '${DMZ_HOSTNAME}'
+HOST="$HOST"
+\$NFTABLES add rule inet filter forward ip daddr \${HOST} accept
+\$NFTABLES add rule inet nat prerouting ip daddr \${IPWAN} dnat to \${HOST}
+
+EOF
+else
+  echo "# 4. no \${DMZ_HOSTNAME} declared." >> ${FIREWALL_FOLDER}/firewall_router.up.sh
+fi
+
+############################################################################################
+## Generate service file
+############################################################################################
 cat > ${SYSTEMD_LIBRARY}/firewall_router.service << EOF
 [Unit]
 Description=Firewall
