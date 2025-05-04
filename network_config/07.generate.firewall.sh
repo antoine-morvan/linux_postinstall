@@ -11,7 +11,7 @@ source config.sh
 ## Generate Firewall config
 ############################################################################################
 
-echo "[NETCONF] INFO: Generate firewall rules"
+echo "[NETCONF] INFO    :: Generate firewall rules"
 
 FIREWALL_FOLDER=./gen.firewall/
 
@@ -288,5 +288,5 @@ EOF
 ############################################################################################
 ## Exit
 ############################################################################################
-echo "[NETCONF] INFO: Generate firewall Done."
+echo "[NETCONF] INFO    :: Generate firewall Done."
 exit 0

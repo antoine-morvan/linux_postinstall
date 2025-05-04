@@ -11,7 +11,7 @@ source config.sh
 ## Generate DNS config
 ############################################################################################
 
-echo "[NETCONF] INFO: Generate DNS"
+echo "[NETCONF] INFO    :: Generate DNS"
 
 ## setup DNS
 
@@ -27,7 +27,7 @@ mkdir -p $BIND_FOLDER
 ## named.conf.options
 ###########################
 
-echo "[NETCONF] INFO:  - named.conf.options"
+echo "[NETCONF] INFO    ::  - named.conf.options"
 cat > ${BIND_FOLDER}/named.conf.options << EOF
 options {
   directory "/var/cache/bind";
@@ -60,7 +60,7 @@ EOF
 ## db.domain init
 ###########################
 
-echo "[NETCONF] INFO:  - init db.${DOMAIN_NAME}"
+echo "[NETCONF] INFO    ::  - init db.${DOMAIN_NAME}"
 cat > ${BIND_FOLDER}/db.${DOMAIN_NAME} << EOF
 \$TTL    604800
 @       IN      SOA     $HOSTNAME.$DOMAIN_NAME. root.$HOSTNAME.$DOMAIN_NAME. (
@@ -82,7 +82,7 @@ EOF
 ## zone files init
 ###########################
 
-echo "[NETCONF] INFO:  - init reverse zones"
+echo "[NETCONF] INFO    ::  - init reverse zones"
 ZONES="%"
 for FixedIP in "NAME:$SERVERLANIP:MAC" $FIXED_IPS; do
   IP=$(echo $FixedIP | rev | cut -d':' -f2 | rev )
@@ -91,7 +91,7 @@ for FixedIP in "NAME:$SERVERLANIP:MAC" $FIXED_IPS; do
     *%${IP_ZONE}%*) : ;; # zone alredy listed & initialized
     *)
       ZONE_FILE=${BIND_FOLDER}/db.$IP_ZONE
-      echo "[NETCONF] INFO:    > db.$IP_ZONE"
+      echo "[NETCONF] INFO    ::    > db.$IP_ZONE"
       cat > $ZONE_FILE << EOF
 \$TTL    604800
 @       IN      SOA     $HOSTNAME.$DOMAIN_NAME. root.$HOSTNAME.$DOMAIN_NAME. (
@@ -112,7 +112,7 @@ ZONES=${ZONES//%/ }
 ## gen db
 ###########################
 
-echo "[NETCONF] INFO:  - Add names and reverse"
+echo "[NETCONF] INFO    ::  - Add names and reverse"
 
 # Add reverse for router
 IP_ZONE=$(echo $SERVERLANIP |cut -d'.' -f-3)
@@ -140,13 +140,13 @@ done
 
 case ${ID_LIKE:-${ID}} in
     *fedora*|*rhel*)*
-      echo "[NETCONF] ERROR: unsupported DNS server on rhel like systems"
+      echo "[NETCONF] ERROR   :: unsupported DNS server on rhel like systems"
       exit 1
       ;;
 esac
 SYSTEM_BIND_FOLDER=/etc/bind
 
-echo "[NETCONF] INFO:  - named.conf.local"
+echo "[NETCONF] INFO    ::  - named.conf.local"
 cat > ${BIND_FOLDER}/named.conf.local  << EOF
 
 zone "${DOMAIN_NAME}" {
@@ -170,5 +170,5 @@ done
 ############################################################################################
 ## Exit
 ############################################################################################
-echo "[NETCONF] INFO: Generate DNS Done."
+echo "[NETCONF] INFO    :: Generate DNS Done."
 exit 0

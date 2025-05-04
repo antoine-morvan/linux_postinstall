@@ -11,7 +11,7 @@ source config.sh
 ## Setup users
 ############################################################################################
 
-echo "[NETCONF] INFO: setup user group"
+echo "[NETCONF] INFO    :: setup user group"
 # Make user soduer
 case ${ID_LIKE:-${ID}} in
     *debian*|*ubuntu*)
@@ -22,7 +22,7 @@ case ${ID_LIKE:-${ID}} in
         ;;
 esac
 
-echo "[NETCONF] INFO: lock root"
+echo "[NETCONF] INFO    :: lock root"
 # Lock root account
 passwd -l root
 
@@ -32,8 +32,8 @@ passwd -l root
 
 PREV_HOSTNAME=$(hostname)
 if [ "${HOSTNAME_OVERRIDE:-}" != "" ] && [ "${HOSTNAME_OVERRIDE:-}" != "${PREV_HOSTNAME}" ]; then
-  echo "[NETCONF] INFO: Overide hostname (from $PREV_HOSTNAME to $HOSTNAME_OVERRIDE)"
-  echo "[NETCONF] WARNING: This option has not been tested..."
+  echo "[NETCONF] INFO    :: Overide hostname (from $PREV_HOSTNAME to $HOSTNAME_OVERRIDE)"
+  echo "[NETCONF] WARNING :: This option has not been tested..."
 	echo "Override hostname from '$PREV_HOSTNAME' to '$HOSTNAME_OVERRIDE'"
 	hostnamectl set-hostname $HOSTNAME_OVERRIDE
 	sed -i "s/$PREV_HOSTNAME/$HOSTNAME_OVERRIDE/g" /etc/hosts
@@ -44,15 +44,15 @@ fi
 ## Setup interfaces
 ############################################################################################
 
-echo "[NETCONF] INFO: Setup lan interface"
+echo "[NETCONF] INFO    :: Setup lan interface"
 set +e
 type -f nmcli &> /dev/null
 RES=$?
 set -e
 if [ $RES == 0 ]; then
-  echo "[NETCONF] INFO:  - using nmcli"
+  echo "[NETCONF] INFO    ::  - using nmcli"
   # Restart network manager in case it was updated
-  echo "[NETCONF] INFO:  - restarting NetworkManager"
+  echo "[NETCONF] INFO    ::  - restarting NetworkManager"
   systemctl restart NetworkManager
   CONNECTION_NAME="static-$HOSTNAME-$LANIFACE"
   set +e
@@ -61,11 +61,11 @@ if [ $RES == 0 ]; then
   set -e
   # delete connection if existing
   if [ $RES == 0 ]; then
-    echo "[NETCONF] INFO:  - delete existing connection"
+    echo "[NETCONF] INFO    ::  - delete existing connection"
     nmcli con del $CONNECTION_NAME
   fi
 
-  echo "[NETCONF] INFO:  - add new connection"
+  echo "[NETCONF] INFO    ::  - add new connection"
   nmcli con add \
     con-name "$CONNECTION_NAME" \
     ifname $LANIFACE \
@@ -74,9 +74,9 @@ if [ $RES == 0 ]; then
 else
   case ${ID_LIKE:-${ID}} in
       *debian*|*ubuntu*)
-        echo "[NETCONF] INFO:  - using /etc/network/interfaces"
+        echo "[NETCONF] INFO    ::  - using /etc/network/interfaces"
         # Remove interface definition from /etc/network/interfaces
-        echo "[NETCONF] INFO:  - Remove existing interface definition"
+        echo "[NETCONF] INFO    ::  - Remove existing interface definition"
         tmpfile=$(mktemp)
         cp /etc/network/interfaces $tmpfile
         cat $tmpfile | \
@@ -86,7 +86,7 @@ else
         rm $tmpfile
 
         # Add interface definition
-        echo "[NETCONF] INFO:  - Add interface definition"
+        echo "[NETCONF] INFO    ::  - Add interface definition"
         cat >> /etc/network/interfaces << EOF
 auto $LANIFACE
 allow-hotplug $LANIFACE
@@ -96,14 +96,14 @@ EOF
           ;;
       *fedora*|*rhel*)
           # TODO : edit /etc/sysconfig/network-scripts/ifcfg-$LANIFACE
-          echo "[NETCONF] INFO:  - using /etc/sysconfig/network-scripts/ifcfg-$LANIFACE"
-          echo "[NETCONF] ERROR: unsupported yet : non nmcli static ip settings"
+          echo "[NETCONF] INFO    ::  - using /etc/sysconfig/network-scripts/ifcfg-$LANIFACE"
+          echo "[NETCONF] ERROR   :: unsupported yet : non nmcli static ip settings"
           exit 1
           ;;
   esac
 fi
 
-echo "[NETCONF] INFO:  - Fix DHCP client settings for DNS to search in new domain"
+echo "[NETCONF] INFO    ::  - Fix DHCP client settings for DNS to search in new domain"
 cat > /etc/dhcp/dhclient.conf << EOF
 supersede domain-name "$DOMAIN_NAME";
 prepend domain-search "$DOMAIN_NAME";
