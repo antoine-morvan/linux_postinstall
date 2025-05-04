@@ -15,11 +15,11 @@ echo "[NETCONF] INFO    :: Generate firewall rules"
 
 FIREWALL_FOLDER=./gen.firewall
 
-FIREWALL_FOLDER=$FIREWALL_FOLDER/sbin/
-SYSTEMD_LIBRARY=$FIREWALL_FOLDER/lib/systemd/system
+SYSTEMD_LIBRARY=$FIREWALL_FOLDER/service
+FIREWALL_FOLDER=$FIREWALL_FOLDER/scripts
 
-mkdir -p $SYSTEMD_LIBRARY $FIREWALL_FOLDER
-    
+mkdir -p ${SYSTEMD_LIBRARY} ${FIREWALL_FOLDER}
+
 cat > ${FIREWALL_FOLDER}/firewall_router.down.sh << EOF
 #!/usr/bin/env bash
 set -eu -o pipefail
