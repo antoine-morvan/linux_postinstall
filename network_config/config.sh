@@ -21,13 +21,14 @@ SUDOUSER=koubi
 # Optional: List of ports to not redirect
 # Host will just accept and not preroute to NAT
 # Applied at the beginning, before all other NAT rules
+# (Advising letting port 22/tcp open)
 HOST_OPEN_PORTS="22"
 
 # Optional: a hostname to which all ports (tcp + udp) will be redirected
 # Rule apply after all other rules: custom redirects to DMZ can still happen before
-#DMZ_HOSTNAME=dmz
+# DMZ_HOSTNAME=dmz
 
-# overide hostname: if set, change hostname
+# Optional: overide hostname: if set, change hostname
 # HOSTNAME_OVERRIDE="gwtest"
 
 ############################################################################################
