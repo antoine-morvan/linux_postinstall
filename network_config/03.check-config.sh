@@ -2,7 +2,6 @@
 set -eu -o pipefail
 
 ERROR_COUNT=0
-DEBUG=true
 
 ############################################################################################
 ## Config file checks
@@ -16,6 +15,7 @@ source config.sh
 ############################################################################################
 
 # Check that the distro is supported
+echo "[NETCONF] INFO    :: System checks"
 case ${ID_LIKE:-${ID}} in
     *debian*|*ubuntu*) : ;;
     *fedora*|*rhel*) : ;;
@@ -31,6 +31,8 @@ esac
 ############################################################################################
 ## Config content checks
 ############################################################################################
+
+echo "[NETCONF] INFO    :: Config checks"
 
 set +e
 cat /etc/passwd | grep ^${SUDOUSER}: &> /dev/null
@@ -70,6 +72,7 @@ DHCP_RANGE_MIN=$(int_ip $DHCP_RANGE_START)
 DHCP_RANGE_MAX=$(int_ip $DHCP_RANGE_END)
 
 # Check that the fixed IPs belong to the subnet and host/ip are not reused
+echo "[NETCONF] INFO    :: Checking host list IPs"
 HOSTLIST="%"
 for FixedIP in $FIXED_IPS; do
   MAC=$(echo $FixedIP | rev | cut -d':' -f3- | rev )
@@ -98,6 +101,7 @@ for FixedIP in $FIXED_IPS; do
 done
 
 # Check that DNS are reachable
+echo "[NETCONF] INFO    :: DNS Checks"
 case $DNS_LIST in
   "")
     echo "[NETCONF] WARNING: No DNS specified, falling back to system default"
@@ -114,15 +118,22 @@ for dns in $DNS_LIST; do
   [ $RES != 0 ] && echo "[NETCONF] ERROR   :: Could not ping DNS '$dns'." && ERROR_COUNT=$((ERROR_COUNT + 1))
 done
 
+echo "[NETCONF] INFO    :: Checking NAT"
 # check nat config
 # - Hosts are in the fixed ip list
 # - not outside port reuse
 # - ports are 1-65535
-
 OUTSIDE_PORTS_USED="%"
+${DEBUG:-false} && (
+  echo "[NETCONF] INFO    :: NAT_LIST ="
+  for NAT_RULE in $NAT_LIST; do
+    echo "[NETCONF] INFO    ::  - $NAT_RULE"
+  done
+)
+
 for NAT_RULE in $NAT_LIST; do
   HOST=$(echo $NAT_RULE | cut -d'#' -f1)
-  # echo $HOST :
+  ${DEBUG:-false} && echo "[NETCONF] INFO    :: HOST = $HOST"
   case $HOSTLIST in
     *"%$HOST%"*) : ;;
     *)
@@ -130,9 +141,11 @@ for NAT_RULE in $NAT_LIST; do
       ;;
   esac
   for portmap in $(echo $NAT_RULE | cut -d'#' -f2- | tr "#" "\n"); do
+    ${DEBUG:-false} && echo "[NETCONF] INFO    ::   - portmap = '$portmap'"
     PROTO=$(echo $portmap | cut -d'/' -f2)
+    ${DEBUG:-false} && echo "[NETCONF] INFO    ::     > PROTO = '$PROTO'"
     case $PROTO in
-      [0-9]*) : ;; # no proto specified, cut returns the port
+      [0-9]*) PROTO=tcp ;; # no proto specified, cut returns the port : defaults to TCP
       u|udp|U|UDP|Udp) PROTO=udp ;;
       t|tcp|T|TCP|Tcp) PROTO=tcp ;;
       *)
@@ -140,7 +153,9 @@ for NAT_RULE in $NAT_LIST; do
         echo "[NETCONF] ERROR   :: Unknown protocol '$PROTO' for host $HOST NAT rule '$portmap'" && ERROR_COUNT=$((ERROR_COUNT + 1))
         ;;
     esac
+    ${DEBUG:-false} && echo "[NETCONF] INFO    ::     > PROTO (fixed) = '$PROTO'"
     OUTSIDE_RANGE=$(echo $portmap | cut -d':' -f1 | cut -d'/' -f1)
+    ${DEBUG:-false} && echo "[NETCONF] INFO    ::     > OUTSIDE_RANGE = '$OUTSIDE_RANGE'"
     case $OUTSIDE_RANGE in
       *[0-9]-[0-9]*) : ;;
       *)
@@ -149,8 +164,9 @@ for NAT_RULE in $NAT_LIST; do
         OUTSIDE_RANGE="${OUTSIDE_RANGE}-${OUTSIDE_RANGE}"
         ;;
     esac
+    ${DEBUG:-false} && echo "[NETCONF] INFO    ::     > OUTSIDE_RANGE (fixed) = '$OUTSIDE_RANGE'"
     for port in $(seq $(echo $OUTSIDE_RANGE | tr '-' ' ')); do
-      case $OUTSIDE_PORTS_USED in
+      case "${OUTSIDE_PORTS_USED}/${PROTO}" in
         *"%$port%"*)
           echo "[NETCONF] ERROR   :: Outside port '$port' is mapped several times" && ERROR_COUNT=$((ERROR_COUNT + 1))
           ;;
@@ -160,7 +176,9 @@ for NAT_RULE in $NAT_LIST; do
       [ $port -eq 22 ] && \
         echo "[NETCONF] ERROR   :: '$port' is reserved" && ERROR_COUNT=$((ERROR_COUNT + 1)) && continue
     done
-    OUTSIDE_PORTS_USED+="$(seq $(echo $OUTSIDE_RANGE | tr '-' ' ') | xargs | sed 's/ /%/g')%"
+    NEW_USED="$(seq $(echo $OUTSIDE_RANGE | tr '-' ' ') | xargs | sed "s# #/$PROTO%#g")/$PROTO"
+    ${DEBUG:-false} && echo "[NETCONF] INFO    ::     > NEW_USED = '$NEW_USED'"
+    OUTSIDE_PORTS_USED+="${NEW_USED}%"
 
     INSIDE_RANGE=$(echo $portmap | cut -d':' -f2 | cut -d'/' -f1)
     case $INSIDE_RANGE in
