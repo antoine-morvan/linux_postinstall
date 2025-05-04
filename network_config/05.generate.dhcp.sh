@@ -31,7 +31,7 @@ cat > ${DHCPD_DEFAULT} << EOF
 INTERFACESv4="${LANIFACE}"
 EOF
 cat > ${DHCPD_FILE} << EOF
-option domain-name ${DOMAIN_NAME};
+option domain-name "${DOMAIN_NAME}";
 option domain-name-servers ${SERVERLANIP};
 default-lease-time 3600;
 max-lease-time 48000;
