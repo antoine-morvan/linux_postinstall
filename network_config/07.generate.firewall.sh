@@ -241,33 +241,6 @@ PROTO="$PROTO"
 EOF
   done
 done
-# # TODO: nat bindings from file
-# IP=172.29.255.10
-# PORT_WAN=18022
-# PORT_LAN=22
-# PROTO=tcp
-
-# nft add rule inet filter forward ip daddr $IP $PROTO dport $PORT_WAN accept
-# nft add rule inet nat prerouting ip daddr $IPWAN $PROTO dport { $PORT_WAN } dnat to $IP
-
-# nft add rule inet nat prerouting ip daddr $IPWAN $PROTO dport { $PORT_WAN } dnat to $IP
-
-# nft add rule inet nat prerouting iif eth0 tcp dport { 80, 443 } dnat to 192.168.1.120
-
-# nft add rule inet filter forward ip daddr 172.30.255.209 tcp dport 49612 counter accept
-# nft add chain inet daddr 172.30.0.179 tcp dport 49612 counter dnat to 172.30.255.209:49612
-
-
-#                 ip daddr 172.30.255.209 tcp dport 49612 counter accept
-#                 ip daddr 172.30.0.179 tcp dport 49612 counter dnat to 172.30.255.209:49612
-
-#                 ip daddr 172.30.255.209 tcp dport 27015-27032 counter accept
-#                 ip daddr 172.30.255.209 udp dport 27015-27032 counter accept
-
-#                 ip daddr 172.30.0.179 tcp dport 49612 counter dnat to 172.30.255.209
-#                 ip daddr 172.30.0.179 tcp dport 49612 counter dnat to 172.30.255.209
-
-
 
 
 cat > ${SYSTEMD_LIBRARY}/firewall_router.service << EOF
