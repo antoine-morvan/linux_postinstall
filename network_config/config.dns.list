@@ -4,23 +4,38 @@
 ########################
 # Favor this
 ########################
+# Neutral and managed by organizations
+
+# radicalDNS : https://libreops.cc/radicaldns.html
+# Greek
+88.198.92.222
+192.71.166.92
+
+# DNS4All.eu : https://dns4all.eu/
+# Still following EU blocking ...
+# 194.0.5.3
+# 194.0.5.64
 
 # FDN : https://www.fdn.fr/actions/dns/
-80.67.169.12
-80.67.169.40
+# Actually not responding too direct requests at the time of writing
+# 80.67.169.12
+# 80.67.169.40
 
 ########################
 # Can fallback on these
 ########################
-# They are still neutral, but managed by company
+# They are still neutral, but managed by companies
 
 # dns.sb
-# 185.222.222.222
-# 45.11.45.11
+# Germany
+# https://www.bortzmeyer.org/dns-sb.html
+185.222.222.222
+45.11.45.11
 
 # https://controld.com/free-dns
-# 76.76.2.0
-# 76.76.10.0
+# Canada
+76.76.2.0
+76.76.10.0
 
 ########################
 # Avoid these (non neutral)
