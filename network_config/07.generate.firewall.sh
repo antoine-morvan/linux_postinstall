@@ -13,7 +13,7 @@ source config.sh
 
 echo "[NETCONF] INFO    :: Generate firewall rules"
 
-FIREWALL_FOLDER=./gen.firewall/
+FIREWALL_FOLDER=./gen.firewall
 
 FIREWALL_FOLDER=$FIREWALL_FOLDER/sbin/
 SYSTEMD_LIBRARY=$FIREWALL_FOLDER/lib/systemd/system

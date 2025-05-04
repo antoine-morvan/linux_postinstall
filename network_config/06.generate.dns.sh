@@ -20,7 +20,7 @@ echo "[NETCONF] INFO    :: Generate DNS"
 #   *)   BIND_FOLDER=/etc/bind/ ;;
 # esac
 
-BIND_FOLDER=./gen.bind/
+BIND_FOLDER=./gen.bind
 mkdir -p $BIND_FOLDER
 
 ###########################

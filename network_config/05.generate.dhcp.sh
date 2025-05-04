@@ -11,7 +11,7 @@ source config.sh
 ## Generate DHCP config files
 ############################################################################################
 
-DHCP_FOLDER=./gen.dhcp/
+DHCP_FOLDER=./gen.dhcp
 mkdir -p $DHCP_FOLDER
 DHCPD_FILE=${DHCP_FOLDER}/dhcpd.conf
 DHCPD_DEFAULT=${DHCP_FOLDER}/isc-dhcp-server
