@@ -83,7 +83,6 @@ for FixedIP in $FIXED_IPS; do
   [ $? != 0 ] && echo "[NETCONF] ERROR   :: Fixed IP '$IP' does not belong to subnet '${LANNET}' (for host '$NAME')" && ERROR_COUNT=$((ERROR_COUNT + 1))
   set -e
 
-
   IP_VALUE=$(int_ip $IP)
   if [ $IP_VALUE -ge $DHCP_RANGE_MIN ] && [ $IP_VALUE -le $DHCP_RANGE_MAX ]; then
     echo "[NETCONF] ERROR   :: Fixed IP '$IP' is within the DHCP range ${DHCP_RANGE_START}-${DHCP_RANGE_END} (for host '$NAME')" && ERROR_COUNT=$((ERROR_COUNT + 1))
@@ -99,6 +98,16 @@ for FixedIP in $FIXED_IPS; do
   esac
   HOSTLIST+="$IP%$NAME%"
 done
+
+if [ "${DMZ_HOSTNAME:-}" != "" ]; then
+  echo "[NETCONF] INFO    :: DMZ hostname check"
+  case $HOSTLIST in
+    *"%$DMZ_HOSTNAME%"*) : ;; # OK
+    *)
+      echo "[NETCONF] ERROR   :: DMZ Hostname '$DMZ_HOSTNAME' does not have corresponding fixed IP" && ERROR_COUNT=$((ERROR_COUNT + 1))
+      ;;
+  esac
+fi
 
 # Check that DNS are reachable
 echo "[NETCONF] INFO    :: DNS Checks"
@@ -118,12 +127,57 @@ for dns in $DNS_LIST; do
   [ $RES != 0 ] && echo "[NETCONF] ERROR   :: Could not ping DNS '$dns'." && ERROR_COUNT=$((ERROR_COUNT + 1))
 done
 
+OUTSIDE_PORTS_USED="%"
+
+if [ "${HOST_OPEN_PORTS:-}" != "" ]; then
+  echo "[NETCONF] INFO    :: Host open ports check"
+  for portmap in $HOST_OPEN_PORTS; do
+    ${DEBUG:-false} && echo "[NETCONF] INFO    ::   - portmap = '$portmap'"
+    PROTO=$(echo $portmap | cut -d'/' -f2)
+    ${DEBUG:-false} && echo "[NETCONF] INFO    ::     > PROTO = '$PROTO'"
+    case $PROTO in
+      [0-9]*) PROTO=tcp ;; # no proto specified, cut returns the port : defaults to TCP
+      u|udp|U|UDP|Udp) PROTO=udp ;;
+      t|tcp|T|TCP|Tcp) PROTO=tcp ;;
+      *)
+        echo "[NETCONF] WARNING :: Unknown protocol '$PROTO' for host $HOST NAT rule '$portmap'" && ERROR_COUNT=$((ERROR_COUNT + 1))
+        echo "[NETCONF] ERROR   :: Unknown protocol '$PROTO' for host $HOST NAT rule '$portmap'" && ERROR_COUNT=$((ERROR_COUNT + 1))
+        ;;
+    esac
+    ${DEBUG:-false} && echo "[NETCONF] INFO    ::     > PROTO (fixed) = '$PROTO'"
+    OUTSIDE_RANGE=$(echo $portmap | cut -d':' -f1 | cut -d'/' -f1)
+    ${DEBUG:-false} && echo "[NETCONF] INFO    ::     > OUTSIDE_RANGE = '$OUTSIDE_RANGE'"
+    case $OUTSIDE_RANGE in
+      *[0-9]-[0-9]*) : ;;
+      *)
+        [ $OUTSIDE_RANGE -lt 1 ] && \
+          echo "[NETCONF] ERROR   :: '$OUTSIDE_RANGE' is outside TCP range for host $HOST" && ERROR_COUNT=$((ERROR_COUNT + 1)) && continue
+        OUTSIDE_RANGE="${OUTSIDE_RANGE}-${OUTSIDE_RANGE}"
+        ;;
+    esac
+    ${DEBUG:-false} && echo "[NETCONF] INFO    ::     > OUTSIDE_RANGE (fixed) = '$OUTSIDE_RANGE'"
+    for port in $(seq $(echo $OUTSIDE_RANGE | tr '-' ' ')); do
+      case "${OUTSIDE_PORTS_USED}" in
+        *"%${port}/${PROTO}%"*)
+          echo "[NETCONF] ERROR   :: Outside port '$port' is mapped several times" && ERROR_COUNT=$((ERROR_COUNT + 1))
+          ;;
+      esac
+      [ $port -gt 65535 ] && \
+        echo "[NETCONF] ERROR   :: '$port' is outside TCP range for host $HOST" && ERROR_COUNT=$((ERROR_COUNT + 1)) && continue
+    done
+    NEW_USED="$(seq $(echo $OUTSIDE_RANGE | tr '-' ' ') | xargs | sed "s# #/$PROTO%#g")/$PROTO"
+    ${DEBUG:-false} && echo "[NETCONF] INFO    ::     > NEW_USED = '$NEW_USED'"
+    ${DEBUG:-false} && echo "[NETCONF] INFO    ::     > CURRENTLY_USED = '$OUTSIDE_PORTS_USED'"
+    OUTSIDE_PORTS_USED+="${NEW_USED}%"
+  done
+fi
+
+
 echo "[NETCONF] INFO    :: Checking NAT"
 # check nat config
 # - Hosts are in the fixed ip list
 # - not outside port reuse
 # - ports are 1-65535
-OUTSIDE_PORTS_USED="%"
 ${DEBUG:-false} && (
   echo "[NETCONF] INFO    :: NAT_LIST ="
   for NAT_RULE in $NAT_LIST; do
@@ -166,18 +220,18 @@ for NAT_RULE in $NAT_LIST; do
     esac
     ${DEBUG:-false} && echo "[NETCONF] INFO    ::     > OUTSIDE_RANGE (fixed) = '$OUTSIDE_RANGE'"
     for port in $(seq $(echo $OUTSIDE_RANGE | tr '-' ' ')); do
-      case "${OUTSIDE_PORTS_USED}/${PROTO}" in
-        *"%$port%"*)
+      ${DEBUG:-false} && echo "[NETCONF] INFO    ::     >>> test '$port'"
+      case "${OUTSIDE_PORTS_USED}" in
+        *"%${port}/${PROTO}%"*)
           echo "[NETCONF] ERROR   :: Outside port '$port' is mapped several times" && ERROR_COUNT=$((ERROR_COUNT + 1))
           ;;
       esac
       [ $port -gt 65535 ] && \
         echo "[NETCONF] ERROR   :: '$port' is outside TCP range for host $HOST" && ERROR_COUNT=$((ERROR_COUNT + 1)) && continue
-      [ $port -eq 22 ] && \
-        echo "[NETCONF] ERROR   :: '$port' is reserved" && ERROR_COUNT=$((ERROR_COUNT + 1)) && continue
     done
     NEW_USED="$(seq $(echo $OUTSIDE_RANGE | tr '-' ' ') | xargs | sed "s# #/$PROTO%#g")/$PROTO"
     ${DEBUG:-false} && echo "[NETCONF] INFO    ::     > NEW_USED = '$NEW_USED'"
+    ${DEBUG:-false} && echo "[NETCONF] INFO    ::     > CURRENTLY_USED = '$OUTSIDE_PORTS_USED'"
     OUTSIDE_PORTS_USED+="${NEW_USED}%"
 
     INSIDE_RANGE=$(echo $portmap | cut -d':' -f2 | cut -d'/' -f1)
