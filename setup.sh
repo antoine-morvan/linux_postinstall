@@ -36,19 +36,29 @@ function prefixprint() {
     esac
 }
 echo "$(prefixprint info) Start."
-
 ###########################################################################################
 ## Checks
 ###########################################################################################
-for CMD in git; do
-    (command -v $CMD &> /dev/null) || (echo "$(prefixprint error) missing '$CMD' command" && exit 1)
-done
+
+case $(whoami) in
+    root) : ;;
+    *) echo "$(prefixprint error) Must execute as root." ; exit 1 ;;
+esac
 
 ###########################################################################################
 ## Logic
 ###########################################################################################
 
-# 1. get latest repo
+# 1. install minimal toolset (curl, git)
+echo "$(prefixprint) Install minimal toolset"
+. /etc/os-release
+case ${ID} in
+    ubuntu) apt udpate ; apt install curl git ; apt clean ;;
+    debian) apt udpate ; apt install curl git ; apt clean ;;
+    *) echo "$(prefixprint error) Unsupported distro '${ID}'" ; exit 1 ;;
+esac
+
+# 2. get latest repo
 if [ ! -d ${TARGET_GIT_CLONE_FOLDER} ]; then
     echo "$(prefixprint) Cloning repository"
     git clone https://github.com/antoine-morvan/linux_postinstall.git ${TARGET_GIT_CLONE_FOLDER}
