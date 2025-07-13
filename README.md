@@ -14,6 +14,7 @@ bash <(curl -L -s $URL) $ARGS
 
 if needed, add the following flags to curl to disable cache : 
 ```sh
+# Taken from https://reqbin.com/req/c-dyugjcgf/curl-no-cache-example
 # -H "Cache-Control: no-cache, no-store, must-revalidate"
 # -H "Pragma: no-cache"
 # -H "Expires: 0"
