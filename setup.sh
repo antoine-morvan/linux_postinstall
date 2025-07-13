@@ -6,7 +6,7 @@ set -eu -o pipefail
 # https://tinyurl.com/38x8e73f
 # https://urlr.me/8Nm2bZ
 # use 'curl -L -o setup.sh $URL'
-# or execute directly : 'bash <(curl -s $URL)''
+# or execute directly : 'bash <(curl -L -s $URL)''
 
 ###########################################################################################
 ## Settings
@@ -14,7 +14,7 @@ set -eu -o pipefail
 
 SETUP_SCRIPT_LOCATION=$(readlink -f "${BASH_SOURCE}")
 case $SETUP_SCRIPT_LOCATION in
-    /dev*) SETUP_SCRIPT_DIR=$(pwd) ;; # used as 'bash <(curl -s $URL)' without source folder: use pwd
+    /dev*|/proc*) SETUP_SCRIPT_DIR=$(pwd) ;; # used as 'bash <(curl -L -s $URL)' without source folder: use pwd
     *) SETUP_SCRIPT_DIR=$(dirname "${SETUP_SCRIPT_LOCATION}") ;;
 esac
 TARGET_GIT_CLONE_FOLDER="${SETUP_SCRIPT_DIR}/linux_postinstall"
