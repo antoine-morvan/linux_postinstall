@@ -1,6 +1,24 @@
 #!/usr/bin/env bash
 set -eu -o pipefail
 
+# Links to this file :
+# https://raw.githubusercontent.com/antoine-morvan/linux_postinstall/refs/heads/master/setup.sh
+# https://tinyurl.com/38x8e73f
+# https://urlr.me/8Nm2bZ
+# use 'curl -L -o setup.sh $URL'
+
+###########################################################################################
+## Settings
+###########################################################################################
+
+SETUP_SCRIPT_LOCATION=$(readlink -f "${BASH_SOURCE}")
+SETUP_SCRIPT_DIR=$(dirname "${SETUP_SCRIPT_LOCATION}")
+TARGET_GIT_CLONE_FOLDER="${SETUP_SCRIPT_DIR}/linux_postinstall"
+
+###########################################################################################
+## Functions
+###########################################################################################
+
 function prefixprint() {
     local prefix="[$(date +"%Y-%m-%d.%T.%3N")] [LINUX_POSTINSTALL]"
     case $(echo "${1:-info}" | tr '[:upper:]' '[:lower:]') in
@@ -13,12 +31,6 @@ function prefixprint() {
     esac
 }
 echo "$(prefixprint info) Start."
-###########################################################################################
-## Settings
-###########################################################################################
-SETUP_SCRIPT_LOCATION=$(readlink -f "${BASH_SOURCE}")
-SETUP_SCRIPT_DIR=$(dirname "${SETUP_SCRIPT_LOCATION}")
-TARGET_GIT_CLONE_FOLDER="${SETUP_SCRIPT_DIR}/linux_postinstall"
 
 ###########################################################################################
 ## Checks
