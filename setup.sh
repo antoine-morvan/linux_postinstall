@@ -6,6 +6,7 @@ set -eu -o pipefail
 # https://tinyurl.com/38x8e73f
 # https://urlr.me/8Nm2bZ
 # use 'curl -L -o setup.sh $URL'
+# or execute directly : 'bash <(curl -s $URL)''
 
 ###########################################################################################
 ## Settings
@@ -54,7 +55,7 @@ fi
 
 # 2. run setup scripts
 echo "$(prefixprint) Start setup"
-echo "$(prefixprint error) TODO"
+echo "$(prefixprint error) TODO args = '$@'"
 
 ###########################################################################################
 ## Exit
