@@ -6,7 +6,8 @@ set -eu -o pipefail
 # https://tinyurl.com/38x8e73f
 # https://urlr.me/8Nm2bZ
 # use 'curl -L -o setup.sh $URL'
-# or execute directly : 'bash <(curl -L -s $URL)''
+# or execute directly : 'bash <(curl -L -s $URL) $ARGS'
+# See readme for more options
 
 ###########################################################################################
 ## Settings
