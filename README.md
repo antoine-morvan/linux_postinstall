@@ -6,6 +6,7 @@ Many things are deprecated, use at your own risks.
 
 Basic usage : Execute the setup wrapper with proper arguments from URL:
 ```sh
+# Use one of the URLs
 URL="https://raw.githubusercontent.com/antoine-morvan/linux_postinstall/refs/heads/master/setup.sh"
 URL="https://tinyurl.com/38x8e73f"
 URL="https://urlr.me/8Nm2bZ"
